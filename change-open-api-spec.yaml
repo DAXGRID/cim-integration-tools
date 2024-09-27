@@ -1,0 +1,82 @@
+openapi: 3.0.1
+info:
+  title: generate-open-api-spec
+  version: '1.0'
+paths: {}
+components:
+  schemas:
+    ChangeSetMember:
+      type: object
+      additionalProperties: false
+    DataSetMember:
+      type: object
+      properties:
+        mRID:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        targetObject:
+          $ref: '#/components/schemas/TargetObject'
+        change:
+          $ref: '#/components/schemas/ChangeSetMember'
+        reverseChange:
+          $ref: '#/components/schemas/ObjectReverseModification'
+      additionalProperties: false
+    IdentifiedObject:
+      type: object
+      properties:
+        mRID:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ObjectCreation:
+      type: object
+      properties:
+        object:
+          $ref: '#/components/schemas/IdentifiedObject'
+      additionalProperties: false
+    ObjectDeletion:
+      type: object
+      additionalProperties: false
+    ObjectModification:
+      type: object
+      properties:
+        modifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyModification'
+          nullable: true
+      additionalProperties: false
+    ObjectReverseModification:
+      type: object
+      properties:
+        modifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyModification'
+          nullable: true
+      additionalProperties: false
+    PropertyModification:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        value:
+          nullable: true
+      additionalProperties: false
+    TargetObject:
+      type: object
+      properties:
+        referenceType:
+          type: string
+          nullable: true
+        ref:
+          type: string
+          nullable: true
+      additionalProperties: false
