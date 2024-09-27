@@ -1,0 +1,35 @@
+{
+   "$type":"DataSetMember",
+   "TargetObject":"ServiceDeliveryPoint/571313124530051892",
+   "Change":{
+      "$type":"ObjectModification",
+      "Modifications":[
+         {
+            "$type":"PropertyModification",
+            "Name":"wgs84Latitude",
+            "Value":55.764942169189453
+         },
+         {
+            "$type":"PropertyModification",
+            "Name":"wgs84Longitude",
+            "Value":9.6929740905761719
+         }
+      ]
+   },
+   "ReverseChange":{
+      "$type":"ObjectReverseModification",
+      "Modifications":[
+         {
+            "$type":"PropertyModification",
+            "Name":"wgs84Latitude",
+            "Value":55.764938354492188
+         },
+         {
+            "$type":"PropertyModification",
+            "Name":"wgs84Longitude",
+            "Value":9.6929616928100586
+         }
+      ]
+   },
+   "mRID":"46cbe217-7c34-4317-a463-7e63f0c798f6"
+}
