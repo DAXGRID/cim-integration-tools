@@ -1,6 +1,7 @@
-﻿namespace CIM.Change;
-
-public class ObjectDeletion : ChangeSetMember
+﻿namespace CIM.Change
 {
+    public class ObjectDeletion : ChangeSetMember
+    {
 
+    }
 }

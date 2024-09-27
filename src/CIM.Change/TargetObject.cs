@@ -1,8 +1,9 @@
-﻿namespace CIM.Change;
-
-public class TargetObject
+﻿namespace CIM.Change
 {
-    public string referenceType { get; set; }
+    public class TargetObject
+    {
+        public string referenceType { get; set; }
 
-    public string @ref { get; set; }
+        public string @ref { get; set; }
+    }
 }

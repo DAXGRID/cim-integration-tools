@@ -1,10 +1,11 @@
-﻿namespace CIM.Change;
-
-public class DataSetMember : IdentifiedObject
+﻿namespace CIM.Change
 {
-    public TargetObject TargetObject { get; set; }
+    public class DataSetMember : IdentifiedObject
+    {
+        public TargetObject TargetObject { get; set; }
 
-    public ChangeSetMember Change { get; set; }
+        public ChangeSetMember Change { get; set; }
 
-    public ObjectReverseModification ReverseChange { get; set; }
+        public ObjectReverseModification ReverseChange { get; set; }
+    }
 }

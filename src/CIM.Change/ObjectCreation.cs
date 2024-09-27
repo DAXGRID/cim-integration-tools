@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace CIM.Change;
-
-public class ObjectCreation : ChangeSetMember
+namespace CIM.Change
 {
-    public IdentifiedObject Object { get; set; }
+    public class ObjectCreation : ChangeSetMember
+    {
+        public IdentifiedObject Object { get; set; }
+    }
 }

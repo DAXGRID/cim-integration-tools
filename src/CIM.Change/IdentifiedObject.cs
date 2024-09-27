@@ -1,12 +1,9 @@
-using System.Text.Json.Serialization;
-
-namespace CIM.Change;
-
-public abstract class IdentifiedObject
+namespace CIM.Change
 {
-    [JsonPropertyName("mRID")]
-    public required string mRID { get; init; }
+    public abstract class IdentifiedObject
+    {
+        public string mRID { get; set; }
 
-    [JsonPropertyName("name")]
-    public required string Name { get; init; }
+        public string name { get; set; }
+    }
 }

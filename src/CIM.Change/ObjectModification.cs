@@ -1,6 +1,7 @@
-﻿namespace CIM.Change;
-
-public class ObjectModification : ChangeSetMember
+﻿namespace CIM.Change
 {
-    public PropertyModification[] Modifications { get; set; }
+    public class ObjectModification : ChangeSetMember
+    {
+        public PropertyModification[] Modifications { get; set; }
+    }
 }

@@ -1,7 +1,8 @@
-﻿namespace CIM.Change;
-
-public class PropertyModification
+﻿namespace CIM.Change
 {
-    public string Name { get; set; }
-    public object Value { get; set; }
+    public class PropertyModification
+    {
+        public string Name { get; set; }
+        public object Value { get; set; }
+    }
 }
