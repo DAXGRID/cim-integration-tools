@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{08FEBC24-E58
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.Change", "src\CIM.Change\CIM.Change.csproj", "{8566D788-1DA4-4F0B-9DD1-9B7190B12892}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.Change.Tests", "src\CIM.Change.Tests\CIM.Change.Tests.csproj", "{CC04FFFC-FFE3-4050-B2E8-EA65529661EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +22,13 @@ Global
 		{8566D788-1DA4-4F0B-9DD1-9B7190B12892}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8566D788-1DA4-4F0B-9DD1-9B7190B12892}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8566D788-1DA4-4F0B-9DD1-9B7190B12892}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC04FFFC-FFE3-4050-B2E8-EA65529661EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC04FFFC-FFE3-4050-B2E8-EA65529661EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC04FFFC-FFE3-4050-B2E8-EA65529661EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC04FFFC-FFE3-4050-B2E8-EA65529661EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8566D788-1DA4-4F0B-9DD1-9B7190B12892} = {08FEBC24-E58F-4B22-8D17-C6EF1BBC5E44}
+		{CC04FFFC-FFE3-4050-B2E8-EA65529661EB} = {08FEBC24-E58F-4B22-8D17-C6EF1BBC5E44}
 	EndGlobalSection
 EndGlobal
