@@ -2,7 +2,7 @@
 {
     public class DataSetMember : IdentifiedObject
     {
-        public TargetObject TargetObject { get; set; }
+        public string TargetObject { get; set; }
 
         public ChangeSetMember Change { get; set; }
 
