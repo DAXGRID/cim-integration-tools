@@ -1,4 +1,4 @@
-﻿namespace DAX.CIM.PhysicalNetworkModel
+﻿namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// A PowerTransformerEnd is associated with each Terminal of a PowerTransformer.

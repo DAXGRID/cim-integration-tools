@@ -1,4 +1,4 @@
-﻿namespace DAX.CIM.PhysicalNetworkModel
+﻿namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// Product of RMS value of the voltage and the RMS value of the quadrature component of the current.

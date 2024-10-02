@@ -1,4 +1,4 @@
-﻿namespace DAX.CIM.PhysicalNetworkModel
+﻿namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// A conducting connection point of a power transformer. It corresponds to a physical transformer winding terminal.  In earlier CIM versions, the TransformerWinding class served a similar purpose, but this class is more flexible because it associates to terminal but is not a specialization of ConductingEquipment.

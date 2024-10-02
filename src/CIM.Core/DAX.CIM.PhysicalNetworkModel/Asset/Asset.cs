@@ -1,4 +1,4 @@
-﻿namespace DAX.CIM.PhysicalNetworkModel
+﻿namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// Tangible resource of the utility, including power system equipment, various end devices, cabinets, buildings, etc. For electrical network equipment, the role of the asset is defined through PowerSystemResource and its subclasses, defined mainly in the Wires model (refer to IEC61970-301 and model package IEC61970::Wires). Asset description places emphasis on the physical characteristics of the equipment fulfilling that role.

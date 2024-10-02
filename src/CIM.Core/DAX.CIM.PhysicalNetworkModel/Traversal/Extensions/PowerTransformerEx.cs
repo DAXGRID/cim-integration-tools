@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAX.CIM.PhysicalNetworkModel.Traversal.Extensions
+namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 {
     public static class PowerTransformerEx
     {

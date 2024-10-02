@@ -1,5 +1,5 @@
 ﻿
-namespace DAX.CIM.PhysicalNetworkModel
+namespace CIM.PhysicalNetworkModel
 {
     using System.Xml.Serialization;
 

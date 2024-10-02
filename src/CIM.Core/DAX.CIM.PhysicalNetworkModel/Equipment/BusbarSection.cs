@@ -1,4 +1,4 @@
-﻿namespace DAX.CIM.PhysicalNetworkModel
+﻿namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// A conductor, or group of conductors, with negligible impedance, that serve to connect other conducting equipment within a single substation. 

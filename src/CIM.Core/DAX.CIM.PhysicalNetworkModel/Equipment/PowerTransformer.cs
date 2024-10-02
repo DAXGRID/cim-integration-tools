@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace DAX.CIM.PhysicalNetworkModel
+namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// An electrical device consisting of  two or more coupled windings, with or without a magnetic core, for introducing mutual coupling between electric circuits. Transformers can be used to control voltage and phase shift (active power flow).

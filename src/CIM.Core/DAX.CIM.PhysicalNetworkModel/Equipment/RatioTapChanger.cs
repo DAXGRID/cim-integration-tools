@@ -1,4 +1,4 @@
-﻿namespace DAX.CIM.PhysicalNetworkModel
+﻿namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// A tap changer that changes the voltage ratio impacting the voltage magnitude but not the phase angle across the transformer.

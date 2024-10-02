@@ -1,9 +1,9 @@
-﻿using DAX.CIM.PhysicalNetworkModel.FeederInfo;
-using DAX.CIM.PhysicalNetworkModel.Traversal;
+﻿using CIM.PhysicalNetworkModel.FeederInfo;
+using CIM.PhysicalNetworkModel.Traversal;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace DAX.CIM.PhysicalNetworkModel
+namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// The parts of a power system that are physical devices, electronic or mechanical.

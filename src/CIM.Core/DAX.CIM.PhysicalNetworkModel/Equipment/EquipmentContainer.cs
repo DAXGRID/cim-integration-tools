@@ -1,7 +1,7 @@
-﻿using DAX.CIM.PhysicalNetworkModel.Traversal;
+﻿using CIM.PhysicalNetworkModel.Traversal;
 using System.Collections.Generic;
 
-namespace DAX.CIM.PhysicalNetworkModel
+namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// A modeling construct to provide a root class for containing equipment.

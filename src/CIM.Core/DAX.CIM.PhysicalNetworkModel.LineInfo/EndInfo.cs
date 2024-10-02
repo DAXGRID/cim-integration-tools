@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAX.CIM.PhysicalNetworkModel.LineInfo
+namespace CIM.PhysicalNetworkModel.LineInfo
 {
     public class EndInfo
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAX.CIM.PhysicalNetworkModel.LineInfo
+namespace CIM.PhysicalNetworkModel.LineInfo
 {
     /// <summary>
     /// A class used to hold information about the relation between a CIM object and a Line

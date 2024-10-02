@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAX.CIM.PhysicalNetworkModel.FeederInfo
+namespace CIM.PhysicalNetworkModel.FeederInfo
 {
     public enum ConnectionPointKind
     {

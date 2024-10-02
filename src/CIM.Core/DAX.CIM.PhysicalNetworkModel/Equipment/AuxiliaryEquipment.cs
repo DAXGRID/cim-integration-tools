@@ -1,4 +1,4 @@
-﻿namespace DAX.CIM.PhysicalNetworkModel
+﻿namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// AuxiliaryEquipment describe equipment that is not performing any primary functions but support for the equipment performing the primary function.

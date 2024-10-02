@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DAX.CIM.PhysicalNetworkModel;
+using CIM.PhysicalNetworkModel;
 
-namespace DAX.Cson.Converters
+namespace CIM.Cson.Converters
 {
     internal class MultiplierAndSymbol
     {

@@ -1,10 +1,10 @@
-﻿using DAX.CIM.PhysicalNetworkModel.Traversal;
-using DAX.CIM.PhysicalNetworkModel.Traversal.Extensions;
+﻿using CIM.PhysicalNetworkModel.Traversal;
+using CIM.PhysicalNetworkModel.Traversal.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DAX.CIM.PhysicalNetworkModel.FeederInfo
+namespace CIM.PhysicalNetworkModel.FeederInfo
 {
     public class FeederInfoContext
     {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using DAX.CIM.PhysicalNetworkModel.Traversal.Internals;
+using CIM.PhysicalNetworkModel.Traversal.Internals;
 
-namespace DAX.CIM.PhysicalNetworkModel.Traversal
+namespace CIM.PhysicalNetworkModel.Traversal
 {
     public abstract class CimContext
     {

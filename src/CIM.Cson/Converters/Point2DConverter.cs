@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
-using DAX.CIM.PhysicalNetworkModel;
+using CIM.PhysicalNetworkModel;
 using Newtonsoft.Json;
 
-namespace DAX.Cson.Converters
+namespace CIM.Cson.Converters
 {
     class Point2DConverter : JsonConverter
     {

@@ -1,4 +1,4 @@
-﻿namespace DAX.CIM.PhysicalNetworkModel
+﻿namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// A generic device designed to close, or open, or both, one or more electric circuits.  All switches are two terminal devices including grounding switches.

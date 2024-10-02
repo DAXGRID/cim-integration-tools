@@ -1,4 +1,4 @@
-﻿namespace DAX.CIM.PhysicalNetworkModel
+﻿namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// Factor by which voltage must be multiplied to give corresponding power lost from a circuit. Real part of admittance.

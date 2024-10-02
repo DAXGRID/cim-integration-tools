@@ -1,4 +1,4 @@
-﻿namespace DAX.CIM.PhysicalNetworkModel
+﻿namespace CIM.PhysicalNetworkModel
 {
     /// <remarks/>
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShuntCompensator))]

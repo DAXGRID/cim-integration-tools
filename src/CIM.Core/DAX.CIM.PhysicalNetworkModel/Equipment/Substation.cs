@@ -1,12 +1,12 @@
 ﻿using System;
-using DAX.CIM.PhysicalNetworkModel.FeederInfo;
-using DAX.CIM.PhysicalNetworkModel.Traversal;
-using DAX.CIM.PhysicalNetworkModel.Traversal.Extensions;
+using CIM.PhysicalNetworkModel.FeederInfo;
+using CIM.PhysicalNetworkModel.Traversal;
+using CIM.PhysicalNetworkModel.Traversal.Extensions;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 
-namespace DAX.CIM.PhysicalNetworkModel
+namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// A collection of equipment for purposes other than generation or utilization, through which electric energy in bulk is passed for the purposes of switching or modifying its characteristics.
@@ -35,7 +35,7 @@ namespace DAX.CIM.PhysicalNetworkModel
 
         /// <summary>
         /// Notice that this list is only populated when using the FeederInfoContext class
-        /// from the DAX.CIM.PhysicalNetworkModel.FeederInfo assembly. You can use this list
+        /// from the CIM.PhysicalNetworkModel.FeederInfo assembly. You can use this list
         /// if you know what you're doing. But please take a look at the feeder helper functions first.
         /// </summary>
         [IgnoreDataMember]

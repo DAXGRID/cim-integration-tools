@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DAX.CIM.PhysicalNetworkModel.Traversal.Extensions
+namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 {
     public static class DoubleExtensions
     {

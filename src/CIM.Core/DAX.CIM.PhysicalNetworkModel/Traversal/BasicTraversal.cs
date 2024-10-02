@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DAX.CIM.PhysicalNetworkModel.Traversal.Extensions;
+using CIM.PhysicalNetworkModel.Traversal.Extensions;
 
-namespace DAX.CIM.PhysicalNetworkModel.Traversal
+namespace CIM.PhysicalNetworkModel.Traversal
 {
     public class BasicTraversal
     {

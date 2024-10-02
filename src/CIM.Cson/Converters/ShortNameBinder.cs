@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DAX.CIM.PhysicalNetworkModel;
-using DAX.CIM.PhysicalNetworkModel.Changes;
+using CIM.PhysicalNetworkModel;
+using CIM.PhysicalNetworkModel.Changes;
 using Newtonsoft.Json.Serialization;
 
-namespace DAX.Cson.Converters
+namespace CIM.Cson.Converters
 {
     class ShortNameBinder : DefaultSerializationBinder
     {

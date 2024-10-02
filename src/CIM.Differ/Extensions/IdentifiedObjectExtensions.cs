@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Runtime.Serialization;
-using DAX.CIM.PhysicalNetworkModel;
+using CIM.PhysicalNetworkModel;
 using FastMember;
 using Newtonsoft.Json;
 

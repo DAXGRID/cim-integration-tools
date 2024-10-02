@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DAX.CIM.PhysicalNetworkModel.Traversal.Extensions
+namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 {
     public static class ConductingEquipmentEx
     {

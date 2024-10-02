@@ -1,11 +1,11 @@
-﻿using DAX.CIM.PhysicalNetworkModel.Traversal;
+﻿using CIM.PhysicalNetworkModel.Traversal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAX.CIM.PhysicalNetworkModel.FeederInfo
+namespace CIM.PhysicalNetworkModel.FeederInfo
 {
     /// <summary>
     /// Fat class to hold simplified/flatten-out feeder information that many non-electrical external systems are hungry for.

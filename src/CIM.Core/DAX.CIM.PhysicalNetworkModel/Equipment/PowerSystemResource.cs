@@ -1,9 +1,9 @@
-﻿using DAX.CIM.PhysicalNetworkModel.FeederInfo;
-using DAX.CIM.PhysicalNetworkModel.Traversal;
+﻿using CIM.PhysicalNetworkModel.FeederInfo;
+using CIM.PhysicalNetworkModel.Traversal;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace DAX.CIM.PhysicalNetworkModel
+namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// A power system resource can be an item of equipment such as a switch, an equipment container containing many individual items of equipment such as a substation, or an organisational entity such as sub-control area. Power system resources can have measurements associated.
@@ -137,7 +137,7 @@ namespace DAX.CIM.PhysicalNetworkModel
 
         /// <summary>
         /// Notice that this list is only populated when using the FeederInfoContext class
-        /// from the DAX.CIM.PhysicalNetworkModel.FeederInfo assembly. You can use this list
+        /// from the CIM.PhysicalNetworkModel.FeederInfo assembly. You can use this list
         /// if you know what you're doing. But please take a look at the feeder helper functions first.
         /// </summary>
         [IgnoreDataMember]

@@ -1,9 +1,9 @@
 ﻿using System.Runtime.Serialization;
-using DAX.CIM.PhysicalNetworkModel.Changes;
-using DAX.CIM.PhysicalNetworkModel.Traversal;
-using DAX.CIM.PhysicalNetworkModel.Traversal.Extensions;
+using CIM.PhysicalNetworkModel.Changes;
+using CIM.PhysicalNetworkModel.Traversal;
+using CIM.PhysicalNetworkModel.Traversal.Extensions;
 
-namespace DAX.CIM.PhysicalNetworkModel
+namespace CIM.PhysicalNetworkModel
 {
     /// <summary>
     /// This is a root class to provide common identification for all classes needing identification and naming attributes.

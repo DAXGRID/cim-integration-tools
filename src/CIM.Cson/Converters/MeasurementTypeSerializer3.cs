@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using DAX.CIM.PhysicalNetworkModel;
+using CIM.PhysicalNetworkModel;
 using FastMember;
 using Newtonsoft.Json;
-using DAX.Cson.Converters;
+using CIM.Cson.Converters;
 
 namespace CIM.Cson.Converters
 {

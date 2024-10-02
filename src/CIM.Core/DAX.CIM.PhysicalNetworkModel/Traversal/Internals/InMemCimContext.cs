@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DAX.CIM.PhysicalNetworkModel.Traversal.Extensions;
+using CIM.PhysicalNetworkModel.Traversal.Extensions;
 
-namespace DAX.CIM.PhysicalNetworkModel.Traversal.Internals
+namespace CIM.PhysicalNetworkModel.Traversal.Internals
 {
     public class InMemCimContext : CimContext
     {
