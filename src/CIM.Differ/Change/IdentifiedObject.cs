@@ -1,4 +1,4 @@
-namespace CIM.Change
+namespace CIM.Differ.Change
 {
     public abstract class IdentifiedObject
     {
