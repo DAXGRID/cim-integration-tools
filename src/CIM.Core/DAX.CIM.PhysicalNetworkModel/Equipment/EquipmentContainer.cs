@@ -22,7 +22,7 @@ namespace CIM.PhysicalNetworkModel
 
                 name = this.name + ' ' + name;
 
-                if (Parent != null)
+                if (Parent(context) != null)
                     return (NameTraverse(visitedEquipments, name, context));
                 else
                     return name;

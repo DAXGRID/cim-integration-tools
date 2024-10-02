@@ -1,5 +1,6 @@
 ﻿using CIM.PhysicalNetworkModel.FeederInfo;
 using CIM.PhysicalNetworkModel.Traversal;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -144,12 +145,14 @@ namespace CIM.PhysicalNetworkModel
             }
         }
 
-
         public override string ToString()
         {
-            return this.GetType().Name + ": " + PathName + " PSRType=" + this.PSRType + " mRID=" + mRID;
+            throw new NotImplementedException("Use the overload with cim context instead");
+        }
+
+        public string ToString(CimContext cimContext)
+        {
+            return this.GetType().Name + ": " + PathName(cimContext) + " PSRType=" + this.PSRType + " mRID=" + mRID;
         }
     }
-
-  
 }
