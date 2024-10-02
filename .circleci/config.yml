@@ -30,6 +30,16 @@ jobs:
       - run:
           name: Test
           command: dotnet test
+  publish-nuget:
+    executor: dotnet-core-sdk
+    steps:
+      - checkout
+      - run:
+          name: Push to NuGet
+          command: |
+            cd src/
+            dotnet pack -o ./publish --no-dependencies -c Release -p:PackageVersion=${CIRCLE_TAG}
+            dotnet nuget push --source "${NUGET_FEED_URL}" --api-key="${NUGET_KEY}" "./publish/*.nupkg"
 
 workflows:
   build-and-test:
