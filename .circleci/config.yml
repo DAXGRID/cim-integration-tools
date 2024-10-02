@@ -42,7 +42,7 @@ jobs:
             dotnet nuget push --source "${NUGET_FEED_URL}" --api-key="${NUGET_KEY}" "./publish/*.nupkg"
 
 workflows:
-  build-and-test:
+  build-and-test-publish-nuget:
     jobs:
       - build-app:
           filters:
@@ -54,3 +54,12 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - publish-nuget:
+          context: nuget
+          requires:
+            - test-app
+          filters:
+            tags:
+              only: /^[0-9].*/
+            branches:
+              ignore: /.*/
