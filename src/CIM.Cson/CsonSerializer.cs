@@ -5,7 +5,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using CIM.PhysicalNetworkModel;
 using CIM.Cson.Internals;
-using CIM.Cson.Internals;
 
 namespace CIM.Cson
 {
