@@ -24,18 +24,18 @@ namespace CIM.Cson
         /// <summary>
         /// Serializes a single object to a JSON string
         /// </summary>
-        public string SerializeObject<T>(T obj) => _serializer.Serialize(obj);
+        public string SerializeObject(IdentifiedObject obj) => _serializer.Serialize(obj);
 
         /// <summary>
         /// Deserializes a single object into its <see cref="IdentifiedObject"/> subclass
         /// </summary>
-        public T DeserializeObject<T>(string json)
+        public IdentifiedObject DeserializeObject(string json)
         {
             var obj = _serializer.Deserialize(json);
 
             try
             {
-                return (T)obj;
+                return (IdentifiedObject)obj;
             }
             catch (Exception exception)
             {
@@ -46,7 +46,7 @@ namespace CIM.Cson
         /// <summary>
         /// Returns a JSONL stream from the given <paramref name="objects"/>
         /// </summary>
-        public Stream SerializeObjects<T>(IEnumerable<T> objects)
+        public Stream SerializeObjects(IEnumerable<IdentifiedObject> objects)
         {
             var enumerator = objects.GetEnumerator();
 
@@ -81,7 +81,7 @@ namespace CIM.Cson
         /// <summary>
         /// Deserializes the given JSON stream and returns <see cref="IdentifiedObject"/> while traversing it
         /// </summary>
-        public IEnumerable<T> DeserializeObjects<T>(Stream source)
+        public IEnumerable<IdentifiedObject> DeserializeObjects(Stream source)
         {
             var lineCounter = 0;
 
@@ -95,18 +95,18 @@ namespace CIM.Cson
 
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
-                    var obj = DeserializeObjectFromLine<T>(line, lineCounter);
+                    var obj = DeserializeObjectFromLine(line, lineCounter);
 
                     yield return obj;
                 }
             }
         }
 
-        T DeserializeObjectFromLine<T>(string line, int lineCounter)
+        IdentifiedObject DeserializeObjectFromLine(string line, int lineCounter)
         {
             try
             {
-                return DeserializeObject<T>(line);
+                return DeserializeObject(line);
             }
             catch (Exception exception)
             {
