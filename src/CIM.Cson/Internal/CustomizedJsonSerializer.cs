@@ -2,6 +2,7 @@ using System;
 using System.Runtime.Serialization;
 using CIM.Cson.Converters;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CIM.Cson.Internals
 {
@@ -20,6 +21,7 @@ namespace CIM.Cson.Internals
                 {
                    new ObjectReferenceSerializer(),
                    new MeasurementTypeSerializer3(),
+                   new StringEnumConverter();
                 },
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
                 ContractResolver = new CustomizedContractResolver(),
