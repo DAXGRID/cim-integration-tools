@@ -23,9 +23,6 @@ namespace CIM.Cson.Internals
                 },
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
                 ContractResolver = new CustomizedContractResolver(),
-
-                // it's important that 0, false, etc are serialized too
-                //DefaultValueHandling = DefaultValueHandling.Ignore,
             };
 
             return settings;
