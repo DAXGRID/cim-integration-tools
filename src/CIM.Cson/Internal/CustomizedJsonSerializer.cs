@@ -21,7 +21,7 @@ namespace CIM.Cson.Internals
                 {
                    new ObjectReferenceSerializer(),
                    new MeasurementTypeSerializer3(),
-                   new StringEnumConverter();
+                   new StringEnumConverter()
                 },
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
                 ContractResolver = new CustomizedContractResolver(),
