@@ -18,13 +18,8 @@ namespace CIM.Cson.Internals
                 Binder = new ShortNameBinder(),
                 Converters =
                 {
-                    //new Point2DConverter(),
-                    //new CustomDateTimeConverter()
-                    //new MeasurementTypeSerializer5(),
-                    //new MeasurementTypeSerializer4(),
-
-                    new ObjectReferenceSerializer(),
-                    new MeasurementTypeSerializer3(),
+                   new ObjectReferenceSerializer(),
+                   new MeasurementTypeSerializer3(),
                 },
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
                 ContractResolver = new CustomizedContractResolver(),
