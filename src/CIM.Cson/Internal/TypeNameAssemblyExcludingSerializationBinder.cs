@@ -13,7 +13,7 @@ namespace CIM.Cson.Internals
         public void BindToName(Type serializedType, out string assemblyName, out string typeName)
         {
             assemblyName = null;
-            typeName = serializedType.FullName;
+            typeName = serializedType.Name;
         }
 
         public Type BindToType(string assemblyName, string typeName)
