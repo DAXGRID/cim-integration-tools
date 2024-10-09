@@ -17,6 +17,7 @@ namespace CIM.Cson.Internals
                 TypeNameHandling = TypeNameHandling.Objects,
                 NullValueHandling = NullValueHandling.Ignore,
                 Binder = new ShortNameBinder(),
+                SerializationBinder = TypeNameAssemblyExcludingSerializationBinder.Instance,
                 Converters =
                 {
                    new ObjectReferenceSerializer(),
