@@ -37,7 +37,9 @@ jobs:
       - run:
           name: Push to NuGet
           command: |
-            dotnet pack -o ./publish --no-dependencies -c Release -p:PackageVersion=${CIRCLE_TAG}
+            dotnet pack -o ./publish --no-dependencies -c Release -p:PackageVersion=${CIRCLE_TAG} ./src/CIM.Core
+            dotnet pack -o ./publish --no-dependencies -c Release -p:PackageVersion=${CIRCLE_TAG} ./src/CIM.Cson
+            dotnet pack -o ./publish --no-dependencies -c Release -p:PackageVersion=${CIRCLE_TAG} ./src/CIM.Differ
             dotnet nuget push --source "${NUGET_FEED_URL}" --api-key="${NUGET_KEY}" "./publish/*.nupkg"
 
 workflows:
