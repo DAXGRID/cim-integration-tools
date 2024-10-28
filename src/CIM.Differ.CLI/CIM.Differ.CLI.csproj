@@ -12,4 +12,14 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CIM.Differ\CIM.Differ.csproj" />
+    <ProjectReference Include="..\CIM.Cson\CIM.Cson.csproj" />
+    <ProjectReference Include="..\CIM.Core\CIM.Core.csproj" />
+  </ItemGroup>
+
 </Project>
