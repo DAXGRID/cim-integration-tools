@@ -8,10 +8,10 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        var previousStateFileOption = new Option<string>(
+        var previousStateFileOption = new Option<string?>(
             name: "--previous-state-file",
             description: "The path to the previous state file. Example: './my-previous-state-file.jsonl'."
-        ) { IsRequired = true };
+        ) { IsRequired = false };
 
         var newStateFileOption = new Option<string>(
             name: "--new-state-file",
@@ -37,12 +37,15 @@ internal static class Program
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
 
-    private static async Task ProcessDiffAsync(string previousStateFilePath, string newStateFilePath, string outputFilePath)
+    private static async Task ProcessDiffAsync(string? previousStateFilePath, string newStateFilePath, string outputFilePath)
     {
         var serializer = new CsonSerializer();
         var differ = new CimDiffer();
 
-        var firstFileIdentifiedObjects = ReadIdentifiedObjectFile(serializer, previousStateFilePath);
+        var firstFileIdentifiedObjects = previousStateFilePath is not null
+            ? ReadIdentifiedObjectFile(serializer, previousStateFilePath)
+            : new List<IdentifiedObject>();
+
         var secondFileIdentifiedObjects = ReadIdentifiedObjectFile(serializer, newStateFilePath);
 
         using (var destination = File.Open(outputFilePath, FileMode.CreateNew))
