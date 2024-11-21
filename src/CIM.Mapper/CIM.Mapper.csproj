@@ -8,8 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CIM.Core" Version="0.3.0" />
-    <PackageReference Include="CIM.Cson" Version="0.3.0" />
+    <ProjectReference Include="..\CIM.Cson\CIM.Cson.csproj" />
+    <ProjectReference Include="..\CIM.Core\CIM.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="ProjNet" Version="2.0.0" />
     <PackageReference Include="QuikGraph" Version="2.5.0" />
