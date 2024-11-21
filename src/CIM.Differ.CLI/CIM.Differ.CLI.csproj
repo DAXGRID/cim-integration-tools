@@ -18,8 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CIM.Differ\CIM.Differ.csproj" />
-    <ProjectReference Include="..\CIM.Cson\CIM.Cson.csproj" />
-    <ProjectReference Include="..\CIM.Core\CIM.Core.csproj" />
   </ItemGroup>
 
 </Project>
