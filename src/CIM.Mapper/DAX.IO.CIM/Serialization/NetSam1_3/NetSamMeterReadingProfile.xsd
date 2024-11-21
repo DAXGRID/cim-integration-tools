@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:cl="urn:entsoe.eu:wgedi:codelists" xmlns:sawsdl="http://www.w3.org/ns/sawsdl" xmlns:cim="http://net-sam.dk/meterreading_1_0" xmlns:cimp="http://www.iec.ch/cimprofile" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://net-sam.dk/meterreading_1_0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="ProfileEnvelop" type="cim:ProfileEnvelop" />
+  <xs:complexType name="ProfileEnvelop">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MeterReadingExt" type="cim:MeterReadingExt" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PowerTransformer" type="cim:PowerTransformer" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Reading" type="cim:Reading" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ReadingType" type="cim:ReadingType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MeterReadingExt" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA Extension#MeterReadingExt">
+    <xs:annotation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="PSI">PSI</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="cim:MeterReading">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="PowerTransformer" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA Extension#MeterReadingExt.PowerTransformer">
+            <xs:complexType>
+              <xs:attribute name="referenceType" type="xs:string" use="optional" />
+              <xs:attribute name="ref" type="xs:string">
+              </xs:attribute>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="PowerTransformer" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Wires#PowerTransformer">
+    <xs:annotation>
+      <xs:documentation>An electrical device consisting of  two or more coupled windings, with or without a magnetic core, for introducing mutual coupling between electric circuits. Transformers can be used to control voltage and phase shift (active power flow).
+A power transformer may be composed of separate transformer tanks that need not be identical.
+A power transformer can be modeled with or without tanks and is intended for use in both balanced and unbalanced representations.   A power transformer typically has two terminals, but may have one (grounding), three or more terminals.
+The inherited association ConductingEquipment.BaseVoltage should not be used.  The association from TransformerEnd to BaseVoltage should be used instead.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="mRID" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Core#IdentifiedObject.mRID">
+        <xs:annotation>
+          <xs:documentation>Master resource identifier issued by a model authority. The mRID must semantically be a UUID as specified in RFC 4122. The mRID is globally unique.
+For CIMXML data files in RDF syntax, the mRID is mapped to rdf:ID or rdf:about attributes that identify CIM object elements.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Version" abstract="true" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version">
+    <xs:annotation>
+      <xs:documentation>Version details.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="NetSam">NetSam</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="iec61970cim16v22b_iec61968cim12v07_iec62325cim03v01" name="baseUML" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.baseUML">
+        <xs:annotation>
+          <xs:documentation>Base UML provided by CIM model manager.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/2013/61970-452/EquipmentCore/4" name="baseURIcore" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.baseURIcore">
+        <xs:annotation>
+          <xs:documentation>Profile URI used in the Model Exchange header and defined in IEC standards.  It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/2013/61970-452/EquipmentOperation/4" name="baseURIoperation" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.baseURIoperation">
+        <xs:annotation>
+          <xs:documentation>Profile URI used in the Model Exchange header and defined in IEC standards.  It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/2013/61970-452/EquipmentShortCircuit/4" name="baseURIshortCircuit" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.baseURIshortCircuit">
+        <xs:annotation>
+          <xs:documentation>Profile URI used in the Model Exchange header and defined in IEC standards.  It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="2014-02-28" name="date" type="xs:date">
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/61970-552/DifferenceModel/1#" name="differenceModelURI" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.differenceModelURI">
+        <xs:annotation>
+          <xs:documentation>Difference model URI defined by IEC 61970-552. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/61970-552/ModelDescription/1#" name="modelDescriptionURI" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.modelDescriptionURI">
+        <xs:annotation>
+          <xs:documentation>Model Description URI defined by IEC 61970-552. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://www.w3.org/1999/02/22-rdf-syntax-ns#" name="namespaceRDF" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.namespaceRDF">
+        <xs:annotation>
+          <xs:documentation>RDF namespace. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/2013/CIM-schema-cim16#" name="namespaceUML" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.namespaceUML">
+        <xs:annotation>
+          <xs:documentation>CIM UML namespace. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="samnet01v01_iec61970cim16v22b_iec61968cim12v07_iec62325cim03v01" name="samnetUML" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.samnetUML">
+        <xs:annotation>
+          <xs:documentation>UML provided by SAM-NET.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://net-sam.dk/CIM/EquipmentCore/3/1" name="samnetURIcore" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.samnetURIcore">
+        <xs:annotation>
+          <xs:documentation>Profile URI defined by SAM-NET and used in the Model Exchange header. It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://net-sam.dk/CIM/EquipmentOperation/3/1" name="samnetURIoperation" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.samnetURIoperation">
+        <xs:annotation>
+          <xs:documentation>Profile URI defined by SAM-NET and used in the Model Exchange header. It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://net-sam.dk/CIM/EquipmentShortCircuit/3/1" name="samnetURIshortCircuit" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.samnetURIshortCircuit">
+        <xs:annotation>
+          <xs:documentation>Profile URI defined by SAM-NET and used in the Model Exchange header. It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="1.0" name="version" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeterReadingProfile#Version.version">
+        <xs:annotation>
+          <xs:documentation>Profile version.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DateTimeInterval" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Domain#DateTimeInterval">
+    <xs:annotation>
+      <xs:documentation>Interval between two date and time points.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="Compound">Compound</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="start" type="xs:dateTime" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Domain#DateTimeInterval.start">
+        <xs:annotation>
+          <xs:documentation>Start date and time of this interval.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" maxOccurs="1" name="end" type="xs:dateTime" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Domain#DateTimeInterval.end">
+        <xs:annotation>
+          <xs:documentation>End date and time of this interval.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MeterReading" abstract="true" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#MeterReading">
+    <xs:annotation>
+      <xs:documentation>Set of values obtained from the meter.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="mRID" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Core#IdentifiedObject.mRID">
+        <xs:annotation>
+          <xs:documentation>Master resource identifier issued by a model authority. The mRID must semantically be a UUID as specified in RFC 4122. The mRID is globally unique.
+For CIMXML data files in RDF syntax, the mRID is mapped to rdf:ID or rdf:about attributes that identify CIM object elements.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" maxOccurs="1" name="valuesInterval" type="cim:DateTimeInterval" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#MeterReading.valuesInterval">
+        <xs:annotation>
+          <xs:documentation>Date and time interval of the data items contained within this meter reading.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Reading" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#Reading">
+    <xs:annotation>
+      <xs:documentation>Specific value measured by a meter or other asset, or calculated by a system. Each Reading is associated with a specific ReadingType.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="mRID" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Core#IdentifiedObject.mRID">
+        <xs:annotation>
+          <xs:documentation>Master resource identifier issued by a model authority. The mRID must semantically be a UUID as specified in RFC 4122. The mRID is globally unique.
+For CIMXML data files in RDF syntax, the mRID is mapped to rdf:ID or rdf:about attributes that identify CIM object elements.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" maxOccurs="1" name="value" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#BaseReading.value">
+        <xs:annotation>
+          <xs:documentation>Value of this reading.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" name="MeterReading" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#Reading.MeterReadings">
+        <xs:annotation>
+          <xs:documentation>All meter readings (sets of values) containing this reading value.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="referenceType" type="xs:string" use="optional" />
+          <xs:attribute name="ref" type="xs:string">
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" name="ReadingType" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#Reading.ReadingType">
+        <xs:annotation>
+          <xs:documentation>Type information for this reading value.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="referenceType" type="xs:string" use="optional" />
+          <xs:attribute name="ref" type="xs:string">
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" maxOccurs="1" name="timePeriod" type="cim:DateTimeInterval" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#BaseReading.timePeriod">
+        <xs:annotation>
+          <xs:documentation>Start and end of the period for those readings whose type has a time attribute such as 'billing', seasonal' or 'forTheSpecifiedPeriod'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ReadingType" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#ReadingType">
+    <xs:annotation>
+      <xs:documentation>Detailed description for a type of a reading value. Values in attributes allow for the creation of recommended codes to be used for identifying reading value types as follows: &amp;lt;macroPeriod&amp;gt;.&amp;lt;aggregate&amp;gt;.&amp;lt;measuringPeriod&amp;gt;.&amp;lt;accumulation&amp;gt;.&amp;lt;flowDirection&amp;gt;.&amp;lt;commodity&amp;gt;.&amp;lt;measurementKind&amp;gt;.&amp;lt;interharmonic.numerator&amp;gt;.&amp;lt;interharmonic.denominator&amp;gt;.&amp;lt;argument.numerator&amp;gt;.&amp;lt;argument.denominator&amp;gt;.&amp;lt;tou&amp;gt;.&amp;lt;cpp&amp;gt;.&amp;lt;consumptionTier&amp;gt;.&amp;lt;phases&amp;gt;.&amp;lt;multiplier&amp;gt;.&amp;lt;unit&amp;gt;.&amp;lt;currency&amp;gt;.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="mRID" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Core#IdentifiedObject.mRID">
+        <xs:annotation>
+          <xs:documentation>Master resource identifier issued by a model authority. The mRID must semantically be a UUID as specified in RFC 4122. The mRID is globally unique.
+For CIMXML data files in RDF syntax, the mRID is mapped to rdf:ID or rdf:about attributes that identify CIM object elements.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" maxOccurs="1" name="measurementKind" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#ReadingType.measurementKind">
+        <xs:annotation>
+          <xs:documentation>Identifies "what" is being measured, as refinement of 'commodity'. When combined with 'unit', it provides detail to the unit of measure. For example, 'energy' with a unit of measure of 'kWh' indicates to the user that active energy is being measured, while with 'kVAh' or 'kVArh', it indicates apparent energy and reactive energy, respectively. 'power' can be combined in a similar way with various power units of measure: Distortion power ('distortionVoltAmperes') with 'kVA' is different from 'power' with 'kVA'.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" maxOccurs="1" name="multiplier" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#ReadingType.multiplier">
+        <xs:annotation>
+          <xs:documentation>Metering-specific multiplier.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" maxOccurs="1" name="unit" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#ReadingType.unit">
+        <xs:annotation>
+          <xs:documentation>Metering-specific unit.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:cl="urn:entsoe.eu:wgedi:codelists" xmlns:sawsdl="http://www.w3.org/ns/sawsdl" xmlns:cim="http://net-sam.dk/measurement_1_0" xmlns:cimp="http://www.iec.ch/cimprofile" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://net-sam.dk/measurement_1_0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="ProfileEnvelop" type="cim:ProfileEnvelop" />
+  <xs:complexType name="ProfileEnvelop">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Discrete" type="cim:Discrete" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="DiscreteExt" type="cim:DiscreteExt" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="DiscreteValue" type="cim:DiscreteValue" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MeasurementValueSource" type="cim:MeasurementValueSource" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="UsagePoint" type="cim:UsagePoint" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="BaseVoltage" type="cim:BaseVoltage" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Version" abstract="true" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version">
+    <xs:annotation>
+      <xs:documentation>Version details.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="NetSam">NetSam</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="iec61970cim16v22b_iec61968cim12v07_iec62325cim03v01" name="baseUML" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.baseUML">
+        <xs:annotation>
+          <xs:documentation>Base UML provided by CIM model manager.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/2013/61970-452/EquipmentCore/4" name="baseURIcore" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.baseURIcore">
+        <xs:annotation>
+          <xs:documentation>Profile URI used in the Model Exchange header and defined in IEC standards.  It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/2013/61970-452/EquipmentOperation/4" name="baseURIoperation" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.baseURIoperation">
+        <xs:annotation>
+          <xs:documentation>Profile URI used in the Model Exchange header and defined in IEC standards.  It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/2013/61970-452/EquipmentShortCircuit/4" name="baseURIshortCircuit" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.baseURIshortCircuit">
+        <xs:annotation>
+          <xs:documentation>Profile URI used in the Model Exchange header and defined in IEC standards.  It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="2014-02-28" name="date" type="xs:date">
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/61970-552/DifferenceModel/1#" name="differenceModelURI" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.differenceModelURI">
+        <xs:annotation>
+          <xs:documentation>Difference model URI defined by IEC 61970-552. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/61970-552/ModelDescription/1#" name="modelDescriptionURI" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.modelDescriptionURI">
+        <xs:annotation>
+          <xs:documentation>Model Description URI defined by IEC 61970-552. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://www.w3.org/1999/02/22-rdf-syntax-ns#" name="namespaceRDF" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.namespaceRDF">
+        <xs:annotation>
+          <xs:documentation>RDF namespace. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://iec.ch/TC57/2013/CIM-schema-cim16#" name="namespaceUML" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.namespaceUML">
+        <xs:annotation>
+          <xs:documentation>CIM UML namespace. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="samnet01v01_iec61970cim16v22b_iec61968cim12v07_iec62325cim03v01" name="samnetUML" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.samnetUML">
+        <xs:annotation>
+          <xs:documentation>UML provided by SAM-NET.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://net-sam.dk/CIM/EquipmentCore/3/1" name="samnetURIcore" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.samnetURIcore">
+        <xs:annotation>
+          <xs:documentation>Profile URI defined by SAM-NET and used in the Model Exchange header. It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://net-sam.dk/CIM/EquipmentOperation/3/1" name="samnetURIoperation" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.samnetURIoperation">
+        <xs:annotation>
+          <xs:documentation>Profile URI defined by SAM-NET and used in the Model Exchange header. It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="http://net-sam.dk/CIM/EquipmentShortCircuit/3/1" name="samnetURIshortCircuit" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.samnetURIshortCircuit">
+        <xs:annotation>
+          <xs:documentation>Profile URI defined by SAM-NET and used in the Model Exchange header. It uniquely identifies the Profile and its version. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" maxOccurs="1" fixed="1.0" name="version" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA ExchangeProfiles/MeasurementProfile#Version.version">
+        <xs:annotation>
+          <xs:documentation>Profile version.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Discrete" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#Discrete">
+    <xs:annotation>
+      <xs:documentation>Discrete represents a discrete Measurement, i.e. a Measurement representing discrete values, e.g. a Breaker position.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="Operation">Operation</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="cim:Measurement">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="DiscreteExt" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA Extension#DiscreteExt">
+    <xs:annotation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="PSI">PSI</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="cim:Discrete">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="UsagePoint" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/Net-Sam-SCADA/Net-Sam-SCADA Extension#DiscreteExt.UsagePoint">
+            <xs:complexType>
+              <xs:attribute name="referenceType" type="xs:string" use="optional" />
+              <xs:attribute name="ref" type="xs:string">
+              </xs:attribute>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="DiscreteValue" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#DiscreteValue">
+    <xs:annotation>
+      <xs:documentation>DiscreteValue represents a discrete MeasurementValue.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="Operation">Operation</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="cim:MeasurementValue">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="value" type="xs:integer" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#DiscreteValue.value">
+            <xs:annotation>
+              <xs:documentation>The value to supervise.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="1" maxOccurs="1" name="Discrete" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#DiscreteValue.Discrete">
+            <xs:annotation>
+              <xs:documentation>The values connected to this measurement.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="referenceType" type="xs:string" use="optional" />
+              <xs:attribute name="ref" type="xs:string">
+              </xs:attribute>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Measurement" abstract="true" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#Measurement">
+    <xs:annotation>
+      <xs:documentation>A Measurement represents any measured, calculated or non-measured non-calculated quantity. Any piece of equipment may contain Measurements, e.g. a substation may have temperature measurements and door open indications, a transformer may have oil temperature and tank pressure measurements, a bay may contain a number of power flow measurements and a Breaker may contain a switch status measurement. 
+The PSR - Measurement association is intended to capture this use of Measurement and is included in the naming hierarchy based on EquipmentContainer. The naming hierarchy typically has Measurements as leafs, e.g. Substation-VoltageLevel-Bay-Switch-Measurement.
+Some Measurements represent quantities related to a particular sensor location in the network, e.g. a voltage transformer (PT) at a busbar or a current transformer (CT) at the bar between a breaker and an isolator. The sensing position is not captured in the PSR - Measurement association. Instead it is captured by the Measurement - Terminal association that is used to define the sensing location in the network topology. The location is defined by the connection of the Terminal to ConductingEquipment. 
+If both a Terminal and PSR are associated, and the PSR is of type ConductingEquipment, the associated Terminal should belong to that ConductingEquipment instance.
+When the sensor location is needed both Measurement-PSR and Measurement-Terminal are used. The Measurement-Terminal association is never used alone.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="Operation">Operation</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="cim:IdentifiedObject">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="measurementType" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#Measurement.measurementType">
+            <xs:annotation>
+              <xs:documentation>Specifies the type of measurement.  For example, this specifies if the measurement represents an indoor temperature, outdoor temperature, bus voltage, line flow, etc.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="PowerSystemResource" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#Measurement.PowerSystemResource">
+            <xs:annotation>
+              <xs:documentation>The measurements associated with this power system resource.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="referenceType" type="xs:string" use="optional" />
+              <xs:attribute name="ref" type="xs:string">
+              </xs:attribute>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="MeasurementValue" abstract="true" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#MeasurementValue">
+    <xs:annotation>
+      <xs:documentation>The current state for a measurement. A state value is an instance of a measurement from a specific source. Measurements can be associated with many state values, each representing a different source for the measurement.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="Operation">Operation</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="cim:IdentifiedObject">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="timeStamp" type="xs:dateTime" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#MeasurementValue.timeStamp">
+            <xs:annotation>
+              <xs:documentation>The time when the value was last updated</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="1" maxOccurs="1" name="MeasurementValueSource" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#MeasurementValue.MeasurementValueSource">
+            <xs:annotation>
+              <xs:documentation>The MeasurementValues updated by the source.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="referenceType" type="xs:string" use="optional" />
+              <xs:attribute name="ref" type="xs:string">
+              </xs:attribute>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="MeasurementValueSource" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Meas#MeasurementValueSource">
+    <xs:annotation>
+      <xs:documentation>MeasurementValueSource describes the alternative sources updating a MeasurementValue. User conventions for how to use the MeasurementValueSource attributes are described in the introduction to IEC 61970-301.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="Operation">Operation</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="cim:IdentifiedObject">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="UsagePoint" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61968/Metering#UsagePoint">
+    <xs:annotation>
+      <xs:documentation>Logical or physical point in the network to which readings or events may be attributed. Used at the place where a physical or virtual meter may be located; however, it is not required that a meter be present.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence />
+  </xs:complexType>
+  <xs:simpleType name="UnitMultiplier" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16#/TC57CIM/IEC61970/Base/Domain#UnitMultiplier">
+    <xs:annotation>
+      <xs:documentation>The unit multipliers defined for the CIM.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="Specifies an enumerated type">enumeration</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="c">
+        <xs:annotation>
+          <xs:documentation>Centi 10**-2.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="d">
+        <xs:annotation>
+          <xs:documentation>Deci 10**-1.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="G">
+        <xs:annotation>
+          <xs:documentation>Giga 10**9.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="k">
+        <xs:annotation>
+          <xs:documentation>Kilo 10**3.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="m">
+        <xs:annotation>
+          <xs:documentation>Milli 10**-3.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="M">
+        <xs:annotation>
+          <xs:documentation>Mega 10**6.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="micro">
+        <xs:annotation>
+          <xs:documentation>Micro 10**-6.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="n">
+        <xs:annotation>
+          <xs:documentation>Nano 10**-9.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="none">
+        <xs:annotation>
+          <xs:documentation>No multiplier or equivalently multiply by 1.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="p">
+        <xs:annotation>
+          <xs:documentation>Pico 10**-12.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="T">
+        <xs:annotation>
+          <xs:documentation>Tera 10**12.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="UnitSymbol" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16#/TC57CIM/IEC61970/Base/Domain#UnitSymbol">
+    <xs:annotation>
+      <xs:documentation>The units defined for usage in the CIM.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="Specifies an enumerated type">enumeration</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="A">
+        <xs:annotation>
+          <xs:documentation>Current in ampere.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="deg">
+        <xs:annotation>
+          <xs:documentation>Plane angle in degrees.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="degC">
+        <xs:annotation>
+          <xs:documentation>Relative temperature in degrees Celsius. In the SI unit system the symbol is ºC. Electric charge is measured in coulomb that has the unit symbol C. To distinguish degree Celsius form coulomb the symbol used in the UML is degC. Reason for not using ºC is the special character º is difficult to manage in software.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="F">
+        <xs:annotation>
+          <xs:documentation>Capacitance in farad.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="g">
+        <xs:annotation>
+          <xs:documentation>Mass in gram.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="h">
+        <xs:annotation>
+          <xs:documentation>Time in hours.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="H">
+        <xs:annotation>
+          <xs:documentation>Inductance in henry.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Hz">
+        <xs:annotation>
+          <xs:documentation>Frequency in hertz.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="J">
+        <xs:annotation>
+          <xs:documentation>Energy in joule.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="m">
+        <xs:annotation>
+          <xs:documentation>Length in meter.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="m2">
+        <xs:annotation>
+          <xs:documentation>Area in square meters.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="m3">
+        <xs:annotation>
+          <xs:documentation>Volume in cubic meters.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="min">
+        <xs:annotation>
+          <xs:documentation>Time in minutes.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="N">
+        <xs:annotation>
+          <xs:documentation>Force in newton.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="none">
+        <xs:annotation>
+          <xs:documentation>Dimension less quantity, e.g. count, per unit, etc.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="ohm">
+        <xs:annotation>
+          <xs:documentation>Resistance in ohm.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Pa">
+        <xs:annotation>
+          <xs:documentation>Pressure in pascal (n/m2).</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="rad">
+        <xs:annotation>
+          <xs:documentation>Plane angle in radians.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="s">
+        <xs:annotation>
+          <xs:documentation>Time in seconds.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="S">
+        <xs:annotation>
+          <xs:documentation>Conductance in siemens.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="V">
+        <xs:annotation>
+          <xs:documentation>Voltage in volt.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="VA">
+        <xs:annotation>
+          <xs:documentation>Apparent power in volt ampere.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="VAh">
+        <xs:annotation>
+          <xs:documentation>Apparent energy in volt ampere hours.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="VAr">
+        <xs:annotation>
+          <xs:documentation>Reactive power in volt ampere reactive.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="VArh">
+        <xs:annotation>
+          <xs:documentation>Reactive energy in volt ampere reactive hours.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="W">
+        <xs:annotation>
+          <xs:documentation>Active power in watt.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Wh">
+        <xs:annotation>
+          <xs:documentation>Real energy in what hours.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="Voltage" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16#/TC57CIM/IEC61970/Base/Domain#Voltage">
+    <xs:annotation>
+      <xs:documentation>Electrical voltage, can be both AC and DC.</xs:documentation>
+      <xs:documentation cimp:category="Stereotype" cimp:notes="CIMDatatype">CIMDatatype</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:float">
+        <xs:attribute name="multiplier" type="cim:UnitMultiplier" use="required" />
+        <xs:attribute fixed="V" name="unit" type="cim:UnitSymbol" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="BaseVoltage" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Core#BaseVoltage">
+    <xs:annotation>
+      <xs:documentation>Defines a system base voltage which is referenced. </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="cim:IdentifiedObject">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="nominalVoltage" type="cim:Voltage" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Core#BaseVoltage.nominalVoltage">
+            <xs:annotation>
+              <xs:documentation>The power system resource's base voltage.</xs:documentation>
+              <xs:documentation cimp:category="Constrtraint" cimp:subcategory="Entsoe" cimp:notes="Should be a positive value - not zero">Invariant</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="IdentifiedObject" abstract="true" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Core#IdentifiedObject">
+    <xs:annotation>
+      <xs:documentation>Grundlaeggende klasse som alle andre klasser nedarver fra.
+
+This is a root class to provide common identification for all classes needing identification and naming attributes.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="mRID" type="xs:string" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Core#IdentifiedObject.mRID">
+        <xs:annotation>
+          <xs:documentation>Master resource identifier issued by a model authority. The mRID must semantically be a UUID as specified in RFC 4122. The mRID is globally unique.
+For CIMXML data files in RDF syntax, the mRID is mapped to rdf:ID or rdf:about attributes that identify CIM object elements.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PowerSystemResource" abstract="true" sawsdl:modelReference="http://iec.ch/TC57/2013/CIM-schema-cim16/TC57CIM/IEC61970/Base/Core#PowerSystemResource">
+    <xs:annotation>
+      <xs:documentation>A power system resource can be an item of equipment such as a switch, an equipment container containing many individual items of equipment such as a substation, or an organisational entity such as sub-control area. Power system resources can have measurements associated.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="cim:IdentifiedObject">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "EquipmentContainer",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::25832" } },
+"features": [
+{ "type": "Feature", "properties": { "pkuid": 1, "mRID": "e55d7ef4-f9ea-4a35-b5ea-9264a42c3ab5", "baseVoltage": 10000, "name": "123", "psrType": "SecondarySubstation" }, "geometry": { "type": "Point", "coordinates": [ 541363.269326230976731, 6177638.795249946415424 ] } }
+]
+}
