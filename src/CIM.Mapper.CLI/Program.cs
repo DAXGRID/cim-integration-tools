@@ -1,9 +1,13 @@
-﻿namespace CIM.Mapper.CLI;
+﻿using System.CommandLine;
+
+namespace CIM.Mapper.CLI;
 
 internal static class Program
 {
-    public static void Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        var rootCommand = new RootCommand("CIM Mapper CLI.");
+
+        return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
 }
