@@ -18,16 +18,28 @@ internal static class Program
         )
         { IsRequired = true };
 
+        var forceOption = new Option<bool>(
+            name: "--force",
+            description: "Ignore errors."
+        )
+        { IsRequired = false };
+
         var rootCommand = new RootCommand("CIM Mapper CLI.");
         rootCommand.Add(transformationConfigurationFileOption);
         rootCommand.Add(tranformationSpecificationNameOption);
+        rootCommand.Add(forceOption);
 
         rootCommand.SetHandler(
-            (transformationConfigurationFile, tranformationSpecificationName) =>
+            (transformationConfigurationFile, tranformationSpecificationName, force) =>
             {
                 Console.WriteLine(transformationConfigurationFile);
                 Console.WriteLine(tranformationSpecificationName);
-            }, transformationConfigurationFileOption, tranformationSpecificationNameOption);
+                Console.WriteLine(force);
+            },
+            transformationConfigurationFileOption,
+            tranformationSpecificationNameOption,
+            forceOption
+        );
 
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
