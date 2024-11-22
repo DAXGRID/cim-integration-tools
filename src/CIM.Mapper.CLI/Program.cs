@@ -132,7 +132,7 @@ internal static class Program
 
             if (writer != null)
             {
-                CIMGraph graph = writer.GetCIMGraph();
+                var graph = writer.GetCIMGraph();
 
                 if (serializerName is not null && outputFileName is not null)
                 {
