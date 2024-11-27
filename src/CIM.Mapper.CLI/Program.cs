@@ -14,13 +14,13 @@ internal static class Program
     {
         var transformationConfigurationFileOption = new Option<string>(
             name: "--transformation-configuration-file",
-            description: "The file path to the file that contains the transformation settings.."
+            description: "The file path to the file that contains the transformation settings."
         )
         { IsRequired = true };
 
         var tranformationSpecificationNameOption = new Option<string>(
             name: "--transformation-specification-name",
-            description: "The file path to the file that contains the transformation settings.."
+            description: "The specification names."
         )
         { IsRequired = true };
 
