@@ -25,3 +25,4 @@ _NCrunch_*
 *.backup
 docker_runtime_settings.env
 appsettings.json
+/src/CIM.Mapper.CLI/Properties/PublishProfiles
