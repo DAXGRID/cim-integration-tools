@@ -15,7 +15,7 @@ namespace DAX.IO.CIM
         
         }
 
-        public void Run(CIMGraph g, TableLogger tableLogger)
+        public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {
             Logger.Log(LogLevel.Debug, "InformiBayPositionProcessor: Calculating bay position from GIS coordinates...");
 

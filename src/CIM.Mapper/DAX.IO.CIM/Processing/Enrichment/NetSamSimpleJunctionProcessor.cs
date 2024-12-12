@@ -11,7 +11,7 @@ namespace DAX.IO.CIM
         {
         }
 
-        public void Run(CIMGraph g, TableLogger tableLogger)
+        public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {
             Logger.Log(LogLevel.Debug, "NetSam Simple Junction Processor: Build node-breaker model (indre skematik) in i.e. T-Junctions and/or towers...");
 

@@ -16,7 +16,7 @@ namespace DAX.IO.CIM
         {
         }
 
-        public void Run(CIMGraph g, TableLogger tableLogger)
+        public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {
             Logger.Log(LogLevel.Info, "MissingBaseVoltageProcessor: Transfer voltage level to components who miss them from other componentes they are electrically connected to.");
 

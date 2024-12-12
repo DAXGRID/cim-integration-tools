@@ -18,7 +18,7 @@ namespace DAX.IO.CIM
     public class LineProcessor : IGraphProcessor
     {
         CIMGraph _g = null;
-        TableLogger _tableLogger = null;
+        CimErrorLogger _tableLogger = null;
         LineProcessingResult _result = new LineProcessingResult();
         string _connectionString = null;
         string _bayInfoSpName = null;
@@ -26,7 +26,7 @@ namespace DAX.IO.CIM
         bool _removeFirstChar = false;
 
 
-        public void Run(CIMGraph g, TableLogger tableLogger)
+        public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {
             
             _g = g;

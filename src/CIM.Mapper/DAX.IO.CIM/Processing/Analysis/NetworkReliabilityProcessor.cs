@@ -11,7 +11,7 @@ namespace DAX.IO.CIM
     public class NetworkReliabilityProcessor : IGraphProcessor
     {
         CIMGraph _g = null;
-        TableLogger _tableLogger = null;
+        CimErrorLogger _tableLogger = null;
         NetworkReliabilityProcessingResult _result = new NetworkReliabilityProcessingResult();
         string _connectionString = null;
         string _bayInfoSpName = null;
@@ -21,7 +21,7 @@ namespace DAX.IO.CIM
         {
         }
 
-        public void Run(CIMGraph g, TableLogger tableLogger)
+        public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {
             _g = g;
             _tableLogger = tableLogger;

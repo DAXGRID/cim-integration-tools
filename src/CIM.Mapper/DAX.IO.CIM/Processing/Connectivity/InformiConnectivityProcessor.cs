@@ -11,7 +11,7 @@ namespace DAX.IO.CIM
 {
     public class InformiConnectivityProcessor : IGraphProcessor
     {
-        public void Run(CIMGraph g, TableLogger tableLogger)
+        public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {
             Logger.Log(LogLevel.Debug, "InformiConnectivityProcessor: Transforming Informi GIS connectivity to CIM connectivity...");
 
@@ -455,7 +455,7 @@ namespace DAX.IO.CIM
             CheckPowerTransformers(g, tableLogger);
         }
 
-        private void SortNeighborsToCreateStabelTerminal(CIMGraph g, TableLogger tableLogger)
+        private void SortNeighborsToCreateStabelTerminal(CIMGraph g, CimErrorLogger tableLogger)
         {
             foreach (var obj in g.CIMObjects.Where(o => o is CIMConductingEquipment))
             {
@@ -776,7 +776,7 @@ namespace DAX.IO.CIM
             }
         }
 
-        private void DeleteACLSThatHasTerminalsConnectedToEachOther(CIMGraph g, TableLogger tableLogger)
+        private void DeleteACLSThatHasTerminalsConnectedToEachOther(CIMGraph g, CimErrorLogger tableLogger)
         {
             foreach (var obj in g.CIMObjects)
             {
@@ -816,7 +816,7 @@ namespace DAX.IO.CIM
             }
         }
 
-        private void ProcessAuxEquipments(CIMGraph g, TableLogger tableLogger)
+        private void ProcessAuxEquipments(CIMGraph g, CimErrorLogger tableLogger)
         {
             // An aux equipment is connected to a terminal directly, and does not have terminal it self, so we need to disconnect it from the network
             foreach (var obj in g.CIMObjects)
@@ -838,7 +838,7 @@ namespace DAX.IO.CIM
             }
         }
 
-        private void FixConnectivityNodesInSeries(CIMGraph g, TableLogger tableLogger)
+        private void FixConnectivityNodesInSeries(CIMGraph g, CimErrorLogger tableLogger)
         {
             foreach (var obj in g.CIMObjects)
             {
@@ -872,7 +872,7 @@ namespace DAX.IO.CIM
             }
         }
 
-        private void CheckPowerTransformers(CIMGraph g, TableLogger tableLogger)
+        private void CheckPowerTransformers(CIMGraph g, CimErrorLogger tableLogger)
         {
             foreach (var obj in g.CIMObjects)
             {
@@ -1013,7 +1013,7 @@ namespace DAX.IO.CIM
             return traverseOrder;
         }
 
-        private void ProcessPowerTransformers(CIMGraph g, TableLogger tableLogger)
+        private void ProcessPowerTransformers(CIMGraph g, CimErrorLogger tableLogger)
         {
             foreach (var obj in g.CIMObjects)
             {
@@ -1083,7 +1083,7 @@ namespace DAX.IO.CIM
             }
         }
 
-        private void ProcessEnergyConsumersInSeries(CIMGraph g, TableLogger tableLogger)
+        private void ProcessEnergyConsumersInSeries(CIMGraph g, CimErrorLogger tableLogger)
         {
             foreach (var obj in g.CIMObjects)
             {
@@ -1123,7 +1123,7 @@ namespace DAX.IO.CIM
             }
         }
 
-        private void ProcessCoilsWithMoreThanOneTerminal(CIMGraph g, TableLogger tableLogger)
+        private void ProcessCoilsWithMoreThanOneTerminal(CIMGraph g, CimErrorLogger tableLogger)
         {
             foreach (var obj in g.CIMObjects)
             {
@@ -1163,7 +1163,7 @@ namespace DAX.IO.CIM
             }
         }
 
-        private void ConnectAuxObjectToObject(CIMIdentifiedObject objToConnect, CIMClassEnum cimClassToConnectTo, TableLogger tableLogger)
+        private void ConnectAuxObjectToObject(CIMIdentifiedObject objToConnect, CIMClassEnum cimClassToConnectTo, CimErrorLogger tableLogger)
         {
             if (objToConnect.Name != null && objToConnect.Name == "571313124503002715")
             {
@@ -1371,7 +1371,7 @@ namespace DAX.IO.CIM
             }
         }
 
-        private void RemoveDublicatedNeighbors(CIMGraph g, TableLogger tableLogger)
+        private void RemoveDublicatedNeighbors(CIMGraph g, CimErrorLogger tableLogger)
         {
             // Ensure no neighbor exists more that one time
             foreach (var cimObj in g.CIMObjects)
@@ -1392,7 +1392,7 @@ namespace DAX.IO.CIM
             }
         }
 
-        private void EnsureStableConnectivityNodeMRID(CIMGraph g, TableLogger tableLogger)
+        private void EnsureStableConnectivityNodeMRID(CIMGraph g, CimErrorLogger tableLogger)
         {
             // Ensure Connectivity nodes has stable mRID's
             foreach (var cimObj in g.CIMObjects)

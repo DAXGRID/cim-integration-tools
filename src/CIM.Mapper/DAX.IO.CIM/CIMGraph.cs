@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using QuickGraph;
-using QuickGraph.Algorithms;
-using DAX.IO.CIM.DataModel;
+﻿using DAX.IO.CIM.Processing;
 using DAX.NetworkModel.CIM;
 using DAX.Util;
-using DAX.IO.CIM.Processing;
+using QuickGraph;
+using QuickGraph.Algorithms;
 
 namespace DAX.IO.CIM
 {
@@ -43,13 +37,10 @@ namespace DAX.IO.CIM
         // Dictionaries used for looking up CIM objects
         private Dictionary<string, CIMEquipmentContainer> _cimEquipmentContainers = new Dictionary<string, CIMEquipmentContainer>();
         private Dictionary<string, CIMIdentifiedObject> _cimObjectByMRID = new Dictionary<string, CIMIdentifiedObject>();
-        private Dictionary<string, CIMIdentifiedObject> _cimObjByName = new Dictionary<string, CIMIdentifiedObject>();
-        private Dictionary<string, CIMIdentifiedObject> _cimObjByExternalId = new Dictionary<string, CIMIdentifiedObject>();
+        //private Dictionary<string, CIMIdentifiedObject> _cimObjByName = new Dictionary<string, CIMIdentifiedObject>();
+        //private Dictionary<string, CIMIdentifiedObject> _cimObjByExternalId = new Dictionary<string, CIMIdentifiedObject>();
 
-        public Dictionary<string, CIMIdentifiedObject> getAllCIMObjectsByExtarnalID()
-        {
-            return _cimObjByExternalId;
-        }
+
         // Graph Processing Results
         private Dictionary<string, IGraphProcessingResult> _processingResults = new Dictionary<string, IGraphProcessingResult>();
 
@@ -80,7 +71,7 @@ namespace DAX.IO.CIM
         private TopologyProcessingResult _topologyProcessingResult;
 
         // Set by CIMGraphWriter. If set, the graph processing errors will be logged to a tabel in a database
-        internal TableLogger? TableLogger;
+        internal CimErrorLogger? CimErrorLogger;
 
         #region DAX node functionality
 
@@ -101,14 +92,6 @@ namespace DAX.IO.CIM
             get { return ObjectManager.GetObjects(); }
         }
 
-        public CIMIdentifiedObject? GetCIMObjectByName(string name)
-        {
-            if (_cimObjByName.ContainsKey(name))
-                return _cimObjByName[name];
-            else
-                return null;
-        }
-
         public CIMIdentifiedObject? GetCIMObjectByMrid(string mrid)
         {
             if (_cimObjectByMRID.ContainsKey(mrid))
@@ -117,6 +100,7 @@ namespace DAX.IO.CIM
                 return null;
         }
 
+        /*
         public CIMIdentifiedObject? GetCIMObjectByExternalId(string externalId)
         {
             if (_cimObjByExternalId.ContainsKey(externalId))
@@ -125,7 +109,15 @@ namespace DAX.IO.CIM
                 return null;
         }
 
-     
+        public CIMIdentifiedObject? GetCIMObjectByName(string name)
+        {
+            if (_cimObjByName.ContainsKey(name))
+                return _cimObjByName[name];
+            else
+                return null;
+        }
+        */
+
         public CIMIdentifiedObject GetCIMObjectByVertexId(int vertexId)
         {
             if (_cimObjByVertexId.ContainsKey(vertexId))
@@ -195,10 +187,7 @@ namespace DAX.IO.CIM
                     _overlapCounter++;
 
                     string errorText = "CIM object " + obj.IdString() + " cannot be added to the graph because CIM object " + existingCimObject.IdString() + " is already attached to graph vertex with id=" + vertexId;
-                    //Logger.Log(LogLevel.Warning, errorText);
-                    TableLogger.Log(Severity.Error, (int)GeneralErrors.ComponentOverlayAnotherComponent, errorText, obj);
-                    
-                    //tableLogger.Log(2, 4, errorText, obj.Coords[0], obj.Coords[1], obj.ExternalId, obj.ClassType.ToString(), obj.mRID.ToString());
+                    CimErrorLogger.Log(Severity.Error, (int)GeneralErrors.ComponentOverlayAnotherComponent, errorText, obj);
                 }
                 else
                 {
@@ -275,9 +264,6 @@ namespace DAX.IO.CIM
         {
             var feeder = new DAXElectricFeeder();
 
-
-
-
             if (feederInfo.ConnectivityNode.EquipmentContainerRef != null)
             {
                 feeder.VoltageLevel = feederInfo.ConnectivityNode.EquipmentContainerRef.VoltageLevel;
@@ -285,12 +271,7 @@ namespace DAX.IO.CIM
                 feeder.Bay = feederInfo.ConnectivityNode.EquipmentContainerRef;
             }
 
-            if (feeder.Name == "03HATT: 30244")
-            {
-
-            }
-
-                feeder.UpstreamCIMObjectId = feederInfo.ConnectivityNode.InternalId;
+            feeder.UpstreamCIMObjectId = feederInfo.ConnectivityNode.InternalId;
             feeder.DownstreamCIMObjectId = down.InternalId;
             ObjectManager.AdditionalObjectAttributes(feederInfo.ConnectivityNode).IsFeederEntryObject = true;
 
@@ -340,10 +321,6 @@ namespace DAX.IO.CIM
         }
 
         #endregion
-     
-
-       
-
 
         public IList<CIMIdentifiedObject> ShortestPath(int sourceVertexId, int targetVertexId)
         {
@@ -394,19 +371,12 @@ namespace DAX.IO.CIM
 
         private void AddEquipmentContainer(CIMEquipmentContainer ec)
         {
-            string key = ec.ExternalId;
-
-            if (ec.ContainsPropertyValue("dax.equipmentcontainertype"))
-            {
-                key = ec.GetPropertyValueAsString("dax.equipmentcontainertype") + ":" + key;
-            }
+            string key = ec.ClassType.ToString().ToLower() + ":" + (ec.ExternalId == null ? ec.mRID.ToString() : ec.ExternalId);
 
             if (!_cimEquipmentContainers.ContainsKey(key))
             {
                 _cimEquipmentContainers.Add(key, ec);
                 _cimObjectByMRID.Add(ec.mRID.ToString(), ec);
-
-                //ec.VoltageLevel = ConvertVoltageLevel(ec);
 
                 TryPairWithEquipmentContainer(ec);
 
@@ -416,11 +386,6 @@ namespace DAX.IO.CIM
                     _topologyProcessingResult._daxNodeByCimObj.Add(ec, daxNode);
                 }
             }
-            else
-            {
-
-            }
-        
         }
 
         private void TryPairWithEquipmentContainer(CIMIdentifiedObject obj)
@@ -428,99 +393,29 @@ namespace DAX.IO.CIM
             // Only pair with container, if not allready paired
             if (obj.EquipmentContainerRef == null)
             {
-                string cimRefEc = obj.GetPropertyValueAsString("cim.ref.equipmentcontainer");
-                string ctype = obj.GetPropertyValueAsString("dax.ref.equipmentcontainertype");
+                string equipmentContainerRefType = obj.GetPropertyValueAsString("dax.parent.equipmentcontainertype");
+                string equipmentContainerRef = obj.GetPropertyValueAsString("dax.parent.equipmentcontainermrid");
 
-                if (obj.ExternalId == "17063")
+                if (equipmentContainerRefType != null && equipmentContainerRef != null)
                 {
-                }
+                    string key = equipmentContainerRefType.ToLower() + ":" + equipmentContainerRef.ToLower();
 
-                if (ctype != null && cimRefEc == null)
-                {
-                    obj.RemoveProperty("dax.ref.equipmentcontainertype");
-
-                    string cimRefEcSubstation = obj.GetPropertyValueAsString("cim.ref.substation");
-                    string cimRefEcBay = obj.GetPropertyValueAsString("cim.ref.bay");
-
-                    if (cimRefEcBay != null)
+                    if (_cimEquipmentContainers.ContainsKey(key))
                     {
-                    }
-
-                    // Prøv at finde bay først
-                    if (cimRefEcBay != null && _cimEquipmentContainers.ContainsKey("Bay:" + cimRefEcBay))
-                    {
-                        CIMEquipmentContainer ec = _cimEquipmentContainers["Bay:" + cimRefEcBay];
-                        ec.Children.Add(obj);
-                        obj.EquipmentContainerRef = ec;
-                        obj.EquipmentContainerRef.Children.Add(obj);
-                    }
-                    else if (cimRefEcSubstation != null)
-                    {
-                        // Find container
-                        string key = ctype + ":" + cimRefEcSubstation;
-
-                        if (_cimEquipmentContainers.ContainsKey(key))
-                        {
-                            CIMEquipmentContainer ec = _cimEquipmentContainers[key];
-                            obj.EquipmentContainerRef = ec;
-                            obj.EquipmentContainerRef.Children.Add(obj);
-                        }
-                        else
-                        {
-                            // try to sbstation lookup by mrid
-                            string mridClean = cimRefEcSubstation.ToLower().Replace("{", "").Replace("}", "");
-
-                            if (_cimObjectByMRID.ContainsKey(mridClean))
-                            {
-                                obj.EquipmentContainerRef = _cimObjectByMRID[mridClean] as CIMEquipmentContainer;
-                                obj.EquipmentContainerRef.Children.Add(obj);
-                            }
-
-                        }
-                    }
-                    else if (cimRefEc != null)
-                    {
-
-                    }
-                }
-                else
-                {
-                    string cimRefEcBay = obj.GetPropertyValueAsString("cim.ref.bay");
-
-                    // Prøv at finde bay først
-                    if (cimRefEcBay != null && _cimEquipmentContainers.ContainsKey("Bay:" + cimRefEcBay))
-                    {
-                        obj.RemoveProperty("cim.ref.bay");
-
-                        CIMEquipmentContainer ec = _cimEquipmentContainers["Bay:" + cimRefEcBay];
+                        CIMEquipmentContainer ec = _cimEquipmentContainers[key];
                         ec.Children.Add(obj);
                         obj.EquipmentContainerRef = ec;
                     }
-                    else if (cimRefEc != null)
-                    {
-                        string key = cimRefEc;
 
-                        obj.RemoveProperty("cim.ref.equipmentcontainer");
-
-                        if (ctype != null)
-                        {
-                            obj.RemoveProperty("dax.ref.equipmentcontainertype");
-                            key = ctype + ":" + key;
-                        }
-
-                        if (_cimEquipmentContainers.ContainsKey(key))
-                        {
-                            CIMEquipmentContainer ec = _cimEquipmentContainers[key];
-                            ec.Children.Add(obj);
-                            obj.EquipmentContainerRef = ec;
-                        }
-                    }
+                    obj.RemoveProperty("dax.parent.equipmentcontainermrid");
+                    obj.RemoveProperty("dax.parent.equipmentcontainertype");
                 }
             }
         }
 
         public void IndexObject(CIMIdentifiedObject obj)
         {
+            /*
             // Index externalid on all objects except ConnectivityNode and ConnectivityEdge (to save memory)
             if (obj.ClassType != CIMClassEnum.ConnectivityNode && obj.ClassType != CIMClassEnum.ConnectivityEdge)
             {
@@ -528,6 +423,8 @@ namespace DAX.IO.CIM
                 if (!_cimObjByExternalId.ContainsKey(exKey))
                     _cimObjByExternalId.Add(exKey, obj);
             }
+            
+
 
             // Index name on substations, enclosures and enegyconsumers
             if (obj.Name != null)
@@ -556,8 +453,7 @@ namespace DAX.IO.CIM
                         _dublicateLists[obj.ClassType.ToString()].Add(objName);
 
 
-                        //Logger.Log(LogLevel.Warning, errorMsg);
-                        TableLogger.Log(Severity.Error, (int)GeneralErrors.NameNotUnique, errorMsg, obj);
+                        CimErrorLogger.Log(Severity.Error, (int)GeneralErrors.NameNotUnique, errorMsg, obj);
                     }
                 }
                 else if ((obj.ClassType == CIMClassEnum.PetersenCoil || obj.ClassType == CIMClassEnum.LinearShuntCompensator) && obj.EquipmentContainerRef != null)
@@ -568,6 +464,8 @@ namespace DAX.IO.CIM
                         _cimObjByName.Add(indexKey, obj);
                 }
             }
+
+            */
 
 
         }

@@ -61,7 +61,7 @@ namespace DAX.IO.CIM
     }
 
 
-    public class TableLogger
+    public class CimErrorLogger
     {
 
         private string _tableName = null;
@@ -75,7 +75,7 @@ namespace DAX.IO.CIM
             return _theSummary; 
         }
 
-        public TableLogger()
+        public CimErrorLogger()
         {
         }
               
@@ -234,5 +234,11 @@ namespace DAX.IO.CIM
         {
             return _errorCodeList;
         }
+
+        public static void Log(Severity severity, string errorCode, string errorMessage, string objectId = null, string objectType = null, double x = -1, double y = -1)
+        {
+            Logger.Log(LogLevel.Warning, errorCode + ": " + errorMessage);
+        }
+
     }
 }

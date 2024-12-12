@@ -16,7 +16,7 @@ namespace DAX.IO.CIM
         {
         }
 
-        public void Run(CIMGraph g, TableLogger tableLogger)
+        public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {
             Logger.Log(LogLevel.Debug, "MissingBayProcessor: Add missing bays for PSI to be happy...");
             FixCableOnHorn(g);

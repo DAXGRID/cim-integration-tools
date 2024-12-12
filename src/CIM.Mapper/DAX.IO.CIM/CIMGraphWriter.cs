@@ -1,37 +1,23 @@
 ﻿using DAX.IO.CIM;
 using DAX.IO.CIM.DataModel;
 using DAX.IO.CIM.Processing;
-using DAX.NetworkModel.CIM;
 using DAX.Util;
-using QuickGraph;
-using QuickGraph.Algorithms;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using System.IO;
 
 
 namespace DAX.IO.Writers
 {
     public class CIMGraphWriter : IDaxWriter
     {
-        private string _nameAndVersion = "CIMGraphWriter ver. 0.2 (12-03-2018)";
+        private string _nameAndVersion = "CIMGraphWriter ver. 0.3 (10-12-2024)";
 
         private TransformationConfig _transConf = null;
 
         private CIMGraph _g = new CIMGraph();
 
-        public Summary getSummary() { return _g.TableLogger.getSummary(); }
-
         private Dictionary<string, int> _aaavertexByXYDict = new Dictionary<string, int>();
 
         private Dictionary<string, List<string>> _invalidCoordsLists = new Dictionary<string, List<string>>();
 
-
-        //private Dictionary<string, int> _consumerVertexIdByName = new Dictionary<string, int>();
 
         // Temporary
         private List<DAXFeature> _busbars = new List<DAXFeature>();
@@ -198,8 +184,7 @@ namespace DAX.IO.Writers
         public void WriteFeature(DAXFeature feature, DataSetMappingGuide dsGuide = null)
         {
 
-            //string className = feature.ClassName.ToLower();
-            string className = feature.ClassName;
+            string className = feature.ClassName.ToLower();
 
             if (className == "aclinesegment")
             {
@@ -227,10 +212,9 @@ namespace DAX.IO.Writers
                 _switches.Add(feature);
             else if (className == "switch")
             {
-                feature.ClassName = feature["cim.class"].ToString();
-                if (feature.ClassName == "Disconnecter")
-                    feature.ClassName = "disconnector";
-
+                if (feature.ContainsKey("cim.class"))
+                    feature.ClassName = feature["cim.class"].ToString();
+               
                 _switches.Add(feature);
             }
 
@@ -242,9 +226,6 @@ namespace DAX.IO.Writers
                 {
                     _transformers.Add(feature);
                     dubletCheck.Add(globalid);
-                }
-                else
-                {
                 }
             }
             else if (className == "petersencoil")
@@ -340,43 +321,18 @@ namespace DAX.IO.Writers
             // LoadBreakswitch
             fcDef = metaData.AddOrGetFeatureClassDefinition(null, "LoadBreakSwitch", "LoadBreakSwitch");
             AddCommonMetaDataAttributes(metaData, "LoadBreakSwitch");
-            /*
-            AddMetaDataAttribute(metaData, "LoadBreakSwitch", "cim.asset.type");
-            AddMetaDataAttribute(metaData, "LoadBreakSwitch", "cim.open");
-            AddMetaDataAttribute(metaData, "LoadBreakSwitch", "cim.normalopen");
-            AddMetaDataAttribute(metaData, "LoadBreakSwitch", "cim.ratedcurrent");
-            AddMetaDataAttribute(metaData, "LoadBreakSwitch", "dax.closed");
-            AddMetaDataAttribute(metaData, "LoadBreakSwitch", "dax.normalclosed");
-            */
 
             // Breaker
             fcDef = metaData.AddOrGetFeatureClassDefinition(null, "Breaker", "Breaker");
             AddCommonMetaDataAttributes(metaData, "Breaker");
-            /*
-            AddMetaDataAttribute(metaData, "Breaker", "cim.asset.type");
-            AddMetaDataAttribute(metaData, "Breaker", "cim.open");
-            AddMetaDataAttribute(metaData, "Breaker", "cim.normalOpen");
-            AddMetaDataAttribute(metaData, "Breaker", "cim.ratedcurrent");
-            AddMetaDataAttribute(metaData, "Breaker", "dax.closed");
-            AddMetaDataAttribute(metaData, "Breaker", "dax.normalclosed");
-            */
 
             // Fuse
             fcDef = metaData.AddOrGetFeatureClassDefinition(null, "Fuse", "Fuse");
             AddCommonMetaDataAttributes(metaData, "Fuse");
-            /*
-            AddMetaDataAttribute(metaData, "Fuse", "cim.ratedcurrent");
-            AddMetaDataAttribute(metaData, "Fuse", "cim.asset.type");
-            */
 
             // Disconnector
             fcDef = metaData.AddOrGetFeatureClassDefinition(null, "Disconnector", "Disconnector");
             AddCommonMetaDataAttributes(metaData, "Disconnector");
-            /*
-            AddMetaDataAttribute(metaData, "Disconnector", "cim.ratedcurrent");
-            AddMetaDataAttribute(metaData, "Disconnector", "cim.asset.type");
-            */
-
 
             // Substation
             fcDef = metaData.AddOrGetFeatureClassDefinition(null, "Substation", "Substation");
@@ -501,7 +457,7 @@ namespace DAX.IO.Writers
                 sw1.Start();
                 Logger.Log(LogLevel.Info, "CIMGraphWriter: " + VersionInfo.CIMAdapterVersion + " Starting CIM processing...");
 
-                _g.TableLogger = new TableLogger();
+                _g.CimErrorLogger = new CimErrorLogger();
 
                 // Setup table logger if specificed in config
                 if (logTableDbConnectionString != null || buildErrorCodeList != null)
@@ -509,7 +465,7 @@ namespace DAX.IO.Writers
                     Logger.Log(LogLevel.Debug, "CIMGraphWriter: Initialize table logger...");
 
                     if (buildErrorCodeList != null && buildErrorCodeList == "yes")
-                        _g.TableLogger.constructErrorCodeList(true);
+                        _g.CimErrorLogger.constructErrorCodeList(true);
                 }
 
                 _g.ObjectManager.Clear();
@@ -529,14 +485,9 @@ namespace DAX.IO.Writers
                         var ec = new CIMEquipmentContainer(_g.ObjectManager);
 
                         ec.SetClass(feature.ClassName);
-                        ec.SetPropertyValue("dax.equipmentcontainertype", ec.ClassType.ToString());
 
                         MapCommonFields(feature, ec);
                         CopyAttributes(feature, ec);
-
-                        if (ec.Name == "Vrå")
-                        {
-                        }
 
                         if (feature.Coordinates != null && feature.Coordinates.Length == 1)
                         {
@@ -577,42 +528,10 @@ namespace DAX.IO.Writers
                     {
                         var ec = new CIMEquipmentContainer(_g.ObjectManager);
                         ec.SetClass(feature.ClassName);
-                        ec.SetPropertyValue("dax.equipmentcontainertype", "Bay");
-
+                   
                         MapCommonFields(feature, ec);
                         CopyAttributes(feature, ec);
-
-                        if (ec.ExternalId == "253854")
-                        {
-                        }
-
-                        // Overfør minY og maxY (benyttes til check af løse ender)
-                        double minX = 99999999999999;
-                        double maxX = 0;
-
-
-                        double minY = 99999999999999;
-                        double maxY = 0;
-
-
-                        foreach (var coord in feature.Coordinates)
-                        {
-                            if (coord.X < minX)
-                                minX = coord.X;
-
-                            if (coord.X > maxX)
-                                maxX = coord.X;
-
-                            if (coord.Y < minY)
-                                minY = coord.Y;
-
-                            if (coord.Y > maxY)
-                                maxY = coord.Y;
-
-                        }
-
-                        ec.Coords = new double[] { Math.Round(minY, paramRoundDecimals), Math.Round(maxY, paramRoundDecimals), Math.Round(minX, paramRoundDecimals), Math.Round(maxX, paramRoundDecimals) };
-
+                      
                         _g.AddCIMObjectToVertex(ec);
 
                         nBay++;
@@ -643,6 +562,7 @@ namespace DAX.IO.Writers
                 Logger.Log(LogLevel.Info, "" + _assetInfos.Count + " asset infos imported.");
 
                 _assetInfos = null;
+
 
                 ////////////////////////////////////////////////////////
                 // Manufactures and product asset models
@@ -692,7 +612,7 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                        AddVertexToGraph(feature.Coordinates, ci);
                     else
                         AddVertexToGraph(feature["cim.terminal.1"].ToString(), ci);
                 }
@@ -703,20 +623,13 @@ namespace DAX.IO.Writers
 
 
 
-
                 ////////////////////////////////////////////////////////
                 // Switches
 
                 foreach (var feature in _switches)
                 {
-                  
-                    
-
-
                     var ci = new CIMConductingEquipment(_g.ObjectManager);
-                    if (!ci.ContainsPropertyValue("dax.ref.equipmentcontainertype"))
-                        ci.SetPropertyValue("dax.ref.equipmentcontainertype", "Bay");
-
+               
                     // handle disconnectinglink in classname
                     if (feature.ClassName.ToLower() == "disconnectinglink")
                     {
@@ -725,15 +638,9 @@ namespace DAX.IO.Writers
                     }
 
                     ci.SetClass(feature.ClassName);
-
-                    if (ci.ClassType == CIMClassEnum.Disconnector)
-                    {
-                    }
-
                     MapCommonFields(feature, ci);
                     CopyAttributes(feature, ci);
                     MapCoords(feature, ci);
-
 
 
                     bool normalOpen = false;
@@ -792,18 +699,16 @@ namespace DAX.IO.Writers
                     {
                         if (normalOpen == false)
                         {
-                            AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                            AddVertexToGraph(feature.Coordinates, ci);
                         }
                         else
                         {
-                            AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci, 1);
-                            AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci, 2);
+                            AddVertexToGraph(feature.Coordinates, ci, 1);
+                            AddVertexToGraph(feature.Coordinates, ci, 2);
                         }
                     }
                     else
                         TerminalBasedConnectivity_AddSwitchToGraph(feature, ci);
-
-
                 }
 
                 Logger.Log(LogLevel.Info, "" + _switches.Count + " switch devices imported.");
@@ -823,7 +728,7 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                        AddVertexToGraph(feature.Coordinates, ci);
                     else
                         AddVertexToGraph(feature["cim.terminal.1"].ToString(), ci);
 
@@ -847,7 +752,7 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                        AddVertexToGraph(feature.Coordinates, ci);
                     else
                         AddVertexToGraph(feature["cim.terminal.1"].ToString(), ci);
 
@@ -871,7 +776,7 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                        AddVertexToGraph(feature.Coordinates, ci);
                     else
                         AddVertexToGraph(feature["cim.terminal.1"].ToString(), ci);
 
@@ -895,7 +800,7 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                        AddVertexToGraph(feature.Coordinates, ci);
                     else
                         AddVertexToGraph(feature["cim.terminal.1"].ToString(), ci);
                 }
@@ -903,6 +808,7 @@ namespace DAX.IO.Writers
                 Logger.Log(LogLevel.Info, "" + _potentialTransformers.Count + " Potential Transformers imported.");
 
                 _potentialTransformers = null;
+
 
                 ////////////////////////////////////////////////////////
                 // Protection Equipments (relays)
@@ -914,24 +820,11 @@ namespace DAX.IO.Writers
 
                     MapCommonFields(feature, ci);
                     CopyAttributes(feature, ci);
-
-                    var swRel = ci.GetPropertyValueAsString("cim.ref.protectiveswitch");
-
-                    if (swRel != null)
-                    {
-                        var sw = _g.GetCIMObjectByMrid(swRel);
-
-                        if (sw != null)
-                        {
-
-                        }
-                    }
                 }
 
                 Logger.Log(LogLevel.Info, "" + _protectionEquipments.Count + " Protection Equipments (relays) imported.");
 
                 _protectionEquipments = null;
-
 
 
                 ////////////////////////////////////////////////////////
@@ -948,7 +841,12 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                    {
+                        if (feature.Coordinates != null && feature.Coordinates.Length == 1)
+                            AddVertexToGraph(feature.Coordinates, ci);
+                        else
+                            Logger.Log(LogLevel.Error, $"No terminal or geometry found on power transformer with id: {ci.mRID}");
+                    }
                     else
                     {
                         TerminalBasedConnectivity_AddObjectToGraph(feature, ci);
@@ -964,6 +862,9 @@ namespace DAX.IO.Writers
 
                 Logger.Log(LogLevel.Info, "" + _transformers.Count + " power transformers imported.");
 
+                _transformers = null;
+
+
                 ////////////////////////////////////////////////////////
                 // Coils
 
@@ -977,14 +878,14 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                        AddVertexToGraph(feature.Coordinates, ci);
                     else
                         TerminalBasedConnectivity_AddObjectToGraph(feature, ci);
-
-                    //var vertexId = AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
                 }
 
                 Logger.Log(LogLevel.Info, "" + _coils.Count + " petersen coils imported.");
+
+                _coils = null;
 
              
                 ////////////////////////////////////////////////////////
@@ -1000,14 +901,14 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                        AddVertexToGraph(feature.Coordinates, ci);
                     else
                         AddVertexToGraph(feature["cim.terminal.1"].ToString(), ci);
-
-                    //var vertexId = AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
                 }
 
                 Logger.Log(LogLevel.Info, "" + _compensators.Count + " LinearShuntCompensator imported.");
+
+                _compensators = null;
 
 
                 ////////////////////////////////////////////////////////
@@ -1023,13 +924,15 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                        AddVertexToGraph(feature.Coordinates, ci);
                     else
                         AddVertexToGraph(feature["cim.terminal.1"].ToString(), ci);
-                    //var vertexId = AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
                 }
 
                 Logger.Log(LogLevel.Info, "" + _sync_gens.Count + " synchronous machines imported.");
+
+                _sync_gens = null;
+
 
                 ////////////////////////////////////////////////////////
                 // Async generators
@@ -1044,13 +947,14 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                        AddVertexToGraph(feature.Coordinates, ci);
                     else
                         AddVertexToGraph(feature["cim.terminal.1"].ToString(), ci);
-                    //var vertexId = AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
                 }
 
                 Logger.Log(LogLevel.Info, "" + _async_gens.Count + " asynchronous machines imported.");
+
+                _async_gens = null;
 
 
                 ////////////////////////////////////////////////////////
@@ -1066,13 +970,14 @@ namespace DAX.IO.Writers
                     MapCoords(feature, ci);
 
                     if (!feature.ContainsKey("cim.terminal.1"))
-                        AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                        AddVertexToGraph(feature.Coordinates, ci);
                     else
                         AddVertexToGraph(feature["cim.terminal.1"].ToString(), ci);
-                    //var vertexId = AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
                 }
 
                 Logger.Log(LogLevel.Info, "" + _extNetworkInjections.Count + " external network injections imported.");
+
+                _extNetworkInjections = null;
 
 
                 ////////////////////////////////////////////////////////
@@ -1098,7 +1003,7 @@ namespace DAX.IO.Writers
                         {
                             MapCoords(feature, ci);
 
-                            AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ci);
+                            AddVertexToGraph(feature.Coordinates, ci);
 
                             consumerCounter++;
                         }
@@ -1112,38 +1017,30 @@ namespace DAX.IO.Writers
                 _energyconsumers = null;
 
 
-
-
-
                 ////////////////////////////////////////////////////////
                 // Usage Points
 
                 int usagePointCounter = 0;
                 foreach (var feature in _usagePoints)
                 {
-                    if (feature.GetAttributeAsString("cim.networkconnectionpointid") == null)
+                    if (feature.GetAttributeAsString("cim.ref.energyconsumer") == null)
                     {
-                        Logger.Log(LogLevel.Warning, $"No cim.networkconnectionpointid found on usage point with id: {feature.GetAttributeAsString("cim.mrid")}");
+                        Logger.Log(LogLevel.Warning, $"No cim.ref.energyconsumer found on usage point with id: {feature.GetAttributeAsString("cim.mrid")}");
                     }
                     else
                     {
-
+                        usagePointCounter++;
 
                         var ci = new CIMIdentifiedObject(_g.ObjectManager);
                         ci.SetClass(CIMClassEnum.UsagePoint);
                         MapCommonFields(feature, ci);
                         CopyAttributes(feature, ci);
 
-                        if (ci.mRID == Guid.Parse("061E2937-9614-4FA1-9180-3B7A82F70FF0"))
-                        {
-
-                        }
-
                         var ecRel = ci.GetPropertyValueAsString("cim.ref.energyconsumer");
 
                         if (ecRel != null)
                         {
-                            var ec = _g.GetCIMObjectByName(ecRel);
+                            var ec = _g.GetCIMObjectByMrid(ecRel);
 
                             if (ec != null)
                             {
@@ -1157,13 +1054,17 @@ namespace DAX.IO.Writers
                                 ec.SetPropertyValue("usagepoints", ecUsagePointList);
                             }
                         }
+                        else
+                        {
+                            Logger.Log(LogLevel.Error, $"No energyconsumer found with id: {ecRel} referenced from usage point with id: {feature.GetAttributeAsString("cim.mrid")}");
+                        }
                     }
-
                 }
 
                 Logger.Log(LogLevel.Info, "" + usagePointCounter + " usage points imported.");
 
                 _usagePoints = null;
+
 
                 ////////////////////////////////////////////////////////
                 // Network Equipments
@@ -1180,27 +1081,21 @@ namespace DAX.IO.Writers
                     if (feature.Coordinates != null && feature.Coordinates.Length == 1)
                     {
                         if (!feature.ContainsKey("cim.terminal.1"))
-                            AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ne);
+                            AddVertexToGraph(feature.Coordinates, ne);
                         else
                             AddVertexToGraph(feature["cim.terminal.1"].ToString(), ne);
-                        //var vertexId = AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, ne);
                     }
                     else if (feature.Coordinates != null && feature.Coordinates.Length > 1)
                     {
                         CoordBasedConnectivity_AddACLineSegmentToGraph(feature, ne);
                     }
                     else
-                        //Logger.Log(LogLevel.Warning, "NetworkEquipment " + ne.ToString() + " has invalid coordinates. Will not be imported.");
                         AddToInvalidCoordList(ne.ClassType.ToString(), ne.ExternalId);
                 }
 
                 Logger.Log(LogLevel.Info, "" + _networkEquipments.Count + " network equipments imported.");
 
                 _networkEquipments = null;
-
-                sw1.Stop();
-                Logger.Log(LogLevel.Debug, "Commit before precheckconnectivity: " + sw1.ElapsedMilliseconds + " milli seconds.");
-
 
 
                 ////////////////////////////////////////////////////////
@@ -1253,11 +1148,7 @@ namespace DAX.IO.Writers
                             //Logger.Log(LogLevel.Info, "Reversing cartographic cable: " + ci.ExternalId);
                             reversing++;
                         }
-                        //if (CIMHelper.equalWithTolerance(ci.Coords[1], ci.Coords[3], GetTolerance()))
-                        //  Logger.Log(LogLevel.Info, "Cartographic cable: " + ci.ExternalId + " has no horizontal extent.");
-
                     }
-
 
                     ProcessEdgeConnector(feature, cn, true);
                 }
@@ -1296,7 +1187,6 @@ namespace DAX.IO.Writers
                             CoordBasedConnectivity_AddACLineSegmentToGraph(feature, ci);
                     }
                     else
-                        //Logger.Log(LogLevel.Warning, "ACLineSegment " + ci.ToString() + " has invalid coordinates. Will not be imported.");
                         AddToInvalidCoordList(ci.ClassType.ToString(), ci.ExternalId);
                 }
 
@@ -1356,14 +1246,13 @@ namespace DAX.IO.Writers
 
                     if (feature.Coordinates != null && feature.Coordinates.Length == 1)
                     {
-                        var vertexId = AddVertexToGraph(feature.Coordinates[0].X, feature.Coordinates[0].Y, la);
+                        var vertexId = AddVertexToGraph(feature.Coordinates, la);
                     }
                     else if (feature.Coordinates != null && feature.Coordinates.Length > 1)
                     {
                         CoordBasedConnectivity_AddACLineSegmentToGraph(feature, la);
                     }
                     else
-                        //Logger.Log(LogLevel.Warning, "LocationAddress " + la.ToString() + " has invalid coordinates. Will not be imported.");
                         AddToInvalidCoordList(la.ClassType.ToString(), la.ExternalId);
                 }
 
@@ -1389,6 +1278,9 @@ namespace DAX.IO.Writers
                     }
                 }
 
+                sw1.Stop();
+                Logger.Log(LogLevel.Debug, "Commit before precheckconnectivity: " + sw1.ElapsedMilliseconds + " milli seconds.");
+
 
                 // Fix connectivity
                 if (doPreCheck())
@@ -1403,17 +1295,13 @@ namespace DAX.IO.Writers
 
 
 
-
                 Logger.Log(LogLevel.Info, "CIMGraphWriter: Finish loading data into in-memory CIM graph.");
                 graphLoadedSuccessfull = true;
-
-                // FIX: Waiting for NRGi to say go... on this
-                //EmitGraphToBus(_g).Wait();    
 
                 string summaryFileName = GetSummaryFileName();
                 if (summaryFileName != null && summaryFileName.Length > 0)
                 {
-                    String summary = _g.TableLogger.DumpSummary(LogLevel.Info);
+                    String summary = _g.CimErrorLogger.DumpSummary(LogLevel.Info);
 
                     try
                     {
@@ -1431,55 +1319,8 @@ namespace DAX.IO.Writers
             {
                
             }
-
         }
-
-
-        /*
-        async private Task EmitGraphToBus(CIMGraph graph)
-        {
-            
-            // Emit CIM XML to bus
-            Logger.Log(LogLevel.Debug, "CIMGraphWriter: Trying to emit CIM XML to the bus...");
-
-            using (var activator = new BuiltinHandlerActivator())
-            {
-                try
-                {
-                    var bus = Configure
-                        .With(activator)
-                        .AsClient()
-                        .Options(o =>
-                        {
-                            o.EnableDataBus().StoreInSqlServer("RebusSagas", "DataBus");
-                          //  .StoreInFileSystem(@"c:\temp\cim\databus");
-                        })
-                        .Start();
-
-                    var serializer = _transConf.InitializeSerializer("NetSam") as IDAXSerializeable;
-
-                    var cimXmlBytes = serializer.Serialize(CIMMetaDataManager.Repository, graph.CIMObjects, graph);
-
-                    var attachment = await bus.Advanced.DataBus.CreateAttachment(new MemoryStream(cimXmlBytes));
-
-                    var message = new NewEquipmentSnapshotCreated
-                    {
-                        AttachmentId = attachment.Id
-                    };
-
-                    await bus.Publish(message);
-
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log(LogLevel.Warning, "CIMGraphWriter: Cannot emit CIM XML to Rebus. " + ex.Message);
-                }
-            }
-            
-
-        }
-        */
-
+       
         private void AddCustomerObjectToPowerTransformer(CIMConductingEquipment tr, int numberOfCustomers)
         {
             var st = tr.EquipmentContainerRef;
@@ -1515,9 +1356,7 @@ namespace DAX.IO.Writers
                 ec.SetPropertyValue("cim.numberofcustomers", numberOfCustomers);
                 ec.AddNeighbour(cn);
                 cn.AddNeighbour(ec);
-
             }
-
         }
 
         private void RunAllGraphProcessors(TransformationConfig config)
@@ -1554,7 +1393,7 @@ namespace DAX.IO.Writers
                     if (run)
                     {
                         Logger.Log(LogLevel.Info, "Running " + ((IGraphProcessor)proc).GetType().Name + "...");
-                        ((IGraphProcessor)proc).Run(_g, _g.TableLogger);
+                        ((IGraphProcessor)proc).Run(_g, _g.CimErrorLogger);
                     }
                 }
             }
@@ -1570,17 +1409,24 @@ namespace DAX.IO.Writers
             {
                 foreach (var dublist in _g.StatNameDublicates)
                 {
-                    string dublicates = "";
-                    foreach (var dub in dublist.Value)
+                    if (dublist.Value.Count < 100)
                     {
-                        dublicates += dub;
+                        string dublicates = "";
 
-                        if (dublicates != "")
-                            dublicates += ",";
+                        foreach (var dub in dublist.Value)
+                        {
+                            dublicates += dub;
 
+                            if (dublicates != "")
+                                dublicates += ",";
+                        }
+
+                        Logger.Log(LogLevel.Warning, dublist.Key + "(" + dublist.Value.Count + ") name dublicates: " + dublicates);
                     }
-
-                    Logger.Log(LogLevel.Warning, dublist.Key + "(" + dublist.Value.Count + ") name dublicates: " + dublicates);
+                    else
+                    {
+                        Logger.Log(LogLevel.Warning, dublist.Key + "(" + dublist.Value.Count + ") dublicates");
+                    }
                 }
             }
 
@@ -1661,9 +1507,6 @@ namespace DAX.IO.Writers
                     coordIndex++;
                     destCoordIndex = destCoordIndex + 2;
                 }
-            } else
-            {
-                string SDfg = "sdhfg";
             }
         }
 
@@ -1821,16 +1664,10 @@ namespace DAX.IO.Writers
                 {
                     var cn = new CIMConnectivityNode(_g.ObjectManager);
 
-                    //cn.mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, no);
-
                     cn.ExternalId = cimObj.ExternalId;
 
-                    if (cn.ExternalId == "2759849")
-                    {
-                    }
-
                     CopyAttributes(feat, cn);
-                    vertexId = AddVertexToGraph(x, y, cn);
+                    vertexId = AddVertexToGraph([new DAXCoordinate() { X = x, Y = y }], cn);
                 }
             }
 
@@ -1861,10 +1698,6 @@ namespace DAX.IO.Writers
                     var cn = new CIMConnectivityNode(_g.ObjectManager);
 
                     cn.ExternalId = cimObj.ExternalId;
-
-                    if (cn.ExternalId == "2759849")
-                    {
-                    }
 
                     CopyAttributes(feat, cn);
                     vertexId = AddVertexToGraph(cnId, cn);
@@ -1898,30 +1731,18 @@ namespace DAX.IO.Writers
                 ce.SetClass(feat.ClassName);
                 MapCommonFields(feat, ce);
                 CopyAttributes(feat, ce);
+                _g.IndexObject(ce);
 
                 if (feat.Coordinates != null && feat.Coordinates.Length == 1)
                 {
                     MapCoords(feat, ce);
                 }
-
-                
-                if (ce.mRID == Guid.Parse("34916164-07d6-4955-813c-827013699867"))
-                {
-
-                }
-
+            
                 // CN
                 var cnId = feat.GetAttributeAsString("cim.terminal.1");
 
-                if (cnId == "394985")
-                {
-
-                }
-
                 var fromVertextId = TerminalBasedConnectivity_CreateCnIfNotExists(cnId, ce.ExternalId);
                 var cn = _g.GetCIMObjectByVertexId(fromVertextId) as CIMConnectivityNode;
-
-
 
                 var vertexId = _g.AddCIMObjectToVertex(ce);
                 TerminalBasedConnectity_Pair(ce, cn);
@@ -1988,12 +1809,20 @@ namespace DAX.IO.Writers
                 cn.SetClass(CIMClassEnum.ConnectivityNode);
                 cn.ExternalId = externalId;
 
-                if (cnId != "0")
+                if (Guid.TryParse(cnId, out Guid cnGuid))
+                {
+                    cn.mRID = cnGuid;
+                }
+                else if (cnId != null && cnId != "0")
+                {
                     cn.mRID = Guid.Parse("ab4d5a94-bbe0-4fec-a3d1-" + cnId.PadLeft(12, '0'));
+                }
                 else
+                {
                     cn.mRID = Guid.NewGuid();
+                }
 
-                if (cnId != "0")
+                if (cnId != null && cnId != "0")
                 {
                     vertexId = AddVertexToGraph(cnId, cn);
                     AddVertexIdToIndex(vertexId, cnId);
@@ -2050,11 +1879,9 @@ namespace DAX.IO.Writers
                 cn.ExternalId = acLineSegment.ExternalId;
 
                 if (!feat.ContainsKey("cim.terminal.1"))
-                    fromVertexId = AddVertexToGraph(feat.Coordinates[0].X, feat.Coordinates[0].Y, cn);
+                    fromVertexId = AddVertexToGraph(feat.Coordinates, cn);
                 else
                     fromVertexId = AddVertexToGraph(feat["cim.terminal.1"].ToString(), cn);
-
-                //fromVertexId = AddVertexToGraph(feat.Coordinates[0].X, feat.Coordinates[0].Y, cn);
             }
 
             // Manage to point
@@ -2077,11 +1904,9 @@ namespace DAX.IO.Writers
                 cn.ExternalId = acLineSegment.ExternalId;
 
                 if (!feat.ContainsKey("cim.terminal.2"))
-                    toVertexId = AddVertexToGraph(feat.Coordinates[feat.Coordinates.Length - 1].X, feat.Coordinates[feat.Coordinates.Length - 1].Y, cn);
+                    toVertexId = AddVertexToGraph(feat.Coordinates, cn);
                 else
                     toVertexId = AddVertexToGraph(feat["cim.terminal.2"].ToString(), cn);
-
-                // toVertexId = AddVertexToGraph(feat.Coordinates[feat.Coordinates.Length - 1].X, feat.Coordinates[feat.Coordinates.Length - 1].Y, cn);
             }
 
             _g.AddCIMObjectToEdge(fromVertexId, toVertexId, acLineSegment);
@@ -2089,9 +1914,6 @@ namespace DAX.IO.Writers
         
         private CreateFeederInfo CoordBasedConnectivity_GetFeederVertexFromACLineSegment(CIMConductingEquipment acLineSegment, int acLineSegmentVertexIdToCheck, int acLineSegmentOtherEndVertexId)
         {
-            // hack virkede ikke
-            //if (acLineSegment.ContainsPropertyValue("cim.ref.equipmentcontainer"))
-            //    return null;
 
             var endToCheckCimObj = _g.GetCIMObjectByVertexId(acLineSegmentVertexIdToCheck);
             var otherEndCimObj = _g.GetCIMObjectByVertexId(acLineSegmentOtherEndVertexId);
@@ -2175,17 +1997,6 @@ namespace DAX.IO.Writers
 
             string type = busbar.GetPropertyValueAsString("dax.ref.equipmentcontainertype");
 
-            // SK 2
-            if (busbar.mRID == Guid.Parse("be37cd82-da88-4348-a67a-19ab150299bc"))
-            {
-            }
-
-            // SK 3
-            if (busbar.mRID == Guid.Parse("b22d7e47-8988-4356-89c0-683cbbae71a8"))
-            {
-            }
-
-
             // Search switches FROM END
             int fromEndSearchVertexId = -1;
 
@@ -2255,7 +2066,6 @@ namespace DAX.IO.Writers
                     // Create a connectivity edge between switch and busbar
                     CIMConnectivityNode ce = new CIMConnectivityNode(_g.ObjectManager);
                     ce.SetClass(CIMClassEnum.ConnectivityEdge);
-                    //ce.mRID = GUIDHelper.CreateDerivedGuid(busbar.mRID, 1);
 
                     // Connect switch to cn
                     cimObjFound.AddNeighbour(ce);
@@ -2286,8 +2096,6 @@ namespace DAX.IO.Writers
             }
 
 
-
-
             // Index all intermediate busbar coords to busbar vertex, to support IG style busbar connections (kartografiske kabler som er snappet ind til skinnens vertices)
             for (int i = 1; i < feat.Coordinates.Length - 1; i++)
             {
@@ -2301,45 +2109,56 @@ namespace DAX.IO.Writers
                 {
                     //Logger.Log(LogLevel.Warning, "Intermediate Busbar coordinate: " + feat.ToString() + " belonging to CIM object " + busbar.IdString() + " overlaps another CIM object. Will be ignored!");
                     // TODO: Log til table - ingen checker denne log for denne type fejl
-
                 }
             }
         }
         
-        private int AddVertexToGraph(double X, double Y, CIMIdentifiedObject obj, int no = 0)
+        private int AddVertexToGraph(DAXCoordinate[] coords, CIMIdentifiedObject obj, int no = 0)
         {
-            // If vertex already exists in graph, just tell graph to assign the CIM object to the vertex. It's up to the graph to decide if it's legal or not.
-            if (FindVertexId(X, Y, no) > 0)
+            if (coords == null || coords.Length == 0)
             {
-                int vertexId = FindVertexId(X, Y, no);
-
-                _g.AddCIMObjectToExistingVertex(obj, vertexId);
-
-                if (no == 0 || no == 1)
-                    _g.ObjectManager.AdditionalObjectAttributes(obj).Vertex1Id = vertexId;
-                else
-                    _g.ObjectManager.AdditionalObjectAttributes(obj).Vertex2Id = vertexId;
-
-                return vertexId;
+                Logger.Log(LogLevel.Error, $"No terminal or geometry found on CIM object with id: {obj.mRID}");
+                return -1;
             }
             else
             {
-                // Create new graph vertex to hold CIM object
-                bool dublicate = false;
-                if (no > 1)
-                    dublicate = true;
+                var X = coords[0].X;
+                var Y = coords[0].Y;
 
-                int vertexId = _g.AddCIMObjectToVertex(obj, dublicate);
 
-                // Set vertex 1 and 2 depending on the vertex no (open switches are represented by two vertex ids).
-                if (no == 0 || no == 1)
-                    _g.ObjectManager.AdditionalObjectAttributes(obj).Vertex1Id = vertexId;
+                // If vertex already exists in graph, just tell graph to assign the CIM object to the vertex. It's up to the graph to decide if it's legal or not.
+                if (FindVertexId(X, Y, no) > 0)
+                {
+                    int vertexId = FindVertexId(X, Y, no);
+
+                    _g.AddCIMObjectToExistingVertex(obj, vertexId);
+
+                    if (no == 0 || no == 1)
+                        _g.ObjectManager.AdditionalObjectAttributes(obj).Vertex1Id = vertexId;
+                    else
+                        _g.ObjectManager.AdditionalObjectAttributes(obj).Vertex2Id = vertexId;
+
+                    return vertexId;
+                }
                 else
-                    _g.ObjectManager.AdditionalObjectAttributes(obj).Vertex2Id = vertexId;
+                {
+                    // Create new graph vertex to hold CIM object
+                    bool dublicate = false;
+                    if (no > 1)
+                        dublicate = true;
 
-                AddVertexIdToIndex(vertexId, X, Y, no);
+                    int vertexId = _g.AddCIMObjectToVertex(obj, dublicate);
 
-                return vertexId;
+                    // Set vertex 1 and 2 depending on the vertex no (open switches are represented by two vertex ids).
+                    if (no == 0 || no == 1)
+                        _g.ObjectManager.AdditionalObjectAttributes(obj).Vertex1Id = vertexId;
+                    else
+                        _g.ObjectManager.AdditionalObjectAttributes(obj).Vertex2Id = vertexId;
+
+                    AddVertexIdToIndex(vertexId, X, Y, no);
+
+                    return vertexId;
+                }
             }
         }
 
@@ -2583,7 +2402,7 @@ namespace DAX.IO.Writers
                     if (obj.EquipmentContainerRef == null)
                     {
                         var theErr = GeneralErrors.ComponentHasNoParent;
-                        _g.TableLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
+                        _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
                     }
                     else 
                     {
@@ -2625,7 +2444,7 @@ namespace DAX.IO.Writers
                                     if (dist > parentCheckRadius)
                                     {
                                         var theErr = GeneralErrors.ComponentHasParentFarAway;
-                                        _g.TableLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
+                                        _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
                                     }
                                 }
 
@@ -2634,10 +2453,8 @@ namespace DAX.IO.Writers
                         else
                         {
                             var theErr = GeneralErrors.ComponentHasNoRootParent;
-                            _g.TableLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
-
+                            _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
                         }
-
                     }
                 }
 
@@ -2649,7 +2466,7 @@ namespace DAX.IO.Writers
                     obj.ClassType == CIMClassEnum.Enclosure) && obj.VoltageLevel == 0)
                 {
                     var theErr = GeneralErrors.ComponentHasNoVoltageLevel;
-                    _g.TableLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
+                    _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
                 }
               
                 // Check line connectors
@@ -2658,16 +2475,7 @@ namespace DAX.IO.Writers
                     bool isError = true;
 
                     var neighbors = obj.GetNeighbours();
-
-                    // Check if more than two neighbors
-                    if (neighbors.Count > 2)
-                    {
-                    }
-
-                    if (neighbors.Count < 2)
-                    {
-                    }
-
+                 
                     // Check if the line segment has neighbor in both ends
                     bool firstVertex = true;
 
@@ -2678,7 +2486,6 @@ namespace DAX.IO.Writers
                     // Check if Cartographics cabel is malformed in some way
                     if (obj.ClassType == CIMClassEnum.ConnectivityEdge)
                     {
-
                         if (obj.Coords.Length == 4 & !isTopCoordFirst(obj))
                         {
                             if (CIMHelper.equalWithTolerance(obj.Coords[1], obj.Coords[3], GetTolerance()))
@@ -2708,8 +2515,6 @@ namespace DAX.IO.Writers
                             sw1.Start();
                             if (!_fast)
                             {
-                                //
-                                // if neighbor.Neighbours.Count() < 2 then the cable is not connected
                                 if (neighbor.Neighbours.Count() >= 2 && neighbor.ClassType != CIMClassEnum.BusbarSection)
                                 {
                                     if (obj.ClassType == CIMClassEnum.ConnectivityEdge) // Cartographic cable
@@ -2738,7 +2543,7 @@ namespace DAX.IO.Writers
                                         if (busBarSection != null)
                                         {
                                             var theErr = GeneralErrors.DanglingConnectivityEdgeOnBusbarSection;
-                                            _g.TableLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj, obj.Coords[0], obj.Coords[1], "", busBarSection);
+                                            _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj, obj.Coords[0], obj.Coords[1], "", busBarSection);
                                         }
                                     }
 
@@ -2791,37 +2596,17 @@ namespace DAX.IO.Writers
                                 if (firstVertex && CIMHelper.equalWithTolerance(yRound, bayMaxY, GetTolerance()))
                                 {
                                     onTopEdgeBay = true;
-                                    //    if (obj.EquipmentContainerRef.EquipmentContainerRef != null)
-                                    //    {
-                                    //        var root = obj.EquipmentContainerRef.EquipmentContainerRef;
-
-                                    //        // Hvis en station og bay sidder på primær side, så er det ok
-                                    //        if (root.ClassType == CIMClassEnum.Substation && bay.VoltageLevel == root.VoltageLevel)
-                                    //            isError = false;
-                                    //    }
                                 }
 
                                 // Sidder på nederste felt kant
                                 if (!firstVertex && CIMHelper.equalWithTolerance(yRound, bayMinY, GetTolerance()))
                                 {
                                     onBottomEdgeBay = true;
-                                    //if (obj.EquipmentContainerRef.EquipmentContainerRef != null)
-                                    //{
-                                    //    var root = obj.EquipmentContainerRef.EquipmentContainerRef;
-
-                                    //    // Hvis det er et skab, så er det ok. I så fald der er kabler, så vil de få "dangling error"
-                                    //    if (root.ClassType == CIMClassEnum.Enclosure)
-                                    //        isError = false;
-
-                                    //    // Hvis en station og bay sidder på sekundær side, så er det ok
-                                    //    if (root.ClassType == CIMClassEnum.Substation && bay.VoltageLevel < root.VoltageLevel)
-                                    //        isError = false;
-                                    //}
                                 }
                             }
 
                             sw2.Stop();
-                            //
+
                             // Only gets here (and mark endpoint as error)
                             //     if this is true -> (neighbor.Neighbours.Count() < 2 && neighbor.ClassType != CIMClassEnum.EnergyConsumer && neighbor.ClassType != CIMClassEnum.BusbarSection)
                             if (isError)
@@ -2860,12 +2645,7 @@ namespace DAX.IO.Writers
                                     CIMIdentifiedObject busBarSection = null;
                                     double[] coor = { x, y };
                                     sw7.Start();
-                                     /*
-                                    if (!_fast)
-                                    {
-                                        busBarSection = GetCIMGraph().IsCartographicCableOnBusBarSection(coor, obj, GetTolerance());
-                                    }
-                                    */
+
                                     sw7.Stop();
                                     if (busBarSection != null)
                                        theErr = GeneralErrors.DanglingConnectivityEdgeOnBusbarSection;
@@ -2898,7 +2678,7 @@ namespace DAX.IO.Writers
                                     }
 
                                     if (isError)
-                                        _g.TableLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj, x, y, KompunderMarkering, busBarSection);
+                                        _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj, x, y, KompunderMarkering, busBarSection);
                                     sw4.Stop();
                                 }
                                 danglingEndCount++;
@@ -2944,25 +2724,8 @@ namespace DAX.IO.Writers
                 GeneralErrors theErr = GeneralErrors.DanglingACLineSegment;
                 if (_visitedDangling[theDangler.Item1.InternalId] != GeneralErrors.noError)
                     theErr = _visitedDangling[theDangler.Item1.InternalId];
-                /*
-                else if (!_fast)
-                {
-                    double[] coor = { theDangler.Item2, theDangler.Item3 };
 
-                    List<Tuple<CIMIdentifiedObject, double>> closeBys = GetCIMGraph().GetCIMObjectsCloseToCoor(coor, GetMaxRadiusOfCloseness());
-                    if (isBayCloseBy(closeBys, GetBayClosenessRadius()))
-                        theErr = GeneralErrors.DanglingACLineSegmentCloseToBay;
-                    else if (isConsumerCloseBy(closeBys, GetConsumerClosenessRadius()))
-                        theErr = GeneralErrors.DanglingACLineSegmentCloseToConsumer;
-                    else if (isOtherDanglingCloseBy(theDangler.Item1, closeBys, GetDanglingClosenessRadius(), coor))
-                        theErr = GeneralErrors.DanglingACLineSegmentCloseToOtherDangling;
-                    else if (isEnclosureCloseBy(closeBys, GetEnclosureClosenessRadius()))
-                        theErr = GeneralErrors.DanglingACLineSegmentCloseToEnclosure;
-
-                }
-                */
-
-                _g.TableLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), theDangler.Item1, theDangler.Item2, theDangler.Item3);
+                _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), theDangler.Item1, theDangler.Item2, theDangler.Item3);
             }
         }
 
@@ -2985,7 +2748,6 @@ namespace DAX.IO.Writers
 
         private SortedDictionary<int, GeneralErrors> _visitedDangling = new SortedDictionary<int, GeneralErrors>();
 
-        //
         // TODO: The distance to the enclosure is undefined
         // The distance to components is used as substitute, but is that good enough?
         private bool isEnclosureCloseBy(List<Tuple<CIMIdentifiedObject, double>> closeBys, double radius)
@@ -3057,7 +2819,7 @@ namespace DAX.IO.Writers
 
         public List<ErrorCode> getErrorCodeList()
         {
-            return _g.TableLogger.getErrorCodeList();
+            return _g.CimErrorLogger.getErrorCodeList();
         }
     }
 }

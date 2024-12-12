@@ -10,7 +10,7 @@ namespace DAX.IO.CIM
 {
     public class AddMissingConnectivityNodesProcessor : IGraphProcessor
     {
-        public void Run(CIMGraph g, TableLogger tableLogger)
+        public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {
             Logger.Log(LogLevel.Debug, "AddMissingConnectivityNodeProcessor: Processing ...");
 

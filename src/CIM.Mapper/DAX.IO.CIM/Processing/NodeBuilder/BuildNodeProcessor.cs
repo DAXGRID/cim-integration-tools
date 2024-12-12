@@ -11,7 +11,7 @@ namespace DAX.IO.CIM
         {
         }
 
-        public void Run(CIMGraph g, TableLogger tableLogger)
+        public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {
             Logger.Log(LogLevel.Debug, "Node Processor: Build node-breaker model (indre skematik) in nodes...");
 
@@ -31,7 +31,7 @@ namespace DAX.IO.CIM
             }
         }
 
-        private void CreateCableBoxOrTJunctionOrTower(CIMGraph g, TableLogger tableLogger, CIMIdentifiedObject cableBoxNode, string psrType)
+        private void CreateCableBoxOrTJunctionOrTower(CIMGraph g, CimErrorLogger tableLogger, CIMIdentifiedObject cableBoxNode, string psrType)
         {
             var topologyData = (ITopologyProcessingResult)g.GetProcessingResult("Topology");
 
@@ -120,7 +120,7 @@ namespace DAX.IO.CIM
             ((TopologyProcessingResult)topologyData)._daxNodeByCimObj.Add(simpleNode, daxNode);
         }
 
-        private void CreateSubstation(CIMGraph g, TableLogger tableLogger, CIMIdentifiedObject buildNode)
+        private void CreateSubstation(CIMGraph g, CimErrorLogger tableLogger, CIMIdentifiedObject buildNode)
         {
             int nTransformers = 1;
 

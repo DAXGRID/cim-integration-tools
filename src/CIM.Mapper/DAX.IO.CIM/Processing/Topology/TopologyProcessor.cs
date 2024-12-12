@@ -10,7 +10,7 @@ namespace DAX.IO.CIM
         {
         }
 
-        public void Run(CIMGraph g, TableLogger tableLogger)
+        public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {
             Logger.Log(LogLevel.Debug, "TopologyProcesser: Tracing all feeders...");
 
@@ -21,7 +21,7 @@ namespace DAX.IO.CIM
             LogFeederProblems(topologyData, tableLogger);
         }
 
-        private void LogFeederProblems(ITopologyProcessingResult topology, TableLogger tableLogger)
+        private void LogFeederProblems(ITopologyProcessingResult topology, CimErrorLogger tableLogger)
         {
             int nCustomerTotal = 0;
             int nCustomerNoFeed = 0;

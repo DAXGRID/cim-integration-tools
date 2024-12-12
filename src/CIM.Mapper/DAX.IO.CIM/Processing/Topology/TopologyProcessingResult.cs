@@ -33,6 +33,7 @@ namespace DAX.IO.CIM.Processing
             get { return _daxFeeders; }
         }
         
+        /*
         public DAXElectricNode GetDAXNodeByExternalId(string externalId)
         {
             if (_g.GetCIMObjectByExternalId(externalId) != null)
@@ -48,6 +49,7 @@ namespace DAX.IO.CIM.Processing
             else
                 return null;
         }
+        */
 
         public void InitialTraceAllFeeders()
         {

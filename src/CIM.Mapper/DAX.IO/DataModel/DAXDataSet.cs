@@ -19,5 +19,10 @@ namespace DAX.IO
                 return Features.Count;
             }
         }
+
+        public void Clear()
+        {
+            Features = null;
+        }
     }
 }

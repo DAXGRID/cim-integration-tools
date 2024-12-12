@@ -173,7 +173,6 @@ namespace DAX.IO.Transformers
 
                                         if (attrGuide.AttributeMapping != null)
                                         {
-                                            //if (attrGuide.AttributeMapping.OutputFieldName.ToLower() == "{datasetname}")
                                             if (attrGuide.AttributeMapping.OutputFieldName == "{datasetname}")
                                             {
                                                 var tempValue = TransferValue(attrGuide.AttributeMapping, inputAttr);
@@ -184,7 +183,6 @@ namespace DAX.IO.Transformers
                                             DAXAttributeDef attrDef = writerMetaData.GetFeatureAttributeDefinition(dsGuide.DataSetMapping.OutputDataSet, attrGuide.AttributeMapping.OutputFieldName);
                                             if (attrDef != null)
                                             {
-                                                //string outputFieldKey = attrDef.Name.ToLower();
                                                 string outputFieldKey = attrDef.Name;
 
                                                 if (!outputFeature.ContainsKey(outputFieldKey))
@@ -455,6 +453,8 @@ namespace DAX.IO.Transformers
                         }
                     }
                 }
+
+                dataSet.Clear();
             }
 
             writer.Commit();

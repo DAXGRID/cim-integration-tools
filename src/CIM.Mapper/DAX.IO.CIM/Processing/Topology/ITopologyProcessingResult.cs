@@ -1,9 +1,4 @@
 ﻿using DAX.NetworkModel.CIM;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAX.IO.CIM.Processing
 {
@@ -13,9 +8,12 @@ namespace DAX.IO.CIM.Processing
 
         List<DAXElectricFeeder> DAXFeeders { get; }
         
+        /*
         DAXElectricNode GetDAXNodeByExternalId(string externalId);
 
         DAXElectricNode GetDAXNodeByName(string name);
+
+        */
 
         DAXElectricNode GetDAXNodeByCIMObject(CIMIdentifiedObject cimObj, bool trace = true);
 

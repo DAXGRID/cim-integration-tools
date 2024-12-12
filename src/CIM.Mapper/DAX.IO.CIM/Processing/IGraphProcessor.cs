@@ -8,6 +8,6 @@ namespace DAX.IO.CIM.Processing
 {
     public interface IGraphProcessor : IDAXInitializeable
     {
-        void Run(CIMGraph g, TableLogger tableLogger);
+        void Run(CIMGraph g, CimErrorLogger tableLogger);
     }
 }
