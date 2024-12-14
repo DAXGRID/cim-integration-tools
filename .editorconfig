@@ -16,5 +16,14 @@ dotnet_diagnostic.CA1014.severity = none
 # CS1591 - We do not care about XML comments, since this is not a library.
 dotnet_diagnostic.CS1591.severity = none
 
+# CA1303: Retrieve the following string from a resource table. We do not care.
+dotnet_diagnostic.CA1303.severity = none
+
+# CA2254: Retrieve the following string from a resource table. We do not care.
+dotnet_diagnostic.CA2254.severity = none
+
+# CA2100: Not a user facing program. So we do not care about dynamic SQL queries.
+dotnet_diagnostic.CA2100.severity = none
+
 # IDE0005: We do not want unused usings.
 dotnet_diagnostic.IDE0005.severity = warning
