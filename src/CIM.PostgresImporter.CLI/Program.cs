@@ -69,6 +69,7 @@ internal static class Program
                 {
                     logger.LogInformation("Creating schema: {SchemaName}", schemaName);
                     await PostgresImport.CreateSchemaAsync(postgresConnectionString, schemaName).ConfigureAwait(false);
+                    logger.LogInformation("Finished creating schema: {SchemaName}", schemaName);
                 }
 
                 await ImportFileAsync(
