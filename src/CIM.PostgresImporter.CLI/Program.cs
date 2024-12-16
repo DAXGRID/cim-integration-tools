@@ -63,6 +63,7 @@ internal static class Program
             async (inputFilePath, postgresConnectionString, srid, postImportScriptPath, schemaName, createSchemaIfNotExists) =>
             {
                 schemaName = schemaName ?? "public";
+                srid = srid ?? 25812
 
                 if (createSchemaIfNotExists.HasValue && createSchemaIfNotExists.Value)
                 {
@@ -71,7 +72,7 @@ internal static class Program
                 }
 
                 await ImportFileAsync(
-                    srid ?? 25812,
+                    srid,
                     BULK_INSERT_COUNT,
                     inputFilePath,
                     postgresConnectionString,
