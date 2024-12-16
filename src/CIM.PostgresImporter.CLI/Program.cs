@@ -102,7 +102,7 @@ internal static class Program
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
 
-    private static async Task ImportFileAsync(int SRID, int BULK_INSERT_COUNT, string dataFilePath, string connectionString, string schemaName, ILogger logger)
+    private static async Task ImportFileAsync(int srid, int bulkInsertCount, string dataFilePath, string connectionString, string schemaName, ILogger logger)
     {
         logger.LogInformation("Starting detection of schema.");
         var schemaReader = new StreamReader(dataFilePath);
@@ -165,8 +165,8 @@ internal static class Program
                 {
                     var schemaType = schemaTypeLookup[importChannelLookup.Key];
                     var totalInsertedCount = await PostgresImport.ImportAsync(
-                        SRID,
-                        BULK_INSERT_COUNT,
+                        srid,
+                        bulkInsertCount,
                         connectionString,
                         schemaType,
                         importChannelLookup.Key,
