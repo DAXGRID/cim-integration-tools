@@ -1,8 +1,8 @@
-using System.Text.Json;
-using System.Threading.Channels;
+using NetTopologySuite.Geometries;
 using Npgsql;
 using NpgsqlTypes;
-using NetTopologySuite.Geometries;
+using System.Text.Json;
+using System.Threading.Channels;
 
 namespace CIM.PostgresImporter.CLI;
 
@@ -11,15 +11,17 @@ internal static class PostgresImport
     public static async Task CreateImportSchemaAsync(string connectionString, Schema schema)
     {
         var createTablesScript = PostgresSchemaBuilder.Build(schema);
+        await ExecuteScriptAsync(connectionString, createTablesScript).ConfigureAwait(false);
+    }
 
-        using var createSchemaConnection = new NpgsqlConnection(connectionString);
+    public static async Task ExecuteScriptAsync(string connectionString, string sql)
+    {
+        using var conn = new NpgsqlConnection(connectionString);
 
-        using var createSchemaCmd = new NpgsqlCommand(
-            createTablesScript,
-            createSchemaConnection);
+        using var cmd = new NpgsqlCommand(sql, conn);
 
-        await createSchemaConnection.OpenAsync().ConfigureAwait(false);
-        await createSchemaCmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+        await conn.OpenAsync().ConfigureAwait(false);
+        await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
     }
 
     public static async Task<int> Import(

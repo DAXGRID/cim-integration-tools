@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using System.CommandLine;
 using System.Text.Json;
 using System.Threading.Channels;
-using System.CommandLine;
 
 namespace CIM.PostgresImporter.CLI;
 
@@ -34,12 +34,19 @@ internal static class Program
         )
         { IsRequired = false };
 
+        var postImportSqlScriptPathOption = new Option<string?>(
+            name: "--post-import-sql-script-path",
+            description: "The path to a SQL script that should be run after the import. An example could be to create indexes."
+        )
+        { IsRequired = false };
+
         rootCommand.Add(inputFilePathOption);
         rootCommand.Add(postgresConnectionStringOption);
         rootCommand.Add(sridOption);
+        rootCommand.Add(postImportSqlScriptPathOption);
 
         rootCommand.SetHandler(
-            async (inputFilePath, postgresConnectionString, srid) =>
+            async (inputFilePath, postgresConnectionString, srid, postImportScriptPath) =>
             {
                 await ImportFileAsync(
                     srid ?? 25812,
@@ -47,10 +54,23 @@ internal static class Program
                     inputFilePath,
                     postgresConnectionString,
                     logger).ConfigureAwait(false);
+
+                if (postImportScriptPath is not null)
+                {
+                    logger.LogInformation("Starting executing script in path {PostImportSqlScriptPath}", postImportScriptPath);
+
+                    var sqlScriptContent = await File.ReadAllTextAsync(postImportScriptPath).ConfigureAwait(false);
+                    await PostgresImport
+                        .ExecuteScriptAsync(postgresConnectionString, sqlScriptContent)
+                        .ConfigureAwait(false);
+
+                    logger.LogInformation("Finished executing script: {PostImportSqlScriptPath}", postImportScriptPath);
+                }
             },
             inputFilePathOption,
             postgresConnectionStringOption,
-            sridOption
+            sridOption,
+            postImportSqlScriptPathOption
         );
 
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
