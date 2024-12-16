@@ -63,7 +63,7 @@ internal static class Program
             async (inputFilePath, postgresConnectionString, srid, postImportScriptPath, schemaName, createSchemaIfNotExists) =>
             {
                 schemaName = schemaName ?? "public";
-                srid = srid ?? 25812
+                srid = srid ?? 25812;
 
                 if (createSchemaIfNotExists.HasValue && createSchemaIfNotExists.Value)
                 {
