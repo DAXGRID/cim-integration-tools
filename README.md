@@ -17,3 +17,14 @@ Example of how to use the CIM.Mapper.CLI.
 ```sh
 ./CIM.Mapper.CLI --transformation-configuration-file="./TransformationConfig.xml" --new-state-file='specification_one,specification_two,specification_three'
 ```
+
+## CIM Postgres Importer
+
+Example of how to use the CIM.PostgresImporter.CLI.
+
+```sh
+./CIM.PostgresImporter.CLI \
+  --input-file-path="/home/user/Downloads/n1.jsonl" \
+  --srid=25812 \
+  --connection-string="Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=postgres;"
+```
