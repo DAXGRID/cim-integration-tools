@@ -2,12 +2,12 @@ namespace CIM.PostgresImporter.CLI;
 
 internal static class PostgresSchemaBuilder
 {
-    public static string Build(Schema schema)
+    public static string Build(Schema schema, string schemaName)
     {
-        return string.Join("\n", schema.Types.Select(x => Build(x)));
+        return string.Join("\n", schema.Types.Select(x => Build(x, schemaName)));
     }
 
-    private static string Build(SchemaType schemaType, string schemaName = "public")
+    private static string Build(SchemaType schemaType, string schemaName)
     {
         var columns = string.Join(",\n  ", schemaType.Properties.Select(x => $"\"{x.Name}\" {ConvertInternalTypeToPostgresqlType(x.Type)}"));
         return @$"

@@ -8,10 +8,15 @@ namespace CIM.PostgresImporter.CLI;
 
 internal static class PostgresImport
 {
-    public static async Task CreateImportSchemaAsync(string connectionString, Schema schema)
+    public static async Task CreateImportSchemaAsync(string connectionString, Schema schema, string schemaName)
     {
-        var createTablesScript = PostgresSchemaBuilder.Build(schema);
+        var createTablesScript = PostgresSchemaBuilder.Build(schema, schemaName);
         await ExecuteScriptAsync(connectionString, createTablesScript).ConfigureAwait(false);
+    }
+
+    public static async Task CreateSchemaAsync(string connectionString, string schemaName)
+    {
+        await ExecuteScriptAsync(connectionString, $"CREATE SCHEMA IF NOT EXISTS \"{schemaName}\"").ConfigureAwait(false);
     }
 
     public static async Task ExecuteScriptAsync(string connectionString, string sql)
@@ -24,12 +29,13 @@ internal static class PostgresImport
         await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
     }
 
-    public static async Task<int> Import(
+    public static async Task<int> ImportAsync(
         int srid,
         int bulkInsertCount,
         string connectionString,
         Dictionary<string, Type> schemaType,
         string typeName,
+        string schemaName,
         ChannelReader<Dictionary<string, JsonElement>> readerChannel)
     {
         var builder = new NpgsqlDataSourceBuilder(connectionString);
@@ -38,7 +44,7 @@ internal static class PostgresImport
         using var connection = await dataSource.OpenConnectionAsync().ConfigureAwait(false);
         var fields = string.Join(",", schemaType.Keys.Select(key => $"\"{key}\""));
 
-        var copySql = $"COPY \"public\".\"{typeName}\" ({fields}) FROM STDIN (FORMAT BINARY)";
+        var copySql = $"COPY \"{schemaName}\".\"{typeName}\" ({fields}) FROM STDIN (FORMAT BINARY)";
 
         var postgresqlBinaryWriter = await connection.BeginBinaryImportAsync(copySql).ConfigureAwait(false);
 

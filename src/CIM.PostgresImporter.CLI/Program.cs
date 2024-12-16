@@ -40,19 +40,42 @@ internal static class Program
         )
         { IsRequired = false };
 
+        var schemaNameOption = new Option<string?>(
+            name: "--schema-name",
+            description: "The name of the schema that should be used to create and import data into. Default is 'public'."
+        )
+        { IsRequired = false };
+
+        var createSchemaIfNotExistsOption = new Option<bool?>(
+            name: "--create-schema-if-not-exists",
+            description: "Enables automatic schema creation if it does not exist."
+        )
+        { IsRequired = false };
+
         rootCommand.Add(inputFilePathOption);
         rootCommand.Add(postgresConnectionStringOption);
         rootCommand.Add(sridOption);
         rootCommand.Add(postImportSqlScriptPathOption);
+        rootCommand.Add(schemaNameOption);
+        rootCommand.Add(createSchemaIfNotExistsOption);
 
         rootCommand.SetHandler(
-            async (inputFilePath, postgresConnectionString, srid, postImportScriptPath) =>
+            async (inputFilePath, postgresConnectionString, srid, postImportScriptPath, schemaName, createSchemaIfNotExists) =>
             {
+                schemaName = schemaName ?? "public";
+
+                if (createSchemaIfNotExists.HasValue && createSchemaIfNotExists.Value)
+                {
+                    logger.LogInformation("Creating schema: {SchemaName}", schemaName);
+                    await PostgresImport.CreateSchemaAsync(postgresConnectionString, schemaName).ConfigureAwait(false);
+                }
+
                 await ImportFileAsync(
                     srid ?? 25812,
                     BULK_INSERT_COUNT,
                     inputFilePath,
                     postgresConnectionString,
+                    schemaName ?? "public",
                     logger).ConfigureAwait(false);
 
                 if (postImportScriptPath is not null)
@@ -70,13 +93,15 @@ internal static class Program
             inputFilePathOption,
             postgresConnectionStringOption,
             sridOption,
-            postImportSqlScriptPathOption
+            postImportSqlScriptPathOption,
+            schemaNameOption,
+            createSchemaIfNotExistsOption
         );
 
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
 
-    private static async Task ImportFileAsync(int SRID, int BULK_INSERT_COUNT, string dataFilePath, string connectionString, ILogger logger)
+    private static async Task ImportFileAsync(int SRID, int BULK_INSERT_COUNT, string dataFilePath, string connectionString, string schemaName, ILogger logger)
     {
         logger.LogInformation("Starting detection of schema.");
         var schemaReader = new StreamReader(dataFilePath);
@@ -88,7 +113,7 @@ internal static class Program
 
         logger.LogInformation("Creating schema.");
         await PostgresImport
-            .CreateImportSchemaAsync(connectionString, schema)
+            .CreateImportSchemaAsync(connectionString, schema, schemaName)
             .ConfigureAwait(false);
 
         var schemaTypeLookup = schema.Types.ToDictionary(x => x.Name, x => x.Properties.ToDictionary(y => y.Name, y => y.Type));
@@ -138,12 +163,13 @@ internal static class Program
                 try
                 {
                     var schemaType = schemaTypeLookup[importChannelLookup.Key];
-                    var totalInsertedCount = await PostgresImport.Import(
+                    var totalInsertedCount = await PostgresImport.ImportAsync(
                         SRID,
                         BULK_INSERT_COUNT,
                         connectionString,
                         schemaType,
                         importChannelLookup.Key,
+                        schemaName,
                         importChannelLookup.Value.Reader
                     ).ConfigureAwait(false);
 
