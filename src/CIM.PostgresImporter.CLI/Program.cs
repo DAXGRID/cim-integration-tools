@@ -34,9 +34,15 @@ internal static class Program
         )
         { IsRequired = false };
 
+        var preImportSqlScriptPathOption = new Option<string?>(
+            name: "--pre-import-sql-script-path",
+            description: "The path to a SQL script that should be run before the import."
+        )
+        { IsRequired = false };
+
         var postImportSqlScriptPathOption = new Option<string?>(
             name: "--post-import-sql-script-path",
-            description: "The path to a SQL script that should be run after the import. An example could be to create indexes."
+            description: "The path to a SQL script that should be run after the import."
         )
         { IsRequired = false };
 
@@ -55,14 +61,27 @@ internal static class Program
         rootCommand.Add(inputFilePathOption);
         rootCommand.Add(postgresConnectionStringOption);
         rootCommand.Add(sridOption);
+        rootCommand.Add(preImportSqlScriptPathOption);
         rootCommand.Add(postImportSqlScriptPathOption);
         rootCommand.Add(schemaNameOption);
         rootCommand.Add(createSchemaIfNotExistsOption);
 
         rootCommand.SetHandler(
-            async (inputFilePath, postgresConnectionString, srid, postImportScriptPath, schemaName, createSchemaIfNotExists) =>
+            async (inputFilePath, postgresConnectionString, srid, postImportScriptPath, schemaName, createSchemaIfNotExists, preImportScriptPath) =>
             {
                 schemaName = schemaName ?? "public";
+
+                if (preImportScriptPath is not null)
+                {
+                    logger.LogInformation("Starting executing the pre import script in path {PostImportSqlScriptPath}", preImportScriptPath);
+
+                    var sqlScriptContent = await File.ReadAllTextAsync(preImportScriptPath).ConfigureAwait(false);
+                    await PostgresImport
+                        .ExecuteScriptAsync(postgresConnectionString, sqlScriptContent)
+                        .ConfigureAwait(false);
+
+                    logger.LogInformation("Finished executing the pre import script: {PostImportSqlScriptPath}", preImportScriptPath);
+                }
 
                 if (createSchemaIfNotExists.HasValue && createSchemaIfNotExists.Value)
                 {
@@ -81,14 +100,14 @@ internal static class Program
 
                 if (postImportScriptPath is not null)
                 {
-                    logger.LogInformation("Starting executing script in path {PostImportSqlScriptPath}", postImportScriptPath);
+                    logger.LogInformation("Starting executing the post import script in path: {PostImportSqlScriptPath}", postImportScriptPath);
 
                     var sqlScriptContent = await File.ReadAllTextAsync(postImportScriptPath).ConfigureAwait(false);
                     await PostgresImport
                         .ExecuteScriptAsync(postgresConnectionString, sqlScriptContent)
                         .ConfigureAwait(false);
 
-                    logger.LogInformation("Finished executing script: {PostImportSqlScriptPath}", postImportScriptPath);
+                    logger.LogInformation("Finished executing the post import script in path: {PostImportSqlScriptPath}", postImportScriptPath);
                 }
             },
             inputFilePathOption,
@@ -96,7 +115,8 @@ internal static class Program
             sridOption,
             postImportSqlScriptPathOption,
             schemaNameOption,
-            createSchemaIfNotExistsOption
+            createSchemaIfNotExistsOption,
+            preImportSqlScriptPathOption
         );
 
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
