@@ -25,8 +25,6 @@ namespace CIM.Mapper.Tests.EngumPower.NetSam1_3
 
             var transformer = config.InitializeDataTransformer("test");
 
-            ((CIMGraphWriter)transformer.GetFirstDataWriter()).DoNotRunPreCheckConnectivity();
-
             transformer.TransferData();
 
             CIMGraphWriter writer = transformer.GetFirstDataWriter() as CIMGraphWriter;
