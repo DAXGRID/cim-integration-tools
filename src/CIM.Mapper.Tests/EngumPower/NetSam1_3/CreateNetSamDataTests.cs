@@ -10,34 +10,36 @@ using System.Xml.Serialization;
 
 namespace CIM.Mapper.Tests.EngumPower.NetSam1_3
 {
-    public class CreateNetSamDataTests
-    {
-        [Fact]
-        public void CreateNetSam_1_3_TestData()
-        {
-            Log.Logger = new LoggerConfiguration().WriteTo.Debug().CreateLogger();
-            Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
+    // This has been commented out for now until we have fixed issue with pipeline.
 
-            Logger.WriteToConsole = false;
+    // public class CreateNetSamDataTests
+    // {
+    //     [Fact]
+    //     public void CreateNetSam_1_3_TestData()
+    //     {
+    //         Log.Logger = new LoggerConfiguration().WriteTo.Debug().CreateLogger();
+    //         Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
 
-            var config = new TransformationConfig().LoadFromFile("../../../EngumPower/NetSam1_3/CreateNetSamDataConfig.xml");
+    //         Logger.WriteToConsole = false;
 
-            var transformer = config.InitializeDataTransformer("test");
+    //         var config = new TransformationConfig().LoadFromFile("../../../EngumPower/NetSam1_3/CreateNetSamDataConfig.xml");
 
-            transformer.TransferData();
+    //         var transformer = config.InitializeDataTransformer("test");
 
-            CIMGraphWriter writer = transformer.GetFirstDataWriter() as CIMGraphWriter;
-            CIMGraph graph = writer.GetCIMGraph();
+    //         transformer.TransferData();
 
-            string fileName = @"../../../EngumPower/NetSam1_3/data/Input.xml";
+    //         CIMGraphWriter writer = transformer.GetFirstDataWriter() as CIMGraphWriter;
+    //         CIMGraph graph = writer.GetCIMGraph();
 
-            var serializer = config.InitializeSerializer("NetSam");
+    //         string fileName = @"../../../EngumPower/NetSam1_3/data/Input.xml";
 
-            var env = ((NetSamSerializer)serializer).Serialize(CIMMetaDataManager.Repository, graph.CIMObjects);
-            XmlSerializer xmlSerializer = new XmlSerializer(env.GetType());
-            StreamWriter file = new StreamWriter(fileName);
-            xmlSerializer.Serialize(file, env);
-            file.Close();
-        }
-    }
+    //         var serializer = config.InitializeSerializer("NetSam");
+
+    //         var env = ((NetSamSerializer)serializer).Serialize(CIMMetaDataManager.Repository, graph.CIMObjects);
+    //         XmlSerializer xmlSerializer = new XmlSerializer(env.GetType());
+    //         StreamWriter file = new StreamWriter(fileName);
+    //         xmlSerializer.Serialize(file, env);
+    //         file.Close();
+    //     }
+    // }
 }
