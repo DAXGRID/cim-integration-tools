@@ -1,10 +1,14 @@
-﻿using DAX.IO;
+﻿using CIM.Cson;
+using DAX.IO;
 using DAX.IO.CIM;
 using DAX.IO.CIM.DataModel;
 using DAX.IO.CIM.Processing;
+using DAX.IO.CIM.Serialization.CIM100;
 using DAX.IO.Transformers;
 using DAX.IO.Writers;
+using Serilog;
 using System.CommandLine;
+using System.Diagnostics;
 
 namespace CIM.Mapper.CLI;
 
@@ -12,6 +16,9 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
+        Log.Logger = new LoggerConfiguration().WriteTo.Debug().CreateLogger();
+        Serilog.Debugging.SelfLog.Enable(msg => Console.WriteLine(msg));
+
         var transformationConfigurationFileOption = new Option<string>(
             name: "--transformation-configuration-file",
             description: "The file path to the file that contains the transformation settings. Example: './TransformationConfig.xml'."
@@ -140,11 +147,17 @@ internal static class Program
 
                     var serializer = config.InitializeSerializer(serializerName);
 
-                    var compressedData = ((IDAXSerializeable)serializer).Serialize(CIMMetaDataManager.Repository, graph.CIMObjects, graph);
+                    var result = ((CIM100Serializer)serializer).GetIdentifiedObjects(CIMMetaDataManager.Repository, graph.CIMObjects, true, true, true);
 
-                    var fileStream = new System.IO.FileStream(outputFileName, System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                    fileStream.Write(compressedData, 0, compressedData.Length);
-                    fileStream.Close();
+                    var cson = new CsonSerializer();
+
+                    using (var destination = File.Open(outputFileName, FileMode.Create))
+                    {
+                        using (var source = cson.SerializeObjects(result))
+                        {
+                            source.CopyTo(destination);
+                        }
+                    }
                 }
             }
         }
