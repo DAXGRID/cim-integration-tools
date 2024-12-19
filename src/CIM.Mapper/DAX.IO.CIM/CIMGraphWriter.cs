@@ -57,7 +57,6 @@ namespace DAX.IO.Writers
         private string logTableName = null;
 
         private string buildErrorCodeList = null;
-        private string doPrecheckconnectivity = null;
         private bool _tool = false;
         private bool _fast = false;
 
@@ -98,11 +97,6 @@ namespace DAX.IO.Writers
                         logTableDbConnectionString = Configuration.GetConnectionString(configParam.Value);
                     if (configParam.Name.ToLower() == "logdbtablename")
                         logTableName = configParam.Value;
-
-                    if (configParam.Name.ToLower() == "builderrorcodelist")
-                        buildErrorCodeList = configParam.Value;
-                    if (configParam.Name.ToLower() == "precheckconnectivity")
-                        doPrecheckconnectivity = configParam.Value;
                     if (configParam.Name.ToLower() == "tool")
                         _tool = configParam.Value.ToLower().Equals("true");
                     if (configParam.Name.ToLower() == "fast")
@@ -508,8 +502,7 @@ namespace DAX.IO.Writers
                         }
                         else
                             //Logger.Log(LogLevel.Warning, "CIM object " + ec.IdString() + " has invalid coordinates.");
-                            AddToInvalidCoordList(ec.ClassType.ToString(), ec.ExternalId);
-
+                            
                         if (feature.ClassName == "substation")
                             nSubstations++;
                         else if (feature.ClassName == "equipmentcontainer")
@@ -1008,7 +1001,9 @@ namespace DAX.IO.Writers
                             consumerCounter++;
                         }
                         else
-                            AddToInvalidCoordList(ci.ClassType.ToString(), ci.ExternalId);
+                        {
+                            // TODO: Log that no coordinat exists
+                        }
                     }
                 }
 
@@ -1090,7 +1085,10 @@ namespace DAX.IO.Writers
                         CoordBasedConnectivity_AddACLineSegmentToGraph(feature, ne);
                     }
                     else
-                        AddToInvalidCoordList(ne.ClassType.ToString(), ne.ExternalId);
+                    {
+                        // TODO: Log that no coordinat exists
+
+                    }
                 }
 
                 Logger.Log(LogLevel.Info, "" + _networkEquipments.Count + " network equipments imported.");
@@ -1187,7 +1185,9 @@ namespace DAX.IO.Writers
                             CoordBasedConnectivity_AddACLineSegmentToGraph(feature, ci);
                     }
                     else
-                        AddToInvalidCoordList(ci.ClassType.ToString(), ci.ExternalId);
+                    {
+                        // TODO: Log that no coordinat exists
+                    }
                 }
 
                 Logger.Log(LogLevel.Info, "" + _aclinesegments.Count + " AC line segments imported.");
@@ -1253,7 +1253,9 @@ namespace DAX.IO.Writers
                         CoordBasedConnectivity_AddACLineSegmentToGraph(feature, la);
                     }
                     else
-                        AddToInvalidCoordList(la.ClassType.ToString(), la.ExternalId);
+                    {
+                        // TODO: Log that no coordinat exists
+                    }
                 }
 
                 Logger.Log(LogLevel.Info, "" + _locationAddresses.Count + " location addresses equipments imported.");
@@ -1279,21 +1281,8 @@ namespace DAX.IO.Writers
                 }
 
                 sw1.Stop();
-                Logger.Log(LogLevel.Debug, "Commit before precheckconnectivity: " + sw1.ElapsedMilliseconds + " milli seconds.");
-
-
-                // Fix connectivity
-                if (doPreCheck())
-                {
-                    Logger.Log(LogLevel.Debug, "CIMGraphWriter: Pre-checking GIS connectivity for errors...");
-                    PreCheckConnectivity();
-                }
-                else
-                    Logger.Log(LogLevel.Debug, "CIMGraphWriter: Skipping pre-checking GIS connectivity for errors...");
 
                 RunAllGraphProcessors(_transConf);
-
-
 
                 Logger.Log(LogLevel.Info, "CIMGraphWriter: Finish loading data into in-memory CIM graph.");
                 graphLoadedSuccessfull = true;
@@ -1434,13 +1423,6 @@ namespace DAX.IO.Writers
             Logger.Log(LogLevel.Info, "CIMGraphWriter: Finish running graph processors. Graph ready for use.");
         }
 
-        private bool doPreCheck()
-        {
-            if (doPrecheckconnectivity == null)
-                return false;
-            return doPrecheckconnectivity.ToLower().Equals("yes");
-        }
-
         public string GetResult()
         {
             throw new NotImplementedException();
@@ -1457,20 +1439,6 @@ namespace DAX.IO.Writers
         }
 
         #endregion
-
-        public void DoNotLogToTable()
-        {
-            Logger.Log(LogLevel.Info, "Logging to database table disabled.");
-
-            logTableDbConnectionString = null;
-            logTableName = null;
-        }
-
-        public void DoNotRunPreCheckConnectivity()
-        {
-            Logger.Log(LogLevel.Info, "Pre check connectivity disabled.");
-            doPrecheckconnectivity = null;
-        }
 
 
         private void AddMetaDataAttribute(DAXMetaData metaData, string className, string fieldName)
@@ -2329,8 +2297,6 @@ namespace DAX.IO.Writers
 
         private double RoundVertexCoordinate(double coordinate)
         {
-            //var pow = Math.Pow(10, paramRoundDecimals);
-            //return Math.Truncate(coordinate * pow) / pow;
             return Math.Round(coordinate, paramRoundDecimals);
         }
 
@@ -2338,465 +2304,9 @@ namespace DAX.IO.Writers
         {
             if (obj.Coords.Length == 4)
             {
-                //
                 // Compare y coords
                 if (obj.Coords[1] > obj.Coords[3])
                     return true;
-            }
-            return false;
-        }
-
-        private static bool isTop(CIMIdentifiedObject obj, bool firstVertice)
-        {
-            if (firstVertice && isTopCoordFirst(obj))
-                return true;
-            if (!firstVertice && !isTopCoordFirst(obj))
-                return true;
-            return false;
-        }
-
-
-        private void PreCheckConnectivity()
-        {
-            int danglingEndCount = 0;
-
-            // Check imported CIM objects for diverse errors
-            System.Diagnostics.Stopwatch sw1 = new System.Diagnostics.Stopwatch();
-            System.Diagnostics.Stopwatch sw2 = new System.Diagnostics.Stopwatch();
-            System.Diagnostics.Stopwatch sw3 = new System.Diagnostics.Stopwatch();
-            System.Diagnostics.Stopwatch sw4 = new System.Diagnostics.Stopwatch();
-            System.Diagnostics.Stopwatch sw5 = new System.Diagnostics.Stopwatch();
-            System.Diagnostics.Stopwatch sw6 = new System.Diagnostics.Stopwatch();
-            System.Diagnostics.Stopwatch sw7 = new System.Diagnostics.Stopwatch();
-            System.Diagnostics.Stopwatch sw8 = new System.Diagnostics.Stopwatch();
-
-            sw6.Start();
-            int topDown = 0;
-            int topUp = 0;
-            int vertical = 0;
-            foreach (var obj in _g.CIMObjects)
-            {
-                if (obj.ExternalId == "716166")
-                {
-                }
-
-                // Check objects that must have a parent (that sit inside substation)
-                if (obj.ClassType == CIMClassEnum.Breaker || 
-                    obj.ClassType == CIMClassEnum.LoadBreakSwitch || 
-                    obj.ClassType == CIMClassEnum.Disconnector || 
-                    obj.ClassType == CIMClassEnum.Fuse || 
-                    obj.ClassType == CIMClassEnum.PowerTransformer ||
-                    obj.ClassType == CIMClassEnum.LinearShuntCompensator ||
-                    obj.ClassType == CIMClassEnum.NonlinearShuntCompensator ||
-                    obj.ClassType == CIMClassEnum.AsynchronousMachine ||
-                    obj.ClassType == CIMClassEnum.SynchronousMachine ||
-                    obj.ClassType == CIMClassEnum.FaultIndicator ||
-                    obj.ClassType == CIMClassEnum.BusbarSection ||
-                    obj.ClassType == CIMClassEnum.PetersenCoil ||
-                    obj.ClassType == CIMClassEnum.Bay ||
-                    (obj.ClassType == CIMClassEnum.ConnectivityEdge && obj.Coords != null && obj.Coords.Length > 0 && obj.Coords[0] > 0) ||
-                    (obj.ClassType == CIMClassEnum.ACLineSegment && obj.GetPropertyValueAsString("dax.istransformercable") != null)
-                )
-                {
-                    // Check if component has a parrent
-                    if (obj.EquipmentContainerRef == null)
-                    {
-                        var theErr = GeneralErrors.ComponentHasNoParent;
-                        _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
-                    }
-                    else 
-                    {
-                        var rootContainer = obj.GetEquipmentContainerRoot();
-                        if (rootContainer != null && rootContainer.Coords != null && obj.Coords != null)
-                        {
-                            if (rootContainer.Coords.Length == 2)
-                            {
-                                double objX = -1;
-                                double objY = -1;
-
-                                if (obj.ClassType == CIMClassEnum.BusbarSection && obj.Coords.Length == 4)
-                                {
-                                    objX = obj.Coords[0];
-                                    objY = obj.Coords[1];
-                                }
-                                else if (obj.ClassType == CIMClassEnum.Bay && obj.Coords.Length == 4)
-                                {
-                                    objX = obj.Coords[2];
-                                    objY = obj.Coords[0];
-                                }
-                                else if (obj.ClassType == CIMClassEnum.ACLineSegment && obj.Coords.Length > 2)
-                                {
-                                    objX = obj.Coords[0];
-                                    objY = obj.Coords[1];
-                                }
-                                else if (obj.Coords.Length == 2)
-                                {
-                                    objX = obj.Coords[0];
-                                    objY = obj.Coords[1];
-                                }
-
-                                // If we find some useful coords to checke on both child and parent, then check them
-                                if (objX != -1)
-                                {
-
-                                    double dist = CIMHelper.FindDist(rootContainer.Coords[0], rootContainer.Coords[1], objX, objY);
-
-                                    if (dist > parentCheckRadius)
-                                    {
-                                        var theErr = GeneralErrors.ComponentHasParentFarAway;
-                                        _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
-                                    }
-                                }
-
-                            }
-                        }
-                        else
-                        {
-                            var theErr = GeneralErrors.ComponentHasNoRootParent;
-                            _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
-                        }
-                    }
-                }
-
-                // Check if objects has voltagelevel
-                if ((obj.ClassType == CIMClassEnum.BusbarSection ||
-                    obj.ClassType == CIMClassEnum.Bay ||
-                    obj.ClassType == CIMClassEnum.ACLineSegment ||
-                    obj.ClassType == CIMClassEnum.Substation ||
-                    obj.ClassType == CIMClassEnum.Enclosure) && obj.VoltageLevel == 0)
-                {
-                    var theErr = GeneralErrors.ComponentHasNoVoltageLevel;
-                    _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj);
-                }
-              
-                // Check line connectors
-                if ((obj.ClassType == CIMClassEnum.ACLineSegment || obj.ClassType == CIMClassEnum.ConnectivityEdge) && obj.Coords != null)
-                {
-                    bool isError = true;
-
-                    var neighbors = obj.GetNeighbours();
-                 
-                    // Check if the line segment has neighbor in both ends
-                    bool firstVertex = true;
-
-                    bool onTopEdgeBay = false;
-                    bool onBottomEdgeBay = false;
-
-                    //
-                    // Check if Cartographics cabel is malformed in some way
-                    if (obj.ClassType == CIMClassEnum.ConnectivityEdge)
-                    {
-                        if (obj.Coords.Length == 4 & !isTopCoordFirst(obj))
-                        {
-                            if (CIMHelper.equalWithTolerance(obj.Coords[1], obj.Coords[3], GetTolerance()))
-                            {
-                                vertical++;
-                                // JL: Er lovligt nok. Så der skal ikke være varning
-                                //Logger.Log(LogLevel.Warning, "Cartographic cable: " + obj.ExternalId + " is Vertical!");
-                                isError = false;
-                            }
-                            else
-                            {
-                                topDown++;
-                                Logger.Log(LogLevel.Warning, "Cartographic cable: " + obj.ExternalId + " is top down!");
-                                isError = false;
-                            }
-                        }
-                        else
-                        {
-                            topUp++;
-
-                        }
-                    }
-
-                    if (isError)
-                        foreach (var neighbor in neighbors)
-                        {
-                            sw1.Start();
-                            if (!_fast)
-                            {
-                                if (neighbor.Neighbours.Count() >= 2 && neighbor.ClassType != CIMClassEnum.BusbarSection)
-                                {
-                                    if (obj.ClassType == CIMClassEnum.ConnectivityEdge) // Cartographic cable
-                                    {
-
-
-                                        double[] coor = { obj.Coords[0], obj.Coords[1] };
-
-                                        if (!firstVertex)
-                                        {
-                                            //
-                                            // Second coordinates is the bottom of the cartographic cable
-                                            coor[0] = obj.Coords[obj.Coords.Length - 2];
-                                            coor[1] = obj.Coords[obj.Coords.Length - 1];
-                                        }
-
-                                        // Check if Dalle laske skab skrammel
-                                        // Horizontal cartographics cable
-                                        // isError = false; 
-                                        CIMIdentifiedObject busBarSection = null;
-
-                                        //
-                                        // The test takes way too long time: 530.000*70 milli seconds ~= 600 minutes
-                                        //busBarSection = GetCIMGraph().IsCartographicCableOnBusBarSection(coor, obj, GetTolerance());
-
-                                        if (busBarSection != null)
-                                        {
-                                            var theErr = GeneralErrors.DanglingConnectivityEdgeOnBusbarSection;
-                                            _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj, obj.Coords[0], obj.Coords[1], "", busBarSection);
-                                        }
-                                    }
-
-                                }
-                            }
-                            sw1.Stop();
-
-                            if (neighbor.Neighbours.Count() < 2 && 
-                            neighbor.ClassType != CIMClassEnum.EnergyConsumer && 
-                            neighbor.ClassType != CIMClassEnum.BusbarSection &&
-                            neighbor.ClassType != CIMClassEnum.AsynchronousMachine &&
-                            neighbor.ClassType != CIMClassEnum.SynchronousMachine &&
-                            neighbor.ClassType != CIMClassEnum.LinearShuntCompensator &&
-                            neighbor.ClassType != CIMClassEnum.NonlinearShuntCompensator &&
-                            neighbor.ClassType != CIMClassEnum.NetworkEquipment &&
-                            neighbor.ClassType != CIMClassEnum.PetersenCoil)
-                        {
-                            sw2.Start();
-
-                            //
-                            // First coordinates is the top of the cartographic cable
-                            double x = obj.Coords[0];
-                            double y = obj.Coords[1];
-
-                            if (!firstVertex)
-                            {
-                                //
-                                // Second coordinates is the bottom of the cartographic cable
-                                x = obj.Coords[obj.Coords.Length - 2];
-                                y = obj.Coords[obj.Coords.Length - 1];
-                            }
-
-                            // Check if Dalle laske skab skrammel
-                            // Horizontal cartographics cable
-                            if (obj.Coords.Length == 4 && obj.Coords[1] == obj.Coords[3])
-                                isError = false;
-
-                            // If inside bay check if y coord is on edge of bay
-                            if (obj.EquipmentContainerRef != null && obj.EquipmentContainerRef.ClassType == CIMClassEnum.Bay)
-                            {
-
-                                // Bay only has three significant digits
-                                //
-                                var yRound = Math.Round(y, paramRoundDecimals);
-                                var bay = obj.EquipmentContainerRef;
-                                double bayMinY = bay.Coords[0];
-                                double bayMaxY = bay.Coords[1];
-
-                                // Sidder på øverste kant
-                                if (firstVertex && CIMHelper.equalWithTolerance(yRound, bayMaxY, GetTolerance()))
-                                {
-                                    onTopEdgeBay = true;
-                                }
-
-                                // Sidder på nederste felt kant
-                                if (!firstVertex && CIMHelper.equalWithTolerance(yRound, bayMinY, GetTolerance()))
-                                {
-                                    onBottomEdgeBay = true;
-                                }
-                            }
-
-                            sw2.Stop();
-
-                            // Only gets here (and mark endpoint as error)
-                            //     if this is true -> (neighbor.Neighbours.Count() < 2 && neighbor.ClassType != CIMClassEnum.EnergyConsumer && neighbor.ClassType != CIMClassEnum.BusbarSection)
-                            if (isError)
-                            {
-                                if (obj.ClassType == CIMClassEnum.ACLineSegment)
-                                {
-                                    sw3.Start();
-                                    _allDanglers.Add(new Tuple<CIMIdentifiedObject, double, double>(obj, x, y));
-
-                                    if (_visitedDangling.ContainsKey(obj.InternalId))
-                                        _visitedDangling[obj.InternalId] = GeneralErrors.DanglingACLineSegmentDouble;
-                                    else
-                                        _visitedDangling.Add(obj.InternalId, GeneralErrors.noError);
-                                    sw3.Stop();
-                                }
-                                else
-                                {
-                                    sw4.Start();
-                                    // Cartographic cables
-                                    // Current end is not connected
-                                    //
-                                    // onTopEdgeBay is true if the cart. cable is inside bay and top edge is on bay top edge. Unless there is something else wrong, the cable's good
-                                    // onBottomEdgeBay is true if the cart. cable is inside bay and bottom edge is on bay top edge. Unless there is something else wrong, the cable's good
-
-                                    GeneralErrors theErr = GeneralErrors.DanglingConnectivityEdge;
-                                    string KompunderMarkering = "";
-                                    CIMIdentifiedObject theCon = obj.GetEquipmentContainerRoot();
-                                    if (theCon != null)
-                                    {
-                                        if (theCon.ClassType == CIMClassEnum.Enclosure)
-                                            KompunderMarkering = "Enclosure: " + theCon.InternalId.ToString();
-                                        else if (theCon.ClassType == CIMClassEnum.Substation)
-                                            KompunderMarkering = "Substation: " + theCon.InternalId.ToString();
-                                    }
-
-                                    CIMIdentifiedObject busBarSection = null;
-                                    double[] coor = { x, y };
-                                    sw7.Start();
-
-                                    sw7.Stop();
-                                    if (busBarSection != null)
-                                       theErr = GeneralErrors.DanglingConnectivityEdgeOnBusbarSection;
-
-                                    if (theCon == null)
-                                       theErr = GeneralErrors.DanglingConnectivityNotKompunder;
-                                    else if (busBarSection == null)
-                                    {
-                                        isError = false;
-
-                                        // If Top and not on top bay edge then error
-                                        if (firstVertex && !onTopEdgeBay)
-                                            isError = true;
-
-                                        // If Bottom and not on bottom bay then error
-                                        if (!firstVertex && !onBottomEdgeBay)
-                                            isError = true;
-                                    }
-
-                                    // Check if dax.checkconnectivity is set to false on the bay, and if so don't log any connectivity error
-                                    if (isError && obj.EquipmentContainerRef != null)
-                                    {
-                                        if (obj.EquipmentContainerRef.ContainsPropertyValue("dax.checkconnectivity"))
-                                        {
-                                            string val = obj.EquipmentContainerRef.GetPropertyValueAsString("dax.checkconnectivity");
-
-                                            if (val != null && (val == "0" || val == "no" || val == "false"))
-                                                isError = false;
-                                        }
-                                    }
-
-                                    if (isError)
-                                        _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), obj, x, y, KompunderMarkering, busBarSection);
-                                    sw4.Stop();
-                                }
-                                danglingEndCount++;
-                            } // End if (isError)
-                        } // End if (neighbor.Neighbours.Count() < 2 && neighbor.ClassType != CIMClassEnum.EnergyConsumer && neighbor.ClassType != CIMClassEnum.BusbarSection)
-
-                        firstVertex = false;
-                    }
-                }
-            }
-            sw5.Start();
-            analyseDanglingCables();
-            sw5.Stop();
-            sw6.Stop();
-            Logger.Log(LogLevel.Debug, "Searching for busbar sections: " + sw1.ElapsedMilliseconds + " milli seconds.");
-            Logger.Log(LogLevel.Debug, "First test: " + sw2.ElapsedMilliseconds + " milli seconds.");
-            Logger.Log(LogLevel.Debug, "ACLineSegment: " + sw3.ElapsedMilliseconds + " milli seconds.");
-            Logger.Log(LogLevel.Debug, "Cartographic cabels: " + sw4.ElapsedMilliseconds + " milli seconds.");
-            Logger.Log(LogLevel.Debug, "Cartographic cabels (search for busbar): " + sw7.ElapsedMilliseconds + " milli seconds.");
-            Logger.Log(LogLevel.Debug, "analyseDanglingCables: " + sw5.ElapsedMilliseconds + " milli seconds.");
-            Logger.Log(LogLevel.Debug, "All: " + sw6.ElapsedMilliseconds + " milli seconds.");
-
-            Logger.Log(LogLevel.Debug, "Cartographic cable top down: " + topDown + ".");
-            Logger.Log(LogLevel.Debug, "Vertical cartographic cable: " + vertical + ".");
-            Logger.Log(LogLevel.Debug, "Cartographic cable top up: " + topUp + ".");
-            
-        }
-
-        private void AddToInvalidCoordList(string objType, string objId)
-        {
-
-            if (!_invalidCoordsLists.ContainsKey(objType))
-                _invalidCoordsLists[objType] = new List<string>();
-
-            _invalidCoordsLists[objType].Add(objId);
-        }
-
-        private void analyseDanglingCables()
-        {
-
-            foreach (var theDangler in _allDanglers)
-            {
-                GeneralErrors theErr = GeneralErrors.DanglingACLineSegment;
-                if (_visitedDangling[theDangler.Item1.InternalId] != GeneralErrors.noError)
-                    theErr = _visitedDangling[theDangler.Item1.InternalId];
-
-                _g.CimErrorLogger.Log(Severity.Error, (short)theErr, GeneralErrorToString.getString(theErr), theDangler.Item1, theDangler.Item2, theDangler.Item3);
-            }
-        }
-
-        private bool isOtherDanglingCloseBy(CIMIdentifiedObject theCIM, List<Tuple<CIMIdentifiedObject, double>> closeBys, double radius, double[] coor)
-        {
-            foreach (var theDangler in _allDanglers)
-            {
-                if (theDangler.Item1.InternalId != theCIM.InternalId)
-                {
-                    double dist = CIMHelper.FindDist(coor[0], coor[1], theDangler.Item2, theDangler.Item3);
-                    if (dist < radius)
-                        return true;
-                }
-            }
-            return false;
-        }
-
-
-        private List<Tuple<CIMIdentifiedObject, double, double>> _allDanglers = new List<Tuple<CIMIdentifiedObject, double, double>>();
-
-        private SortedDictionary<int, GeneralErrors> _visitedDangling = new SortedDictionary<int, GeneralErrors>();
-
-        // TODO: The distance to the enclosure is undefined
-        // The distance to components is used as substitute, but is that good enough?
-        private bool isEnclosureCloseBy(List<Tuple<CIMIdentifiedObject, double>> closeBys, double radius)
-        {
-            CIMIdentifiedObject theContainer = null;
-
-            foreach (Tuple<CIMIdentifiedObject, double> theCIM_Dist in closeBys)
-            {
-                if (theCIM_Dist.Item2 < radius)
-                    if (theCIM_Dist.Item1.ClassType == CIMClassEnum.Fuse || theCIM_Dist.Item1.ClassType == CIMClassEnum.LoadBreakSwitch)
-                    {
-                        theContainer = theCIM_Dist.Item1.GetEquipmentContainerRoot();
-                        if (theContainer != null && theContainer.ClassType == CIMClassEnum.Substation)
-                        {
-                            CIMClassEnum sd = CIMClassEnum.SynchronousMachine;
-                            string sdgh = theContainer.ToString();
-                        }
-
-                        if (theContainer != null && theContainer.ClassType == CIMClassEnum.Enclosure)
-                            return true;
-                    }
-            }
-            return false;
-        }
-
-        //
-        // TODO Only available consumers
-        private bool isConsumerCloseBy(List<Tuple<CIMIdentifiedObject, double>> closeBys, double radius)
-        {
-
-            foreach (Tuple<CIMIdentifiedObject, double> theCIM_Dist in closeBys)
-            {
-                if (theCIM_Dist.Item2 < radius)
-                    if (theCIM_Dist.Item1.ClassType == CIMClassEnum.EnergyConsumer)
-                        return true;
-            }
-            return false;
-        }
-
-        private bool isBayCloseBy(List<Tuple<CIMIdentifiedObject, double>> closeBys, double radius)
-        {
-            foreach (Tuple<CIMIdentifiedObject, double> theCIM_Dist in closeBys)
-            {
-                if (theCIM_Dist.Item2 < radius)
-                {
-                    CIMIdentifiedObject theCIM = theCIM_Dist.Item1.EquipmentContainerRef;
-                    if (theCIM != null && theCIM.ClassType == CIMClassEnum.Bay)
-                        return true;
-                }
             }
             return false;
         }
