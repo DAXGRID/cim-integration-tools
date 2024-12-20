@@ -36,7 +36,5 @@ namespace CIM.TopologyProcessor.Tests
                 System.Console.WriteLine(multiFeededCount + " equipments multi feeded");
             }
         }
-
-
     }
 }
