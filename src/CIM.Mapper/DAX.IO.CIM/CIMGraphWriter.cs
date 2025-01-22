@@ -520,13 +520,19 @@ namespace DAX.IO.Writers
                     if (feature.ClassName == "bay")
                     {
                         var ec = new CIMEquipmentContainer(_g.ObjectManager);
+
                         ec.SetClass(feature.ClassName);
                    
                         MapCommonFields(feature, ec);
                         CopyAttributes(feature, ec);
-                      
-                        _g.AddCIMObjectToVertex(ec);
 
+                        if (ec.mRID == Guid.Parse("ed2144ac-0370-4b3d-b1b8-56d3edd6d804"))
+                        {
+
+                        };
+
+                        _g.AddCIMObjectToVertex(ec);
+                                      
                         nBay++;
                     }
                 }
@@ -675,6 +681,14 @@ namespace DAX.IO.Writers
                         else if (normalopen.ToLower() == "ude")
                         {
                             normalOpen = true;
+                        }
+                        else if (normalopen.ToLower() == "true")
+                        {
+                            normalOpen = true;
+                        }
+                        else if (normalopen.ToLower() == "false")
+                        {
+                            normalOpen = false;
                         }
                         else
                         {
@@ -1022,39 +1036,38 @@ namespace DAX.IO.Writers
                     {
                         Logger.Log(LogLevel.Warning, $"No cim.ref.energyconsumer found on usage point with id: {feature.GetAttributeAsString("cim.mrid")}");
                     }
-                    else
+
+                    usagePointCounter++;
+
+                    var ci = new CIMIdentifiedObject(_g.ObjectManager);
+                    ci.SetClass(CIMClassEnum.UsagePoint);
+                    MapCommonFields(feature, ci);
+                    CopyAttributes(feature, ci);
+
+                    var ecRel = ci.GetPropertyValueAsString("cim.ref.energyconsumer");
+
+                    if (ecRel != null)
                     {
-                        usagePointCounter++;
+                        var ec = _g.GetCIMObjectByMrid(ecRel);
 
-                        var ci = new CIMIdentifiedObject(_g.ObjectManager);
-                        ci.SetClass(CIMClassEnum.UsagePoint);
-                        MapCommonFields(feature, ci);
-                        CopyAttributes(feature, ci);
-
-                        var ecRel = ci.GetPropertyValueAsString("cim.ref.energyconsumer");
-
-                        if (ecRel != null)
+                        if (ec != null)
                         {
-                            var ec = _g.GetCIMObjectByMrid(ecRel);
+                            var ecUsagePointList = ec.GetPropertyValue("usagepoints") as List<CIMIdentifiedObject>;
 
-                            if (ec != null)
-                            {
-                                var ecUsagePointList = ec.GetPropertyValue("usagepoints") as List<CIMIdentifiedObject>;
+                            if (ecUsagePointList == null)
+                                ecUsagePointList = new List<CIMIdentifiedObject>();
 
-                                if (ecUsagePointList == null)
-                                    ecUsagePointList = new List<CIMIdentifiedObject>();
+                            ecUsagePointList.Add(ci);
 
-                                ecUsagePointList.Add(ci);
-
-                                ec.SetPropertyValue("usagepoints", ecUsagePointList);
-                            }
-                        }
-                        else
-                        {
-                            Logger.Log(LogLevel.Error, $"No energyconsumer found with id: {ecRel} referenced from usage point with id: {feature.GetAttributeAsString("cim.mrid")}");
+                            ec.SetPropertyValue("usagepoints", ecUsagePointList);
                         }
                     }
+                    else
+                    {
+                        Logger.Log(LogLevel.Error, $"No energyconsumer found with id: {ecRel} referenced from usage point with id: {feature.GetAttributeAsString("cim.mrid")}");
+                    }
                 }
+                
 
                 Logger.Log(LogLevel.Info, "" + usagePointCounter + " usage points imported.");
 

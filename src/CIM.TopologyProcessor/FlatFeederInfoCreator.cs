@@ -6,10 +6,9 @@ namespace CIM.TopologyProcessor
 {
     public class FlatFeederInfoCreator
     {
-        public List<FlatFeederInfo> CreateFeederInfos(CimContext cimContext, FeederInfoContext feederContext)
+        public IEnumerable<FlatFeederInfo> CreateFeederInfos(CimContext cimContext, FeederInfoContext feederContext)
         {
             var feeders = feederContext.GetConductionEquipmentFeeders();
-            var feederInfos = new List<FlatFeederInfo>();
             var alreadyAdded = new HashSet<Guid>();
 
             HashSet<Guid> ecAclsToBeMarkedSingleFeed = new HashSet<Guid>();
@@ -95,7 +94,8 @@ namespace CIM.TopologyProcessor
                     FlatFeederInfo feederInfo = CreateBasicFeederInfo(seqNo, conductingEquipmentFeeders, feederContext);
                     feederInfo.Multifeed = false;
                     feederInfo.Nofeed = true;
-                    feederInfos.Add(feederInfo);
+
+                    yield return feederInfo;
                 }
 
                 // If seqNo > 2 the components is multi feeded
@@ -133,7 +133,8 @@ namespace CIM.TopologyProcessor
                     }
                 }
 
-                feederInfos.AddRange(feederInfosToAdd);
+                foreach (var feederInfo in feederInfosToAdd)
+                    yield return feederInfo;
             }
 
             // Add components that has no feeder
@@ -156,114 +157,10 @@ namespace CIM.TopologyProcessor
                             Nofeed = true
                         };
 
-                        feederInfos.Add(feederInfo);
+                        yield return feederInfo;
                     }
                 }
             }
-
-            ////////////////////////////
-            // Allow multi feed on parallel customer cables
-            foreach (var feederInfo in feederInfos)
-            {
-                if (ecAclsToBeMarkedSingleFeed.Contains(feederInfo.EquipmentMRID))
-                {
-                    feederInfo.MultifeedAllowed = true;
-                }
-            }
-
-            ////////////////////////////
-            // Run through all feeder infos and mark multifeed allowed where feeder bay name has numeric.numeric
-            HashSet<Feeder> feederAllowMultiFeed = new HashSet<Feeder>();
-
-            foreach (var ciFeeders in feeders)
-            {
-                foreach (var feeder in ciFeeders.Value)
-                {
-                    if (feeder.ConnectionPoint != null
-                        && feeder.ConnectionPoint.Bay != null
-                        && feeder.ConnectionPoint.Bay.name != null
-                        && feeder.ConnectionPoint.Bay.name.Contains("."))
-                    {
-                        string[] bayNameSplit = feeder.ConnectionPoint.Bay.name.Split('.');
-
-                        // If numeric on both of dot side it's bays feeding the same destination node
-                        if (bayNameSplit.Length > 1 && bayNameSplit[0].All(Char.IsDigit))
-                        {
-                            feederAllowMultiFeed.Add(feeder);
-                        }
-                    }
-                }
-            }
-            
-                
-            foreach (var feederInfo in feederInfos)
-            {
-                var cimObj = cimContext.GetObject<ConductingEquipment>(feederInfo.EquipmentMRID.ToString().ToLower());
-
-                var cimObjFeeders = feederContext.GeConductingEquipmentFeeders(cimObj);
-
-                foreach (var feeder in cimObjFeeders)
-                {
-                    if (feederAllowMultiFeed.Contains(feeder))
-                        feederInfo.MultifeedAllowed = true;
-                }
-            }
-
-            ////////////////////////////
-            // Run through all tranformer object and mark multifeed allowed where 
-            // switch is open on both side of transformer.
-            // Check works by counting how many neighbor switches that is open, if at least 2 is found
-            // we set noFeedAllowed. This should work according to Mie. It's her idea/hack :)
-            
-            HashSet<Guid> ecToBeMarkedNoFeedAllowed = new HashSet<Guid>();
-
-            foreach (var cimObj in cimContext.GetAllObjects())
-            {
-                if (cimObj is PowerTransformer)
-                {
-                    int switchOpenCount = 0;
-
-                    var ptNeighbors = cimContext.GetNeighborConductingEquipments((PowerTransformer)cimObj);
-
-                    // Run through alle pt neighbors
-                    foreach (var ptNeighbor in ptNeighbors)
-                    {
-                        // Get the neighbors of the neighbor (which should be a switch device)
-                        var ptNeighborsNeighbors = cimContext.GetNeighborConductingEquipments(ptNeighbor);
-
-                        // Don't check if transformer cable is directly connected to busbar
-                        if (!ptNeighborsNeighbors.Exists(o => o is BusbarSection))
-                        {
-                            foreach (var ptNeighborNeighbor in ptNeighborsNeighbors)
-                            {
-                                if (ptNeighborNeighbor != null && ptNeighborNeighbor is Switch)
-                                {
-                                    var sw = ptNeighborNeighbor as Switch;
-
-                                    if (sw.normalOpen)
-                                        switchOpenCount++;
-                                }
-                            }
-                        }
-                    }
-
-                    if (switchOpenCount > 1)
-                        ecToBeMarkedNoFeedAllowed.Add(Guid.Parse(cimObj.mRID));
-                }
-            }
-
-            foreach (var feederInfo in feederInfos)
-            {
-                if (ecToBeMarkedNoFeedAllowed.Contains(feederInfo.EquipmentMRID))
-                {
-                    System.Diagnostics.Debug.WriteLine(feederInfo.EquipmentMRID);
-                    feederInfo.NofeedAllowed = true;
-                }
-            }
-
-
-
-            return feederInfos;
         }
 
         static void AddHspFeederInfo(Feeder hspFeeder, FlatFeederInfo feederInfo)

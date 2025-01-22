@@ -1,8 +1,9 @@
-﻿using System;
+﻿using CIM.PhysicalNetworkModel;
+using System;
 
 namespace CIM.TopologyProcessor
 {
-    public class FlatFeederInfo
+    public class FlatFeederInfo : IdentifiedObject
     {
         public Guid EquipmentMRID { get; set; }
         public String EquipmentClass { get; set; }
@@ -25,5 +26,10 @@ namespace CIM.TopologyProcessor
         public bool MultifeedAllowed { get; set; }
         public int NodeHopCount { get; set; }
         public int TraversalOrder { get; set; }
+  
+        public FlatFeederInfo()
+        {
+            mRID = Guid.NewGuid().ToString();
+        }
     }
 }

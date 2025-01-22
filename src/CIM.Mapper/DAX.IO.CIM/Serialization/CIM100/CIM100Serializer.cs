@@ -51,9 +51,6 @@ namespace DAX.IO.CIM.Serialization.CIM100
         {
             foreach (var param in parameters)
             {
-                if (param.Name.ToLower() == "energyconsumerusagepointrelation" && param.Value.ToLower() == "true")
-                    hasUsagePointRelation = true;
-
                 if (param.Name.ToLower() == "busextension" && param.Value.ToLower() == "true")
                     busExtension = true;
             }
@@ -176,7 +173,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     var asset = MapAsset(consumer, xmlConsumer);
                     if (asset != null)
                         yield return asset;
-                    
+
 
                     foreach (var identifiedObject in MapLocation(consumer, xmlConsumer))
                         yield return identifiedObject;
@@ -192,64 +189,29 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     foreach (var identifiedObject in MapTerminals(consumer, xmlConsumer))
                         yield return identifiedObject;
 
-                    if (!hasUsagePointRelation)
-                    {
-                        UsagePointExt xmlUsagePoint = new UsagePointExt();
 
-                        // Copy information to usage point
-                        xmlUsagePoint.mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 10).ToString();
-                        CheckIfProcessed(xmlUsagePoint.mRID, xmlUsagePoint);
 
-                        xmlUsagePoint.name = xmlConsumer.name;
-                        xmlUsagePoint.description = xmlConsumer.description;
-
-                        // Relate usagepoint to energy consumer                
-                        xmlUsagePoint.Equipments = new UsagePointEquipments() { @ref = xmlConsumer.mRID };
-
-                        
-                        // Installation id
-                        if (cimObj.ContainsPropertyValue("cim.installationid"))
-                            xmlUsagePoint.installationId = cimObj.GetPropertyValueAsString("cim.installationid");
-
-                        // Meter id
-                        if (cimObj.ContainsPropertyValue("cim.meterid"))
-                            xmlUsagePoint.meterId = cimObj.GetPropertyValueAsString("cim.meterid");
-
-                        // Yearly usage
-                        if (cimObj.ContainsPropertyValue("cim.yearlyusage"))
-                        {
-                            Double yearlyUsage;
-
-                            if (Double.TryParse(cimObj.GetPropertyValueAsString("cim.yearlyusage"), out yearlyUsage))
-                            {
-                                xmlUsagePoint.yearlyUsage = new ApparentPower() { Value = yearlyUsage, multiplier = UnitMultiplier.k, unit = UnitSymbol.Wh };
-                            }
-                        }
-
-                        if (_includeEquipment)
-                            yield return xmlUsagePoint;
-                    }
-                    else
-                    {
-                        var ecUsagePointList = cimObj.GetPropertyValue("usagepoints") as List<CIMIdentifiedObject>;
-
-                        if (ecUsagePointList != null)
-                        {
-                            foreach (var up in ecUsagePointList)
-                            {
-                                UsagePoint xmlUsagePoint = new UsagePoint();
-                                xmlUsagePoint.mRID = up.mRID.ToString();
-                                xmlUsagePoint.name = up.Name;
-                                xmlUsagePoint.description = up.Description;
-                                // Relate usagepoint to energy consumer                
-                                xmlUsagePoint.Equipments = new UsagePointEquipments() { @ref = xmlConsumer.mRID };
-
-                                if (_includeEquipment)
-                                    yield return xmlUsagePoint;
-                            }
-                        }
-                    }
                 }
+            }
+            else if (cimObj.ClassType == CIMClassEnum.UsagePoint)
+            {
+
+                var xmlUsagePoint = new UsagePoint();
+                xmlUsagePoint.mRID = cimObj.mRID.ToString();
+                xmlUsagePoint.name = cimObj.Name;
+                xmlUsagePoint.description = cimObj.Description;
+
+                // Relate usagepoint to energy consumer
+                if (cimObj.ContainsPropertyValue("cim.ref.energyconsumer"))
+                {
+                    var ecRef = cimObj.GetPropertyValueAsString("cim.ref.energyconsumer");
+        
+                    xmlUsagePoint.Equipments = new UsagePointEquipments() { @ref = ecRef };
+                }
+
+                if (_includeEquipment)
+                    yield return xmlUsagePoint;
+
             }
             // Cables outside substation
             else if (cimObj.ClassType == CIMClassEnum.ACLineSegment && cimObj.EquipmentContainerRef == null)
@@ -678,8 +640,8 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     {
                         ProtectionEquipmentExt protectionEq = new ProtectionEquipmentExt();
                         MapIdentifiedObjectFields(ci, (IdentifiedObject)protectionEq);
-                        protectionEq.ProtectedSwitches = new ProtectionEquipmentProtectedSwitches[] { new ProtectionEquipmentProtectedSwitches() { @ref = protectiveSwitchMrid  } };
-                        
+                        protectionEq.ProtectedSwitches = new ProtectionEquipmentProtectedSwitches[] { new ProtectionEquipmentProtectedSwitches() { @ref = protectiveSwitchMrid } };
+
                         if (currenttransformerMrid != null)
                             protectionEq.CurrentTransformers = new ProtectionEquipmentExtCurrentTransformers[] { new ProtectionEquipmentExtCurrentTransformers() { @ref = currenttransformerMrid } };
 
@@ -813,8 +775,6 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
                     MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
                     MapSwitchEquipmentFields(ce, (Switch)xmlObj);
-
-                    ((LoadBreakSwitch)xmlObj).normalOpen = (bool)ce.GetPropertyValue("cim.normalopen");
 
                     if (_includeEquipment)
                         yield return xmlObj;
@@ -2092,10 +2052,6 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 xmlObj.normalOpen = (bool)cimObj.GetPropertyValue("cim.normalopen");
 
                 var str = cimObj.GetPropertyValue("cim.normalopen");
-
-                if (xmlObj.normalOpen == true)
-                {
-                }
             }
 
             if (cimObj.ContainsPropertyValue("cim.ratedcurrent"))
@@ -2142,28 +2098,25 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
             foreach (var vl in vlCandidates)
             {
-                if (vl > 0)
+                if (!substationVoltageLevels.ContainsKey(vl))
                 {
-                    if (!substationVoltageLevels.ContainsKey(vl))
+                    voltageLevelCounter++;
+
+                    var baseVoltage = vl;
+
+                    substationVoltageLevels[vl] = new VoltageLevel()
                     {
-                        voltageLevelCounter++;
+                        BaseVoltage =
+                        baseVoltage,
+                        mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, voltageLevelCounter).ToString(),
+                        name = GetVoltageString(baseVoltage),
+                        EquipmentContainer1 = new VoltageLevelEquipmentContainer() { @ref = xmlObj.mRID }
+                    };
 
-                        var baseVoltage = vl;
+                    CheckIfProcessed(substationVoltageLevels[vl].mRID, substationVoltageLevels[vl]);
 
-                        substationVoltageLevels[vl] = new VoltageLevel()
-                        {
-                            BaseVoltage =
-                            baseVoltage,
-                            mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, voltageLevelCounter).ToString(),
-                            name = GetVoltageString(baseVoltage),
-                            EquipmentContainer1 = new VoltageLevelEquipmentContainer() { @ref = xmlObj.mRID }
-                        };
-
-                        CheckIfProcessed(substationVoltageLevels[vl].mRID, substationVoltageLevels[vl]);
-
-                        if (_includeEquipment)
-                            yield return substationVoltageLevels[vl];
-                    }
+                    if (_includeEquipment)
+                        yield return substationVoltageLevels[vl];
                 }
             }
 

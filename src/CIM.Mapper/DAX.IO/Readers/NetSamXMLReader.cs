@@ -216,7 +216,7 @@ namespace DAX.IO.Readers
                         // Give up if no mrid found
                         if (mrid == null)
                             break;
-
+                                             
                         AddEquipmentContainerRef(feature, mrid.Value);
                         AddBaseVoltage(feature, mrid.Value);
                         AddPsrType(feature, mrid.Value);
@@ -643,6 +643,11 @@ namespace DAX.IO.Readers
                 else
                 {
                     nominalVoltage = Int32.Parse(keyValuePairs["nominalvoltage"].Trim());
+                }
+
+                if (nominalVoltage == 0)
+                {
+
                 }
 
                 _baseVoltageByMrid[mrid] = nominalVoltage;

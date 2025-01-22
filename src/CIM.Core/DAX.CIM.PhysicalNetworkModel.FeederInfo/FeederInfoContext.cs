@@ -214,12 +214,6 @@ namespace CIM.PhysicalNetworkModel.FeederInfo
 
         private void CreateFeeder(ConnectionPoint connectionPoint, ConductingEquipment conductingEquipment)
         {
-            // SLET DEBUG
-            if (connectionPoint.Bay != null && connectionPoint.Bay.mRID == "66484140-abb7-4446-bfa4-32646d852467")
-            {
-
-            }
-
             // Don't create feeder if conducting equipment already feederized
             if (connectionPoint.Feeders.Count(c => c.ConductingEquipment == conductingEquipment) > 0)
                 return;
@@ -315,7 +309,7 @@ namespace CIM.PhysicalNetworkModel.FeederInfo
                 {
                     var pt = obj as PowerTransformer;
 
-                    if (pt.name != null && !pt.name.ToLower().Contains("lokal"))
+                    if (!(pt.name != null && pt.name.ToLower().Contains("lokal")))
                     {
                         var traceResult = pt.Traverse(
                         _cimContext,
@@ -361,17 +355,11 @@ namespace CIM.PhysicalNetworkModel.FeederInfo
                         }
                         else if (feeder.FeederType == FeederType.PrimarySubstation)
                         {
-                            if (feeder.ConnectionPoint.PowerTransformer == null)
-                                continue;
-
                             nodeTypesToPass.Add("SecondarySubstation");
                             nodeTypesToPass.Add("Tower");
                         }
                         else if (feeder.FeederType == FeederType.SecondarySubstation)
                         {
-                            if (feeder.ConnectionPoint.PowerTransformer == null)
-                                continue;
-
                             nodeTypesToPass.Add("CableBox");
                             nodeTypesToPass.Add("Tower");
                             nodeTypesToPass.Add("T-Junction");
@@ -579,13 +567,6 @@ namespace CIM.PhysicalNetworkModel.FeederInfo
                 if (!ce.InternalFeeders.Contains(feeder))
                     ce.InternalFeeders.Add(feeder);
             }
-
-            /*
-            if (!_conductingEquipmentSubstationHop.ContainsKey(ce))
-            {
-                _conductingEquipmentSubstationHop[ce] = substationHop;
-            }
-            */
         }
 
         private void AssignFeederToSubstation(Substation st, Feeder feeder)
