@@ -22,6 +22,8 @@ internal static class Program
         { IsRequired = true };
 
         var rootCommand = new RootCommand("CIM Topology Processor CLI.");
+        rootCommand.AddOption(inputFileOption);
+        rootCommand.AddOption(outputFileOption);
 
         rootCommand.SetHandler(
             async (inputFilePath, outputFilePath) =>
