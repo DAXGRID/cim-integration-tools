@@ -24,7 +24,7 @@ Example of how to use the CIM.PostgresImporter.CLI.
 
 ```sh
 ./CIM.PostgresImporter.CLI \
-  --input-file-path="/home/user/Downloads/n1.jsonl" \
+  --input-file-path="./my-input-file.jsonl" \
   --srid=25812 \
   --connection-string="Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=postgres;"
 ```
