@@ -28,3 +28,11 @@ Example of how to use the CIM.PostgresImporter.CLI.
   --srid=25812 \
   --connection-string="Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=postgres;"
 ```
+
+## CIM Topology Processor
+
+```sh
+./CIM.TopologyProcessor.CLI \
+  --input-file="./my-input-file.jsonl" \
+  --output-file="./my-output-file.jsonl"
+```
