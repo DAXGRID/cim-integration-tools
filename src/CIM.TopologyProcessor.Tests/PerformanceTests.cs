@@ -26,14 +26,14 @@ namespace CIM.TopologyProcessor.Tests
 
                 var feeders = feederInfoCreator.CreateFeederInfos(cimContext, feederInfoContext);
 
-                int notFeededCount = feeders.Count(f => f.Nofeed == true);
-                int feededCount = feeders.Count(f => f.Nofeed == false);
-                int multiFeededCount = feeders.Count(f => f.Multifeed == true);
+                var notFeededCount = feeders.Count(f => f.Nofeed == true);
+                var feededCount = feeders.Count(f => f.Nofeed == false);
+                var multiFeededCount = feeders.Count(f => f.Multifeed == true);
 
-                System.Console.WriteLine(feeders.Count() + " total equipments");
-                System.Console.WriteLine(feededCount + " equipments feeded");
-                System.Console.WriteLine(notFeededCount + " equipments not feeded");
-                System.Console.WriteLine(multiFeededCount + " equipments multi feeded");
+                Console.WriteLine($"{feeders.Count()} total equipments");
+                Console.WriteLine($"{feededCount} equipments feeded");
+                Console.WriteLine($"{notFeededCount} equipments not feeded");
+                Console.WriteLine($"{multiFeededCount} equipments multi feeded");
             }
         }
     }
