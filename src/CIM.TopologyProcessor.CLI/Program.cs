@@ -10,13 +10,13 @@ internal static class Program
     public static async Task<int> Main(string[] args)
     {
         var inputFileOption = new Option<string>(
-            name: "input-file",
+            name: "--input-file",
             description: "The file path to the input file."
         )
         { IsRequired = true };
 
         var outputFileOption = new Option<string>(
-            name: "output-file",
+            name: "--output-file",
             description: "The file path to the output file."
         )
         { IsRequired = true };
