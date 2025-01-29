@@ -9,11 +9,11 @@ internal static class PostgresSchemaBuilder
 
     private static string Build(SchemaType schemaType, string schemaName)
     {
-        var columns = string.Join(",\n  ", schemaType.Properties.Select(x => $"\"{x.Name}\" {ConvertInternalTypeToPostgresqlType(x.Type)}"));
+        var columns = string.Join(",\n  ", schemaType.Properties.Select(x => $"\"{x.Name.ToSnakeCase()}\" {ConvertInternalTypeToPostgresqlType(x.Type)}"));
         return @$"
-CREATE TABLE ""{schemaName}"".""{schemaType.Name}"" (
+CREATE TABLE ""{schemaName}"".""{schemaType.Name.ToSnakeCase()}"" (
   {columns},
-  PRIMARY KEY (""mRID"")
+  PRIMARY KEY (""m_rid"")
 );";
     }
 

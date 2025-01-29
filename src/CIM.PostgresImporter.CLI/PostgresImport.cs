@@ -42,9 +42,9 @@ internal static class PostgresImport
         builder.UseNetTopologySuite();
         using var dataSource = builder.Build();
         using var connection = await dataSource.OpenConnectionAsync().ConfigureAwait(false);
-        var fields = string.Join(",", schemaType.Keys.Select(key => $"\"{key}\""));
+        var fields = string.Join(",", schemaType.Keys.Select(key => $"\"{key.ToSnakeCase()}\""));
 
-        var copySql = $"COPY \"{schemaName}\".\"{typeName}\" ({fields}) FROM STDIN (FORMAT BINARY)";
+        var copySql = $"COPY \"{schemaName}\".\"{typeName.ToSnakeCase()}\" ({fields}) FROM STDIN (FORMAT BINARY)";
 
         var postgresqlBinaryWriter = await connection.BeginBinaryImportAsync(copySql).ConfigureAwait(false);
 
