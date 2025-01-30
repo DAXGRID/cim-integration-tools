@@ -10,7 +10,7 @@ internal static class PostgresImport
 {
     public static async Task CreateImportSchemaAsync(string connectionString, Schema schema, string schemaName)
     {
-        var createTablesScript = PostgresSchemaBuilder.Build(schema, schemaName);
+        var createTablesScript = PostgresSqlBuilder.Build(schema, schemaName);
         await ExecuteScriptAsync(connectionString, createTablesScript).ConfigureAwait(false);
     }
 
@@ -42,14 +42,13 @@ internal static class PostgresImport
         builder.UseNetTopologySuite();
         using var dataSource = builder.Build();
         using var connection = await dataSource.OpenConnectionAsync().ConfigureAwait(false);
-        var fields = string.Join(",", schemaType.Keys.Select(key => $"\"{key.ToSnakeCase()}\""));
 
-        var copySql = $"COPY \"{schemaName}\".\"{typeName.ToSnakeCase()}\" ({fields}) FROM STDIN (FORMAT BINARY)";
+        var copySql = PostgresSqlBuilder.BuildCopyBulkInsert(schemaType, typeName, schemaName);
 
         var postgresqlBinaryWriter = await connection.BeginBinaryImportAsync(copySql).ConfigureAwait(false);
 
         var totalInsertionCount = 0;
-        await foreach (var properties in readerChannel.ReadAllAsync())
+        await foreach (var properties in readerChannel.ReadAllAsync().ConfigureAwait(false))
         {
             totalInsertionCount++;
             await postgresqlBinaryWriter.StartRowAsync().ConfigureAwait(false);
