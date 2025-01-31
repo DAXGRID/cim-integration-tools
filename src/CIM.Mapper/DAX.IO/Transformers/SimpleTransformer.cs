@@ -277,42 +277,45 @@ namespace DAX.IO.Transformers
                                 string objectFcXYPrecisionFieldName = null;
                                 string objectFcZPrecisionFieldName = null;
 
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.JobFieldName != null)
-                                    jobFieldName = _transSpec.SurveySettings.JobFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.UserFieldName != null)
-                                    userFieldName = _transSpec.SurveySettings.UserFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.ProjectFieldName != null)
-                                    projectFieldName = _transSpec.SurveySettings.ProjectFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcXFieldName != null)
-                                    pointXFieldName = _transSpec.SurveySettings.PointFcXFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcYFieldName != null)
-                                    pointYFieldName = _transSpec.SurveySettings.PointFcYFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcZFieldName != null)
-                                    pointZFieldName = _transSpec.SurveySettings.PointFcZFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcPointIdFieldName != null)
-                                    pointPointIdFieldName = _transSpec.SurveySettings.PointFcPointIdFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.MeasuredDateFieldName != null)
-                                    messuredDateFieldName = _transSpec.SurveySettings.MeasuredDateFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.ImportedDateFieldName != null)
-                                    importedDateFieldName = _transSpec.SurveySettings.ImportedDateFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcJobFieldName != null)
-                                    pointFcJobFieldName = _transSpec.SurveySettings.PointFcJobFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcProjectFieldName != null)
-                                    pointFcProjectFieldName = _transSpec.SurveySettings.PointFcProjectFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcUserFieldName != null)
-                                    pointFcUserFieldName = _transSpec.SurveySettings.PointFcUserFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcMeasuredDateFieldName != null)
-                                    pointFcMeasuredDateFieldName = _transSpec.SurveySettings.PointFcMeasuredDateFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcImportedDateFieldName != null)
-                                    pointFcImportedDateFieldName = _transSpec.SurveySettings.PointFcImportedDateFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcXYPrecisionFieldName != null)
-                                    pointFcXYPrecisionFieldName = _transSpec.SurveySettings.PointFcXYPrecisionFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.PointFcZPrecisionFieldName != null)
-                                    pointFcZPrecisionFieldName = _transSpec.SurveySettings.PointFcZPrecisionFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.ObjectFcXYPrecisionFieldName != null)
-                                    objectFcXYPrecisionFieldName = _transSpec.SurveySettings.ObjectFcXYPrecisionFieldName;
-                                if (_transSpec.SurveySettings != null && _transSpec.SurveySettings.ObjectFcZPrecisionFieldName != null)
-                                    objectFcZPrecisionFieldName = _transSpec.SurveySettings.ObjectFcZPrecisionFieldName;
+                                if (_transSpec.SurveySettings is not null)
+                                {
+                                    if (_transSpec.SurveySettings.JobFieldName is not null)
+                                        jobFieldName = _transSpec.SurveySettings.JobFieldName;
+                                    if (_transSpec.SurveySettings.UserFieldName is not null)
+                                        userFieldName = _transSpec.SurveySettings.UserFieldName;
+                                    if (_transSpec.SurveySettings.ProjectFieldName is not null)
+                                        projectFieldName = _transSpec.SurveySettings.ProjectFieldName;
+                                    if (_transSpec.SurveySettings.PointFcXFieldName is not null)
+                                        pointXFieldName = _transSpec.SurveySettings.PointFcXFieldName;
+                                    if (_transSpec.SurveySettings.PointFcYFieldName is not null)
+                                        pointYFieldName = _transSpec.SurveySettings.PointFcYFieldName;
+                                    if (_transSpec.SurveySettings.PointFcZFieldName is not null)
+                                        pointZFieldName = _transSpec.SurveySettings.PointFcZFieldName;
+                                    if (_transSpec.SurveySettings.PointFcPointIdFieldName is not null)
+                                        pointPointIdFieldName = _transSpec.SurveySettings.PointFcPointIdFieldName;
+                                    if (_transSpec.SurveySettings.MeasuredDateFieldName is not null)
+                                        messuredDateFieldName = _transSpec.SurveySettings.MeasuredDateFieldName;
+                                    if (_transSpec.SurveySettings.ImportedDateFieldName is not null)
+                                        importedDateFieldName = _transSpec.SurveySettings.ImportedDateFieldName;
+                                    if (_transSpec.SurveySettings.PointFcJobFieldName is not null)
+                                        pointFcJobFieldName = _transSpec.SurveySettings.PointFcJobFieldName;
+                                    if (_transSpec.SurveySettings.PointFcProjectFieldName is not null)
+                                        pointFcProjectFieldName = _transSpec.SurveySettings.PointFcProjectFieldName;
+                                    if (_transSpec.SurveySettings.PointFcUserFieldName is not null)
+                                        pointFcUserFieldName = _transSpec.SurveySettings.PointFcUserFieldName;
+                                    if (_transSpec.SurveySettings.PointFcMeasuredDateFieldName is not null)
+                                        pointFcMeasuredDateFieldName = _transSpec.SurveySettings.PointFcMeasuredDateFieldName;
+                                    if (_transSpec.SurveySettings.PointFcImportedDateFieldName is not null)
+                                        pointFcImportedDateFieldName = _transSpec.SurveySettings.PointFcImportedDateFieldName;
+                                    if (_transSpec.SurveySettings.PointFcXYPrecisionFieldName is not null)
+                                        pointFcXYPrecisionFieldName = _transSpec.SurveySettings.PointFcXYPrecisionFieldName;
+                                    if (_transSpec.SurveySettings.PointFcZPrecisionFieldName is not null)
+                                        pointFcZPrecisionFieldName = _transSpec.SurveySettings.PointFcZPrecisionFieldName;
+                                    if (_transSpec.SurveySettings.ObjectFcXYPrecisionFieldName is not null)
+                                        objectFcXYPrecisionFieldName = _transSpec.SurveySettings.ObjectFcXYPrecisionFieldName;
+                                    if (_transSpec.SurveySettings.ObjectFcZPrecisionFieldName is not null)
+                                        objectFcZPrecisionFieldName = _transSpec.SurveySettings.ObjectFcZPrecisionFieldName;
+                                }
 
                                 AddJobNameAndProjectNumber(ref outputFeature, jobFieldName, jobName, projectFieldName, projectName);
                                 AddFieldValue(ref outputFeature, messuredDateFieldName, inputFeature.Coordinates[0].TimeStamp.ToString());
