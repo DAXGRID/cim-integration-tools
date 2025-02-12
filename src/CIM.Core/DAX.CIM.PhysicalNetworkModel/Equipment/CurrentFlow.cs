@@ -38,20 +38,6 @@
         }
 
         /// <remarks/>
-        //[System.Xml.Serialization.XmlIgnoreAttribute()]
-        //public bool multiplierSpecified
-        //{
-        //    get
-        //    {
-        //        return this.multiplierFieldSpecified;
-        //    }
-        //    set
-        //    {
-        //        this.multiplierFieldSpecified = value;
-        //    }
-        //}
-
-        /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public UnitSymbol unit
         {
@@ -64,20 +50,6 @@
                 this.unitField = value;
             }
         }
-
-        /// <remarks/>
-        //[System.Xml.Serialization.XmlIgnoreAttribute()]
-        //public bool unitSpecified
-        //{
-        //    get
-        //    {
-        //        return this.unitFieldSpecified;
-        //    }
-        //    set
-        //    {
-        //        this.unitFieldSpecified = value;
-        //    }
-        //}
 
         /// <remarks/>
         [System.Xml.Serialization.XmlTextAttribute()]
