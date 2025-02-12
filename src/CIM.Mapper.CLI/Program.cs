@@ -133,7 +133,7 @@ internal static class Program
         TransformationConfig config,
         DataTransformer transformer)
     {
-        if (config.TransformationSpecifications != null && transformer != null)
+        if (config.TransformationSpecifications is not null && transformer is not null)
         {
             var writer = transformer.GetFirstDataWriter() as CIMGraphWriter;
 
