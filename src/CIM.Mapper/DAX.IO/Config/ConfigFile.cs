@@ -104,18 +104,12 @@ namespace DAX.IO
                             {
                                 if (am.InputFieldName != null)
                                     am.InputFieldName = am.InputFieldName.ToLower();
-
-                                /*
-                                if (am.OutputFieldName != null)
-                                    am.OutputFieldName = am.OutputFieldName.ToLower();
-                                    */
                             }
                         }
 
                     }
                 }
             }
-
         }
 
         public DataReaderWriterSpecification[] GetDataSourceByClass(string className)
