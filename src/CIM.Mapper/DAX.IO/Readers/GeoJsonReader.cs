@@ -103,8 +103,6 @@ namespace DAX.IO.Readers
             {
                 var jsonDataset = _jsonDatasets[_datasetReadIndex];
 
-                
-
                 // Change dataset if end of features
                 if (_lineReadIndex >= jsonDataset.Features.Count)
                 {
@@ -135,9 +133,7 @@ namespace DAX.IO.Readers
 
                 var jProps = jFeat["properties"] as JObject;
 
-
                 DAXFeature feature = new DAXFeature() { GeometryType = DAXGeometryType.NoGemoetry, ClassName = jsonDataset.DatasetName };
-
 
                 foreach (var prop in jProps)
                 {
