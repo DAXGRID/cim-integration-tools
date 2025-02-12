@@ -330,7 +330,7 @@ namespace DAX.IO
         {
             foreach (TransformationSpecification transSpec in TransformationSpecifications) 
             {
-                if (transSpec.Name != null && transSpec.Name.ToLower() == name.ToLower())
+                if (transSpec.Name is not null && transSpec.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     return transSpec;
             }
 
@@ -341,7 +341,7 @@ namespace DAX.IO
         {
             foreach (SerializerSpecification serializer in Serializers)
             {
-                if (serializer.Name != null && serializer.Name.ToLower() == name.ToLower())
+                if (serializer.Name is not null && serializer.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     return serializer;
             }
 
@@ -352,7 +352,7 @@ namespace DAX.IO
         {
             foreach (GraphProcessorSpecification graphProcessor in GraphProcessors)
             {
-                if (graphProcessor.Name != null && graphProcessor.Name.ToLower() == name.ToLower())
+                if (graphProcessor.Name is not null && graphProcessor.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     return graphProcessor;
             }
 
