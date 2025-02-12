@@ -54,7 +54,6 @@ namespace DAX.TransformerUtil
         public Dictionary<string, DAXDataSet> _dataSets = new Dictionary<string, DAXDataSet>();
         public IDaxReader _dataReader;
         public string _dataSetName;
-        public Thread _thread;
 
         public void DoWork(object data)
         {
