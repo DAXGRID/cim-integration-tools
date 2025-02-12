@@ -15,7 +15,7 @@ Example of how to use the CIM.Differ.CLI.
 Example of how to use the CIM.Mapper.CLI.
 
 ```sh
-./CIM.Mapper.CLI --transformation-configuration-file="./TransformationConfig.xml" ----transformation-specification-name='specification_one,specification_two,specification_three'
+./CIM.Mapper.CLI --transformation-configuration-file="./TransformationConfig.xml" --transformation-specification-name='specification_one,specification_two,specification_three'
 ```
 
 ## CIM Postgres Importer
