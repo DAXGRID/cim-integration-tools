@@ -17,10 +17,6 @@ namespace DAX.IO.CIM
 
             ProcessAuxEquipments(g, tableLogger);
 
-            int cnPairCount = 0;
-            int cnTreeCount = 0;
-            int cnMoreThanTreeCount = 0;
-
             // Clean up edge connectors
             foreach (var obj in g.CIMObjects)
             {

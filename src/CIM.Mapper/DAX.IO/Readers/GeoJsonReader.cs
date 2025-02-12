@@ -6,7 +6,6 @@ namespace DAX.IO.Readers
 {
     public class GeoJsonReader : IDaxReader
     {
-        private string _dataSourceName = null;
         private string _folderName;
         private List<JsonDataset> _jsonDatasets = null;
 

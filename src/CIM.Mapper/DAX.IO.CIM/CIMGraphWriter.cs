@@ -65,7 +65,6 @@ namespace DAX.IO.Writers
         private double enclosureRadius;
         private double consumerRadius;
         private double danglingRadius;
-        private double parentCheckRadius = 10;
 
         private double tolerance;
 
@@ -77,9 +76,6 @@ namespace DAX.IO.Writers
 
         // Midlertidig TME hack til brug for generering af CIM indre skematik
         public Dictionary<CIMIdentifiedObject, CIMEquipmentContainer> _substationByACLineConnector = new Dictionary<CIMIdentifiedObject, CIMEquipmentContainer>();
-
-        // Test
-        private int _testBusbarVertexId = 0;
 
         #region IDaxWriter Members
 
@@ -442,8 +438,6 @@ namespace DAX.IO.Writers
 
         public void Commit()
         {
-            bool graphLoadedSuccessfull = false;
-
             try
             {
                 System.Diagnostics.Stopwatch sw1 = new System.Diagnostics.Stopwatch();
@@ -1298,7 +1292,6 @@ namespace DAX.IO.Writers
                 RunAllGraphProcessors(_transConf);
 
                 Logger.Log(LogLevel.Info, "CIMGraphWriter: Finish loading data into in-memory CIM graph.");
-                graphLoadedSuccessfull = true;
 
                 string summaryFileName = GetSummaryFileName();
                 if (summaryFileName != null && summaryFileName.Length > 0)

@@ -18,10 +18,6 @@ namespace DAX.IO.CIM.Serialization.CIM100
         private Dictionary<string, Guid> _manufacturerNameToGuid = new Dictionary<string, Guid>();
         private Dictionary<string, Guid> _assetModelNameToGuid = new Dictionary<string, Guid>();
 
-
-        bool hasUsagePointRelation = false;
-        bool busExtension = true;
-
         bool _includeEquipment;
         bool _includeAsset;
         bool _includeLocation;
@@ -49,11 +45,6 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
         public void Initialize(string name, List<ConfigParameter> parameters = null)
         {
-            foreach (var param in parameters)
-            {
-                if (param.Name.ToLower() == "busextension" && param.Value.ToLower() == "true")
-                    busExtension = true;
-            }
         }
 
         public byte[] Serialize(CIMMetaDataRepository repository, List<CIMIdentifiedObject> cimObjects, CIMGraph graph)
@@ -216,14 +207,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
             // Cables outside substation
             else if (cimObj.ClassType == CIMClassEnum.ACLineSegment && cimObj.EquipmentContainerRef == null)
             {
-                bool hasTerminalsConnectedToEachOther = false;
-
                 var neighboors = cimObj.GetNeighbours();
-
-                if (neighboors.Count == 2 && neighboors[0] == neighboors[1])
-                {
-                    hasTerminalsConnectedToEachOther = true;
-                }
 
                 if (!CheckIfProcessed(cimObj, false))
                 {
@@ -729,14 +713,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 if (ce.ClassType == CIMClassEnum.ACLineSegment)
                 {
-                    bool hasTerminalsConnectedToEachOther = false;
-
                     var neighboors = cimObj.GetNeighbours();
-
-                    if (neighboors.Count == 2 && neighboors[0] == neighboors[1])
-                    {
-                        hasTerminalsConnectedToEachOther = true;
-                    }
 
                     if (!CheckIfProcessed(cimObj, false))
                     {
@@ -1860,8 +1837,6 @@ namespace DAX.IO.CIM.Serialization.CIM100
         private AssetInfo MapDummyAssetInfo(CIMIdentifiedObject cimObj, PowerSystemResource xmlObj, bool forceAssetRecord = false)
         {
             // Creates dummy asset info when cim.ref.assetinfo = null and cim.ref.productassetmodel <> null
-
-            bool containsAssetInfo = false;
 
             AssetExt asset = new AssetExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 20).ToString() };
 

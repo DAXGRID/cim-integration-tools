@@ -63,12 +63,7 @@ namespace DAX.IO.CIM
 
     public class CimErrorLogger
     {
-
-        private string _tableName = null;
-        private int _nextObjectId = 0;
-
         private Summary _theSummary = new Summary();
-
         private List<ErrorCode> _errorCodeList = null;
 
         public Summary getSummary() {

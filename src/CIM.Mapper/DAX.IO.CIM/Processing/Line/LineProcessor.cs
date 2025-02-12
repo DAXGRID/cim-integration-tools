@@ -22,9 +22,7 @@ namespace DAX.IO.CIM
         LineProcessingResult _result = new LineProcessingResult();
         string _connectionString = null;
         string _bayInfoSpName = null;
-        bool _incrementOrderOnParallelLineJunctions = false;
         bool _removeFirstChar = false;
-
 
         public void Run(CIMGraph g, CimErrorLogger tableLogger)
         {

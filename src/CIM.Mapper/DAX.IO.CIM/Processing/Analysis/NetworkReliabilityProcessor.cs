@@ -13,10 +13,6 @@ namespace DAX.IO.CIM
         CIMGraph _g = null;
         CimErrorLogger _tableLogger = null;
         NetworkReliabilityProcessingResult _result = new NetworkReliabilityProcessingResult();
-        string _connectionString = null;
-        string _bayInfoSpName = null;
-
-
         public void Initialize(string name, List<ConfigParameter> parameters = null)
         {
         }
