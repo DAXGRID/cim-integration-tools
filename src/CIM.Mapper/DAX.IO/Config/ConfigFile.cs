@@ -138,8 +138,6 @@ namespace DAX.IO
 
         public DataReaderWriterSpecification GetDataSourceByName(string name)
         {
-            List<DataReaderWriterSpecification> result = new List<DataReaderWriterSpecification>();
-
             foreach (var dw in DataWriters)
             {
                 if (dw.Name != null && dw.Name.ToLower() == name.ToLower())
