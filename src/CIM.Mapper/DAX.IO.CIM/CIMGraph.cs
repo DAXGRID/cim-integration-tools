@@ -100,24 +100,6 @@ namespace DAX.IO.CIM
                 return null;
         }
 
-        /*
-        public CIMIdentifiedObject? GetCIMObjectByExternalId(string externalId)
-        {
-            if (_cimObjByExternalId.ContainsKey(externalId))
-                return _cimObjByExternalId[externalId];
-            else
-                return null;
-        }
-
-        public CIMIdentifiedObject? GetCIMObjectByName(string name)
-        {
-            if (_cimObjByName.ContainsKey(name))
-                return _cimObjByName[name];
-            else
-                return null;
-        }
-        */
-
         public CIMIdentifiedObject GetCIMObjectByVertexId(int vertexId)
         {
             if (_cimObjByVertexId.ContainsKey(vertexId))
@@ -415,59 +397,6 @@ namespace DAX.IO.CIM
 
         public void IndexObject(CIMIdentifiedObject obj)
         {
-            /*
-            // Index externalid on all objects except ConnectivityNode and ConnectivityEdge (to save memory)
-            if (obj.ClassType != CIMClassEnum.ConnectivityNode && obj.ClassType != CIMClassEnum.ConnectivityEdge)
-            {
-                string exKey = obj.ClassType.ToString() + ":" + obj.ExternalId;
-                if (!_cimObjByExternalId.ContainsKey(exKey))
-                    _cimObjByExternalId.Add(exKey, obj);
-            }
-            
-
-
-            // Index name on substations, enclosures and enegyconsumers
-            if (obj.Name != null)
-            {
-                if (obj.ClassType == CIMClassEnum.Substation ||
-                    obj.ClassType == CIMClassEnum.Enclosure ||
-                    obj.ClassType == CIMClassEnum.EnergyConsumer ||
-                    obj.ClassType == CIMClassEnum.AsynchronousMachine ||
-                    obj.ClassType == CIMClassEnum.SynchronousMachine)
-                {
-                    //
-                    // Lots of enclosure share name with station
-                    // By prefixing the enclosure name with "Enclosure:" 
-                    string objName = obj.Name;
-                    if (obj.ClassType == CIMClassEnum.Enclosure)
-                        objName = "Enclosure:" + obj.Name;
-                    if (!_cimObjByName.ContainsKey(objName))
-                        _cimObjByName.Add(objName, obj);
-                    else
-                    {
-                        string errorMsg = "Duplicated name '" + obj.Name + "' detected trying to add CIM object " + obj.IdString() + " to name index.";
-
-                        if (!_dublicateLists.ContainsKey(obj.ClassType.ToString()))
-                            _dublicateLists[obj.ClassType.ToString()] = new List<string>();
-
-                        _dublicateLists[obj.ClassType.ToString()].Add(objName);
-
-
-                        CimErrorLogger.Log(Severity.Error, (int)GeneralErrors.NameNotUnique, errorMsg, obj);
-                    }
-                }
-                else if ((obj.ClassType == CIMClassEnum.PetersenCoil || obj.ClassType == CIMClassEnum.LinearShuntCompensator) && obj.EquipmentContainerRef != null)
-                {
-                    string indexKey = obj.EquipmentContainerRef.Name + "/" + obj.Name;
-
-                    if (!_cimObjByName.ContainsKey(indexKey))
-                        _cimObjByName.Add(indexKey, obj);
-                }
-            }
-
-            */
-
-
         }
 
         #endregion
