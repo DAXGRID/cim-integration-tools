@@ -47,22 +47,6 @@ namespace DAX.TransformerUtil
         {
             return _dataSets.Values.OrderBy(x => (x.CategoryName == null ? "" : x.CategoryName + ".") + x.Name).ToArray();
         }
-
-        
-
-
-
-        private Thread StartWorkerThread(ReaderWorker wi)
-        {
-            var newThread = new Thread(wi.DoWork);
-            newThread.Name = "DAXReader dataset: " + wi._dataSetName;
-            newThread.Start("hej");
-
-            wi._thread = newThread;
-
-            return newThread;
-        }
-
     }
 
     public class ReaderWorker
