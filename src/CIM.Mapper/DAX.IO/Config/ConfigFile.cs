@@ -124,12 +124,12 @@ namespace DAX.IO
 
             foreach (var dw in DataWriters)
             {
-                if (dw.ClassName != null && dw.ClassName.ToLower() == className.ToLower())
+                if (dw.ClassName is not null && dw.ClassName.Equals(className, StringComparison.OrdinalIgnoreCase))
                     result.Add(dw);
             }
             foreach (var dr in DataReaders)
             {
-                if (dr.ClassName != null && dr.ClassName.ToLower() == className.ToLower())
+                if (dr.ClassName is not null && dr.ClassName.Equals(className, StringComparison.OrdinalIgnoreCase))
                     result.Add(dr);
             }
 
@@ -140,12 +140,12 @@ namespace DAX.IO
         {
             foreach (var dw in DataWriters)
             {
-                if (dw.Name != null && dw.Name.ToLower() == name.ToLower())
+                if (dw.Name is not null && dw.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     return dw;
             }
             foreach (var dr in DataReaders)
             {
-                if (dr.Name != null && dr.Name.ToLower() == name.ToLower())
+                if (dr.Name is not null && dr.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     return dr;
             }
 
