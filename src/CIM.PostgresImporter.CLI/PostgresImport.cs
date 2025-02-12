@@ -33,7 +33,7 @@ internal static class PostgresImport
         int srid,
         int bulkInsertCount,
         string connectionString,
-        Dictionary<string, Type> schemaType,
+        Dictionary<string, SchemaTypeProperty> schemaType,
         string typeName,
         string schemaName,
         ChannelReader<Dictionary<string, JsonElement>> readerChannel)
@@ -43,7 +43,7 @@ internal static class PostgresImport
         using var dataSource = builder.Build();
         using var connection = await dataSource.OpenConnectionAsync().ConfigureAwait(false);
 
-        var copySql = PostgresSqlBuilder.BuildCopyBulkInsert(schemaType, typeName, schemaName);
+        var copySql = PostgresSqlBuilder.BuildCopyBulkInsert(schemaType.ToDictionary(x => x.Key, x => x.Value.Type), typeName, schemaName);
 
         var postgresqlBinaryWriter = await connection.BeginBinaryImportAsync(copySql).ConfigureAwait(false);
 
@@ -55,12 +55,27 @@ internal static class PostgresImport
 
             foreach (var schemaProperty in schemaType)
             {
-                var propertyType = schemaProperty.Value;
+                var propertyType = schemaProperty.Value.Type;
 
                 JsonElement? propertyValue = null;
-                if (properties.TryGetValue(schemaProperty.Key, out var pv))
+
+                // If it is a composite object we have to lookup the value in a different way.
+                if (schemaProperty.Value.ContainingObjectName is not null && schemaProperty.Value.InnerObjectName is not null)
                 {
-                    propertyValue = pv;
+                    if (properties.TryGetValue(schemaProperty.Value.ContainingObjectName, out var pv))
+                    {
+                        if (pv.TryGetProperty(schemaProperty.Value.InnerObjectName, out var innerPv))
+                        {
+                            propertyValue = innerPv;
+                        }
+                    }
+                }
+                else
+                {
+                    if (properties.TryGetValue(schemaProperty.Key, out var pv))
+                    {
+                        propertyValue = pv;
+                    }
                 }
 
                 dynamic? parameter = null;

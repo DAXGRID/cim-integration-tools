@@ -16,7 +16,13 @@ internal sealed record SchemaType
 internal sealed record SchemaTypeProperty
 {
     public required string Name { get; init; }
+
     public required Type Type { get; init; }
+
+    // This is a special case where we are dealing with a composite type.
+    public string? ContainingObjectName { get; init; }
+    public string? InnerObjectName { get; init; }
+
     public int SortNumber => GetSortNumber();
 
     private int GetSortNumber()
@@ -48,11 +54,21 @@ internal sealed record Point2D
 internal sealed class CompositeObject { }
 #pragma warning restore CA1812
 
+internal sealed class SchemaColumn
+{
+    public required string Name { get; init; }
+    public required Type Type { get; init; }
+
+    // This is a special case where we are dealing with a composite type.
+    public string? ContainingObjectName { get; init; }
+    public string? InnerObjectName { get; init; }
+}
+
 internal static class DynamicSchema
 {
     public static async Task<Schema> BuildFromJsonAsync(StreamReader reader)
     {
-        var schemas = new Dictionary<string, Dictionary<string, Type>>();
+        var schemas = new Dictionary<string, Dictionary<string, SchemaColumn>>();
 
         string? line;
         while ((line = await reader.ReadLineAsync().ConfigureAwait(false)) is not null)
@@ -75,7 +91,7 @@ internal static class DynamicSchema
 
             foreach (var property in properties)
             {
-                Dictionary<string, Type>? typeSchema;
+                Dictionary<string, SchemaColumn>? typeSchema;
                 if (!schemas.TryGetValue(typeName, out typeSchema))
                 {
                     typeSchema = new();
@@ -84,7 +100,33 @@ internal static class DynamicSchema
 
                 if (!typeSchema.ContainsKey(property.Key))
                 {
-                    typeSchema.Add(property.Key, ConvertJsonType((JsonElement)property.Value));
+                    var conversionType = ConvertJsonType((JsonElement)property.Value);
+                    if (conversionType != typeof(CompositeObject))
+                    {
+                        var schemaColumn = new SchemaColumn { Name = property.Key, Type = conversionType };
+                        typeSchema.Add(property.Key, schemaColumn);
+                    }
+                    else
+                    {
+                        var innerProperties = property.Value.Deserialize<Dictionary<string, JsonElement>>() ??
+                            throw new InvalidOperationException($"Could not deserialize inner object: '{property.Value.GetRawText()}'.");
+
+                        innerProperties.Remove("$type");
+
+                        foreach (var innerProperty in innerProperties)
+                        {
+                            var name = $"{property.Key}_{innerProperty.Key}";
+                            var schemaColumn = new SchemaColumn
+                            {
+                                Name = name,
+                                Type = ConvertJsonType((JsonElement)innerProperty.Value),
+                                ContainingObjectName = property.Key,
+                                InnerObjectName = innerProperty.Key
+                            };
+
+                            typeSchema.TryAdd(name, schemaColumn);
+                        }
+                    }
                 }
             }
         }
@@ -98,7 +140,13 @@ internal static class DynamicSchema
                 {
                     Name = x.Key,
                     Properties = x.Value
-                      .Select(y => new SchemaTypeProperty { Name = y.Key, Type = y.Value })
+                      .Select(y => new SchemaTypeProperty
+                      {
+                          Name = y.Key,
+                          Type = y.Value.Type,
+                          ContainingObjectName = y.Value.ContainingObjectName,
+                          InnerObjectName = y.Value.InnerObjectName
+                      })
                       .OrderByDescending(x => x.SortNumber)
                       .ThenBy(x => x.Name)
                       .ToList()

@@ -20,7 +20,6 @@ namespace CIM.Cson.Internals
                 Converters =
                 {
                    new ObjectReferenceSerializer(),
-                   new MeasurementTypeSerializer3(),
                    new StringEnumConverter()
                 },
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,

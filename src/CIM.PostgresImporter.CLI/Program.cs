@@ -137,7 +137,7 @@ internal static class Program
             .CreateImportSchemaAsync(connectionString, schema, schemaName)
             .ConfigureAwait(false);
 
-        var schemaTypeLookup = schema.Types.ToDictionary(x => x.Name, x => x.Properties.ToDictionary(y => y.Name, y => y.Type));
+        var schemaTypeLookup = schema.Types.ToDictionary(x => x.Name, x => x.Properties.ToDictionary(y => y.Name, y => y));
 
         var importChannelsLookup = new Dictionary<string, Channel<Dictionary<string, JsonElement>>>();
 
