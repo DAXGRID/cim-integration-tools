@@ -368,8 +368,6 @@ namespace DAX.IO
                 _inputActions = ParseInputActionString(InputActions);
 
             return ApplyInputActions(_inputActions, value);
-
-            return value;
         }
 
         private List<InputActionType> ParseInputActionString(string actions)

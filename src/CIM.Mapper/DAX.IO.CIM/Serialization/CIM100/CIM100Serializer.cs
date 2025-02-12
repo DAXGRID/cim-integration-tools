@@ -1641,8 +1641,6 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 var existingCimObj = _cimObjectHasBeenProcessed[guid];
 
                 throw new Exception(mRID + " already processed. Error in serialization. Existing obj: " + existingCimObj.ToString());
-
-                return true;
             }
             else
                 _cimObjectHasBeenProcessed.Add(guid, obj);
