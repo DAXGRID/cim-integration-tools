@@ -203,7 +203,6 @@ namespace DAX.IO.Writers
                
                 _switches.Add(feature);
             }
-
             else if (className == "powertransformer")
             {
                 Guid globalid = Guid.Parse(feature["cim.mrid"].ToString());
