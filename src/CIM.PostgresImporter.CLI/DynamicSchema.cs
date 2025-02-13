@@ -115,16 +115,19 @@ internal static class DynamicSchema
 
                         foreach (var innerProperty in innerProperties)
                         {
-                            var name = $"{property.Key}_{innerProperty.Key}";
-                            var schemaColumn = new SchemaColumn
+                            var typeSchemaName = $"{property.Key}_{innerProperty.Key}";
+                            if (!typeSchema.ContainsKey(typeSchemaName))
                             {
-                                Name = name,
-                                Type = ConvertJsonType((JsonElement)innerProperty.Value),
-                                ContainingObjectName = property.Key,
-                                InnerObjectName = innerProperty.Key
-                            };
+                                var schemaColumn = new SchemaColumn
+                                {
+                                    Name = typeSchemaName,
+                                    Type = ConvertJsonType((JsonElement)innerProperty.Value),
+                                    ContainingObjectName = property.Key,
+                                    InnerObjectName = innerProperty.Key
+                                };
 
-                            typeSchema.TryAdd(name, schemaColumn);
+                                typeSchema.Add(typeSchemaName, schemaColumn);
+                            }
                         }
                     }
                 }
