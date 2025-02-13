@@ -185,10 +185,6 @@ namespace DAX.IO.Writers
                     _aclinesegments.Add(feature);
                     dubletCheck.Add(globalid);
                 }
-                else
-                {
-
-                }
             }
             else if (className == "busbarsection")
                 _busbars.Add(feature);
