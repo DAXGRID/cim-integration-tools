@@ -1174,10 +1174,11 @@ namespace DAX.IO.Writers
 
 
                     // debug
+                    #if DEBUG
                     if (ci.mRID == Guid.Parse("43E2A656-B2AA-428B-8018-F540ACF3A724"))
                     {
                     }
-
+                    #endif
 
                     if (feature.Coordinates != null && feature.Coordinates.Length > 1)
                     {
