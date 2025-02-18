@@ -5,6 +5,7 @@ namespace CIM.TopologyProcessor
 {
     public class FlatFeederInfo : IdentifiedObject
     {
+        public SwitchStateType SwitchStateType { get; set; }
         public Guid EquipmentMRID { get; set; }
         public String EquipmentClass { get; set; }
         public String EquipmentPSRType { get; set; }
@@ -31,5 +32,12 @@ namespace CIM.TopologyProcessor
         {
             mRID = Guid.NewGuid().ToString();
         }
+    }
+
+    public enum SwitchStateType
+    {
+        GIS = 0,
+        Normal = 1,
+        Actual = 2
     }
 }
