@@ -1,7 +1,7 @@
 ﻿using CIM.PhysicalNetworkModel;
 using System;
 
-namespace CIM.PhysicalNetworkModel.FeederInfo
+namespace CIM.PhysicalNetworkModel
 {
     public class FlatFeederInfo : IdentifiedObject
     {
