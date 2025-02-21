@@ -549,7 +549,6 @@ namespace DAX.IO.Transformers
                         // Run through the features attributes
                         foreach (KeyValuePair<string, object> attribute in feature)
                         {
-                            //string attrKey = attribute.Key.ToLower();
                             string attrKey = attribute.Key;
 
                             AttributeMapping[] attrMappings = _transSpec.FindAttributeMappings(classKey, attrKey);
