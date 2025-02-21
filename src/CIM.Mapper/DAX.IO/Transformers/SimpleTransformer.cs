@@ -156,7 +156,6 @@ namespace DAX.IO.Transformers
                             // Transfer const values
                             foreach (var constValue in dsGuide.DataSetMapping.GetConstValues())
                                 outputFeature.Add(constValue.Key, constValue.Value);
-                                //outputFeature.Add(constValue.Key.ToLower(), constValue.Value);
 
                             // Transfer attribute values
                             foreach (var attrMapping in attrMappings)
@@ -164,7 +163,6 @@ namespace DAX.IO.Transformers
                                 if (attrMapping.InputFieldName != null)
                                 {
                                     string inputFieldKey = attrMapping.InputFieldName.ToLower();
-                                    //string inputFieldKey = attrMapping.InputFieldName;
 
                                     if (inputFeature.ContainsKey(inputFieldKey) && dsGuide.AttributeMappingGuides.ContainsKey(inputFieldKey))
                                     {
