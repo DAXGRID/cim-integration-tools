@@ -497,7 +497,6 @@ namespace DAX.IO.Transformers
                 // Run through all features in the dataset
                 foreach (DAXFeature feature in dataSet.Features)
                 {
-                    //string classKey = feature.ClassName.ToLower().Trim();
                     string classKey = feature.ClassName;
 
                     // Add feature to preview
