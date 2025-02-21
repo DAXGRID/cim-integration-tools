@@ -52,27 +52,24 @@ namespace CIM.Cson
 
             var callbackStream = new CallbackStream(request =>
             {
-                var lines = new List<string>(_lineBufferSize);
+                var linesStringBuilder = new StringBuilder();
 
                 while (enumerator.MoveNext())
                 {
-                    var current = enumerator.Current;
-                    var line = SerializeObject(current);
-                    lines.Add(string.Concat(line, Environment.NewLine));
+                    linesStringBuilder.Append(SerializeObject(enumerator.Current)).Append(Environment.NewLine);
 
-                    if (lines.Count >= _lineBufferSize)
+                    if (linesStringBuilder.Length >= _lineBufferSize)
                     {
-                        request.Write(Encoding.UTF8.GetBytes(string.Concat(lines)));
+                        request.Write(Encoding.UTF8.GetBytes(linesStringBuilder.ToString()));
+                        linesStringBuilder.Clear();
                         return;
                     }
                 }
 
-                if (lines.Count >= 0)
+                if (linesStringBuilder.Length >= 0)
                 {
-                    request.Write(Encoding.UTF8.GetBytes(string.Concat(lines)));
+                    request.Write(Encoding.UTF8.GetBytes(linesStringBuilder.ToString()));
                 }
-
-                enumerator.Dispose();
             }, enumerator);
 
             return callbackStream;
