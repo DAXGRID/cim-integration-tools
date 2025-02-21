@@ -12,9 +12,7 @@ namespace DAX.IO.Transformers
 {
     public class DataTransformer
     {
-
         public TransformationConfig TransformationConfig;
-
         private Dictionary<string, IDaxReader> _dataReaders = new Dictionary<string, IDaxReader>();
         private Dictionary<string, IDaxWriter> _dataWriters = new Dictionary<string, IDaxWriter>();
         private TransformationSpecification _transSpec = null;
@@ -24,7 +22,6 @@ namespace DAX.IO.Transformers
         private bool _trimAllStringValues = false;
         private bool _suppressEmptyStringValues = false;
         private DataOrganizer _organizer = null;
-
 
         public DataOrganizer GetDataOrganizer
         {
@@ -53,7 +50,6 @@ namespace DAX.IO.Transformers
             get { return _suppressEmptyStringValues; }
             set { _suppressEmptyStringValues = value; }
         }
-
 
         public MappingGuide GetMappingGuide()
         {
@@ -505,10 +501,6 @@ namespace DAX.IO.Transformers
                     string classKey = feature.ClassName;
 
                     // Add feature to preview
-                    //PreviewObject previewObject = new PreviewObject();
-                    //previewObject.GeometryType = feature.GeometryType;
-                    //previewObject.Coordinates = feature.ToStringWithoutZ();
-                    //_mappingGuide.PreviewObjects.Add(previewObject);
                     _mappingGuide.UpdateMinMaxValues(feature);
 
                     // Analyse and create mapping
