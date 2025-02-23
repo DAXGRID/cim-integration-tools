@@ -64,7 +64,7 @@ internal static class Program
         rootCommand.Add(outputFilePathOption);
 
         rootCommand.SetHandler(
-            (transformationConfigurationFile, tranformationSpecificationName, force, debugMode, serializerName, outputFilePath) =>
+            async (transformationConfigurationFile, tranformationSpecificationName, force, debugMode, serializerName, outputFilePath) =>
             {
                 // Check if transformation configuration file exists
                 if (!File.Exists(transformationConfigurationFile))
@@ -106,13 +106,13 @@ internal static class Program
                         {
                             Console.Error.WriteLine("Error found in mapping (se log). But will attempt to transfer data because of force parameter.");
                             transformer.TransferData();
-                            CheckForCIMProcessing(serializerName, outputFilePath, config, transformer);
+                            await CheckForCIMProcessingAsync(serializerName, outputFilePath, config, transformer).ConfigureAwait(false);
                         }
                     }
                     else
                     {
                         transformer.TransferData();
-                        CheckForCIMProcessing(serializerName, outputFilePath, config, transformer);
+                        await CheckForCIMProcessingAsync(serializerName, outputFilePath, config, transformer).ConfigureAwait(false);
                     }
                 }
             },
@@ -127,7 +127,7 @@ internal static class Program
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
 
-    private static void CheckForCIMProcessing(
+    private async static Task CheckForCIMProcessingAsync(
         string? serializerName,
         string? outputFileName,
         TransformationConfig config,
@@ -155,7 +155,7 @@ internal static class Program
                     {
                         using (var source = cson.SerializeObjects(result))
                         {
-                            source.CopyTo(destination);
+                            await source.CopyToAsync(destination).ConfigureAwait(false);
                         }
                     }
                 }
