@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.TopologyProcessor.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.TopologyProcessor.CLI", "src\CIM.TopologyProcessor.CLI\CIM.TopologyProcessor.CLI.csproj", "{92AA04F8-6EE2-44FC-AAEB-EBB10C0890F7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.Filter", "src\CIM.Filter\CIM.Filter.csproj", "{B6E0807D-D768-4B85-A5C7-487A8AA5DB5C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{92AA04F8-6EE2-44FC-AAEB-EBB10C0890F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92AA04F8-6EE2-44FC-AAEB-EBB10C0890F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92AA04F8-6EE2-44FC-AAEB-EBB10C0890F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6E0807D-D768-4B85-A5C7-487A8AA5DB5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6E0807D-D768-4B85-A5C7-487A8AA5DB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6E0807D-D768-4B85-A5C7-487A8AA5DB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6E0807D-D768-4B85-A5C7-487A8AA5DB5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +99,7 @@ Global
 		{C073A4FD-2856-4420-8F80-6C28D1F8012F} = {08FEBC24-E58F-4B22-8D17-C6EF1BBC5E44}
 		{295C6359-BF53-499B-B7CF-446A5A4D7F83} = {08FEBC24-E58F-4B22-8D17-C6EF1BBC5E44}
 		{92AA04F8-6EE2-44FC-AAEB-EBB10C0890F7} = {08FEBC24-E58F-4B22-8D17-C6EF1BBC5E44}
+		{B6E0807D-D768-4B85-A5C7-487A8AA5DB5C} = {08FEBC24-E58F-4B22-8D17-C6EF1BBC5E44}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AC1D4EDB-5346-43E9-8720-2CA4FA5D5421}

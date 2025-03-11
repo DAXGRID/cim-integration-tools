@@ -7,7 +7,6 @@
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://daxgrid.net/PhysicalNetworkModel_0_1")]
     public partial class Breaker : ProtectedSwitch
     {
-
         private CurrentFlow breakingCapacityField;
 
         /// <remarks/>

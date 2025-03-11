@@ -11,4 +11,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CIM.Core\CIM.Core.csproj" />
+    <ProjectReference Include="..\CIM.Cson\CIM.Cson.csproj" />
+  </ItemGroup>
+
 </Project>
