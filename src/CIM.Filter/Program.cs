@@ -108,9 +108,10 @@ internal static class Program
         using var outputFile = new StreamWriter(File.Open(outputFilePath, FileMode.Create));
         await foreach (var line in File.ReadLinesAsync(inputFilePath))
         {
-            var source = serializer.DeserializeObject(line);
+            // This is done for improved performance.
+            var mrid = JsonDocument.Parse(line).RootElement.GetProperty("mRID").GetString();
 
-            if (!idsToIncludeInOutput.Contains(source.mRID))
+            if (!idsToIncludeInOutput.Contains(mrid))
             {
                 continue;
             }
