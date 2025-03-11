@@ -32,7 +32,6 @@ internal static class Program
         const string outputFilePath = "./filter_output.jsonl";
 
         var idsToIncludeInOutput = new HashSet<string>();
-        var connectivityNodes = new HashSet<string>();
         var foundTypes = new HashSet<string>();
 
         var serializer = new CsonSerializer();
