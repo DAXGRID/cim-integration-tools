@@ -1,5 +1,4 @@
-﻿using CIM;
-using CIM.Cson;
+﻿using CIM.Cson;
 using CIM.PhysicalNetworkModel;
 using System.Text.Json;
 
@@ -36,10 +35,11 @@ internal static class Program
 
         var serializer = new CsonSerializer();
 
-        await foreach (var line in File.ReadLinesAsync(inputFilePath))
+        await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
         {
             var source = serializer.DeserializeObject(line);
-            var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line);
+            var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line)
+                ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
 
             if (source is ConductingEquipment)
             {
@@ -57,6 +57,8 @@ internal static class Program
                         }
                     }
                 }
+
+                foundTypes.Add(properties["$type"].ToString());
             }
         }
 
@@ -70,10 +72,17 @@ internal static class Program
 
             var foundTypesInternal = new HashSet<string>();
 
-            await foreach (var line in File.ReadLinesAsync(inputFilePath))
+            await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
             {
-                var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line);
+                var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line)
+                    ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
+
                 var internalType = properties["$type"].ToString();
+
+                if (foundTypes.Contains(internalType))
+                {
+                    continue;
+                }
 
                 if (idsToIncludeInOutput.Contains(properties["mRID"].ToString()))
                 {
@@ -89,7 +98,25 @@ internal static class Program
                         }
                     }
                 }
+                else
+                {
+                    foreach (var property in properties.Where(x => x.Key != "mRID"))
+                    {
+                        if (property.Value.TryGetGuidImpl(out var idReference))
+                        {
+                            if (idsToIncludeInOutput.Contains(idReference.ToString()))
+                            {
+                                if (idsToIncludeInOutput.Add(idReference.ToString()))
+                                {
+                                    foundTypesInternal.Add(internalType);
+                                    newInserted = true;
+                                }
 
+                                idsToIncludeInOutput.Add(properties["mRID"].ToString());
+                            }
+                        }
+                    }
+                }
             }
 
             foundTypes.UnionWith(foundTypesInternal);
@@ -105,17 +132,16 @@ internal static class Program
         Console.WriteLine($"Inserting a total of {idsToIncludeInOutput.Count}");
 
         using var outputFile = new StreamWriter(File.Open(outputFilePath, FileMode.Create));
-        await foreach (var line in File.ReadLinesAsync(inputFilePath))
+        await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
         {
             // This is done for improved performance.
-            var mrid = JsonDocument.Parse(line).RootElement.GetProperty("mRID").GetString();
+            var mrid = JsonDocument.Parse(line).RootElement.GetProperty("mRID").GetString()
+                ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
 
-            if (!idsToIncludeInOutput.Contains(mrid))
+            if (idsToIncludeInOutput.Contains(mrid))
             {
-                continue;
+                await outputFile.WriteLineAsync(line).ConfigureAwait(false);
             }
-
-            await outputFile.WriteLineAsync(line).ConfigureAwait(false);
         }
     }
 }
