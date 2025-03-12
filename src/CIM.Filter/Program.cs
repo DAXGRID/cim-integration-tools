@@ -45,39 +45,9 @@ internal static class Program
         // Build collection.
         await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
         {
-            var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line)
-                ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
-
-            var type = properties["$type"].ToString();
-            var mrid = Guid.Parse(properties["mRID"].ToString());
-
-            var guids = new HashSet<Guid>();
-            foreach (var x in properties.Values)
-            {
-                if (x.TryGetGuidImpl(out var guid))
-                {
-                    guids.Add(guid);
-                }
-            }
-
-            if (!typeIdIndex.TryGetValue(type, out var idIndex))
-            {
-                idIndex = new List<CimLookup>();
-                typeIdIndex.Add(type, idIndex);
-            }
-
-            idIndex.Add(new CimLookup { Mrid = mrid, Guids = guids });
-        }
-
-        var conductingTypes = new HashSet<string>();
-
-        await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
-        {
             var source = serializer.DeserializeObject(line);
             var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line)
                 ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
-
-            var type = properties["$type"].ToString();
 
             if (source is ConductingEquipment)
             {
@@ -85,8 +55,9 @@ internal static class Program
 
                 if (c.BaseVoltage >= 10000)
                 {
-                    idsToIncludeInOutput.Add(Guid.Parse(c.mRID));
-                    relatedIds.Add(Guid.Parse(c.mRID));
+                    var mrid = Guid.Parse(c.mRID);
+                    idsToIncludeInOutput.Add(mrid);
+                    relatedIds.Add(mrid);
 
                     var guids = new HashSet<Guid>();
                     foreach (var x in properties.Values)
@@ -102,18 +73,32 @@ internal static class Program
                         relatedIds.Add(x);
                     }
                 }
+            }
+            else
+            {
+                var type = properties["$type"].ToString();
+                var mrid = Guid.Parse(properties["mRID"].ToString());
 
-                conductingTypes.Add(type);
+                var guids = new HashSet<Guid>();
+                foreach (var x in properties.Values)
+                {
+                    if (x.TryGetGuidImpl(out var guid))
+                    {
+                        guids.Add(guid);
+                    }
+                }
+
+                if (!typeIdIndex.TryGetValue(type, out var idIndex))
+                {
+                    idIndex = new List<CimLookup>();
+                    typeIdIndex.Add(type, idIndex);
+                }
+
+                idIndex.Add(new CimLookup { Mrid = mrid, Guids = guids });
             }
         }
 
-        foreach (var conductingType in conductingTypes)
-        {
-            typeIdIndex.Remove(conductingType);
-        }
-
         var levelOne = new HashSet<string>(typeIdIndex.Select(x => x.Key));
-
         var iteration = 0;
         var previousCount = 0;
 
@@ -142,6 +127,8 @@ internal static class Program
                 }
             }
         }
+
+        Console.WriteLine($"Writing a total of {idsToIncludeInOutput.Count} CIM objects.");
 
         using var outputFile = new StreamWriter(File.Open(outputFilePath, FileMode.Create));
         await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
