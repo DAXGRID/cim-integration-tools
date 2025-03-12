@@ -1,25 +1,62 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.CommandLine;
 
 namespace CIM.Filter;
 
 internal static class Program
 {
-    public static async Task Main()
+    public static async Task<int> Main(string[] args)
     {
-        const string inputFilePath = "./mapper_output.jsonl";
-        const string outputFilePath = "./filter_output.jsonl";
-        const int baseVoltageLowerBound = 10000;
-        const int baseVoltageUppperBound = int.MaxValue;
+        var rootCommand = new RootCommand("CIM Filter CLI.");
+
+        var inputFilePathOption = new Option<string>(
+            name: "--input-file-path",
+            description: "The path to the input file, example: /home/user/my_file.jsonl."
+        )
+        { IsRequired = true };
+
+        var outputFilePathOption = new Option<string>(
+            name: "--output-file-path",
+            description: "The path to the output file, example: /home/user/my_file.jsonl."
+        )
+        { IsRequired = true };
+
+        var baseVoltageLowerBoundOption = new Option<int?>(
+            name: "--base-voltage-lower-bound",
+            description: "Example 400."
+        )
+        { IsRequired = false };
+
+        var baseVoltageUpperBoundOption = new Option<int?>(
+            name: "--base-voltage-upper-bound",
+            description: "Example 10000."
+        )
+        { IsRequired = false };
+
+        rootCommand.Add(inputFilePathOption);
+        rootCommand.Add(outputFilePathOption);
+        rootCommand.Add(baseVoltageLowerBoundOption);
+        rootCommand.Add(baseVoltageUpperBoundOption);
 
         var logger = LoggerFactory.Create(nameof(CIM.Filter.Program));
 
-        await ProcessFilterAsync(
-            logger,
-            inputFilePath,
-            outputFilePath,
-            baseVoltageLowerBound,
-            baseVoltageUppperBound
-        ).ConfigureAwait(false);
+        rootCommand.SetHandler(
+            async (inputFilePath, outputFilePath, baseVoltageLowerBound, baseVoltageUppperBound) =>
+            {
+                await ProcessFilterAsync(
+                    logger,
+                    inputFilePath,
+                    outputFilePath,
+                    baseVoltageLowerBound ?? 0,
+                    baseVoltageUppperBound ?? int.MaxValue
+                ).ConfigureAwait(false);
+            },
+            inputFilePathOption,
+            outputFilePathOption,
+            baseVoltageLowerBoundOption,
+            baseVoltageUpperBoundOption);
+
+        return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
 
     private static async Task ProcessFilterAsync(
