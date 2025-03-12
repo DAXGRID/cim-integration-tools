@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CIM.PhysicalNetworkModel;
+using Microsoft.Extensions.Logging;
 using System.CommandLine;
 
 namespace CIM.Filter.CLI;
@@ -68,10 +69,9 @@ internal static class Program
     {
         logger.LogInformation($"Filtering base voltage lower bound: '{baseVoltageLowerBound}', upper bound: '{baseVoltageUppperBound}'.");
         var idsToIncludeInOutput = await CimFilter
-            .BaseVoltageFilterAsync(
+            .ConductingEquipmentFilterAsync(
                 File.ReadLinesAsync(inputFilePath),
-                baseVoltageLowerBound,
-                baseVoltageUppperBound)
+                (ConductingEquipment c) => CimFilter.BaseVoltageFilter(baseVoltageLowerBound, baseVoltageUppperBound, c))
             .ConfigureAwait(false);
 
         logger.LogInformation($"Writing a total of {idsToIncludeInOutput.Count} CIM objects to {outputFilePath}.");

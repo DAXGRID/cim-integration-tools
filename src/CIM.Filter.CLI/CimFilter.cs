@@ -22,7 +22,12 @@ internal static class CimFilter
         }
     }
 
-    public static async Task<HashSet<Guid>> BaseVoltageFilterAsync(IAsyncEnumerable<string> jsonLines, int baseVoltageLowerBound, int baseVoltageUpperBound)
+    public static bool BaseVoltageFilter(int baseVoltageLowerBound, int baseVoltageUpperBound, ConductingEquipment c)
+    {
+        return c.BaseVoltage >= baseVoltageLowerBound && c.BaseVoltage <= baseVoltageUpperBound;
+    }
+
+    public static async Task<HashSet<Guid>> ConductingEquipmentFilterAsync(IAsyncEnumerable<string> jsonLines, Func<ConductingEquipment, bool> filter)
     {
         // Used to lookup each types with their relational structure.
         var typeIdIndex = new Dictionary<string, List<CimRelationStructure>>();
@@ -48,7 +53,7 @@ internal static class CimFilter
             {
                 var c = (ConductingEquipment)source;
 
-                if (c.BaseVoltage >= baseVoltageLowerBound && c.BaseVoltage <= baseVoltageUpperBound)
+                if (filter(c))
                 {
                     var mrid = Guid.Parse(c.mRID);
                     idsToIncludeInOutput.Add(mrid);
