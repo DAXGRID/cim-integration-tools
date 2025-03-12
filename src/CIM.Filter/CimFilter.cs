@@ -4,9 +4,25 @@ using System.Text.Json;
 
 namespace CIM.Filter;
 
-internal static class BaseVoltageFilter
+internal static class CimFilter
 {
-    public static async Task<HashSet<Guid>> FilterAsync(IAsyncEnumerable<string> jsonLines, int baseVoltageLowerBound, int baseVoltageUpperBound)
+    public static async IAsyncEnumerable<string> CimJsonLineFilter(IAsyncEnumerable<string> inputStream, HashSet<Guid> idsToIncludeInOutput)
+    {
+        await foreach (var line in inputStream.ConfigureAwait(false))
+        {
+            var mrid = Guid.Parse(
+                JsonDocument.Parse(line).RootElement.GetProperty("mRID").GetString()
+                  ?? throw new InvalidOperationException("Could not get the mRID from the line.")
+            );
+
+            if (idsToIncludeInOutput.Contains(mrid))
+            {
+                yield return line;
+            }
+        }
+    }
+
+    public static async Task<HashSet<Guid>> BaseVoltageFilterAsync(IAsyncEnumerable<string> jsonLines, int baseVoltageLowerBound, int baseVoltageUpperBound)
     {
         // Used to lookup each types with their relational structure.
         var typeIdIndex = new Dictionary<string, List<CimRelationStructure>>();

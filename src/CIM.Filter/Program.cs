@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace CIM.Filter;
+﻿namespace CIM.Filter;
 
 internal static class Program
 {
@@ -11,9 +9,19 @@ internal static class Program
         const int baseVoltageLowerBound = 10000;
         const int baseVoltageUppperBound = int.MaxValue;
 
+        await ProcessFilterAsync(
+            inputFilePath,
+            outputFilePath,
+            baseVoltageLowerBound,
+            baseVoltageUppperBound
+        ).ConfigureAwait(false);
+    }
+
+    private static async Task ProcessFilterAsync(string inputFilePath, string outputFilePath, int baseVoltageLowerBound, int baseVoltageUppperBound)
+    {
         Console.WriteLine($"Filtering base voltage lower bound: '{baseVoltageLowerBound}', upper bound: '{baseVoltageUppperBound}'.");
-        var idsToIncludeInOutput = await BaseVoltageFilter
-            .FilterAsync(
+        var idsToIncludeInOutput = await CimFilter
+            .BaseVoltageFilterAsync(
                 File.ReadLinesAsync(inputFilePath),
                 baseVoltageLowerBound,
                 baseVoltageUppperBound)
@@ -21,25 +29,9 @@ internal static class Program
 
         Console.WriteLine($"Writing a total of {idsToIncludeInOutput.Count} CIM objects to {outputFilePath}.");
         using var outputFile = new StreamWriter(File.Open(outputFilePath, FileMode.Create));
-        await foreach (var line in FilterOutputAsync(File.ReadLinesAsync(inputFilePath), idsToIncludeInOutput).ConfigureAwait(false))
+        await foreach (var line in CimFilter.CimJsonLineFilter(File.ReadLinesAsync(inputFilePath), idsToIncludeInOutput).ConfigureAwait(false))
         {
             await outputFile.WriteLineAsync(line).ConfigureAwait(false);
-        }
-    }
-
-    private static async IAsyncEnumerable<string> FilterOutputAsync(IAsyncEnumerable<string> inputStream, HashSet<Guid> idsToIncludeInOutput)
-    {
-        await foreach (var line in inputStream.ConfigureAwait(false))
-        {
-            var mrid = Guid.Parse(
-                JsonDocument.Parse(line).RootElement.GetProperty("mRID").GetString()
-                  ?? throw new InvalidOperationException("Could not get the mRID from the line.")
-            );
-
-            if (idsToIncludeInOutput.Contains(mrid))
-            {
-                yield return line;
-            }
         }
     }
 }
