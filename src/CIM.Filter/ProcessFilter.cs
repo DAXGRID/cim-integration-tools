@@ -6,7 +6,7 @@ namespace CIM.Filter;
 
 internal static class ProcessFilter
 {
-    public static async Task ProcessAsync(string inputFilePath, string outputFilePath, int baseVoltageLowerBound, int baseVoltageUpperBound)
+    public static async Task<HashSet<Guid>> ProcessAsync(IAsyncEnumerable<string> jsonLines, int baseVoltageLowerBound, int baseVoltageUpperBound)
     {
         // Used to lookup each types with their relational structure.
         var typeIdIndex = new Dictionary<string, List<CimRelationStructure>>();
@@ -19,9 +19,7 @@ internal static class ProcessFilter
 
         var serializer = new CsonSerializer();
 
-        Console.WriteLine($"Starting processing {inputFilePath}.");
-
-        await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
+        await foreach (var line in jsonLines.ConfigureAwait(false))
         {
             var source = serializer.DeserializeObject(line);
             var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line)
@@ -80,7 +78,6 @@ internal static class ProcessFilter
         }
 
         var typesToProcess = new HashSet<string>(typeIdIndex.Select(x => x.Key));
-        var iteration = 0;
         var previousCount = 0;
 
         // We stop if nothing is added to the output.
@@ -88,9 +85,6 @@ internal static class ProcessFilter
         while (previousCount != idsToIncludeInOutput.Count)
         {
             previousCount = idsToIncludeInOutput.Count;
-            iteration++;
-
-            Console.WriteLine($"Total count of types {typesToProcess.Count}. Total count of included '{idsToIncludeInOutput.Count}'.");
 
             foreach (var kvp in typeIdIndex.Where(x => typesToProcess.Contains(x.Key)))
             {
@@ -111,19 +105,7 @@ internal static class ProcessFilter
             }
         }
 
-        Console.WriteLine($"Writing a total of {idsToIncludeInOutput.Count} CIM objects.");
-        using var outputFile = new StreamWriter(File.Open(outputFilePath, FileMode.Create));
-        await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
-        {
-            var mrid = Guid.Parse(
-                JsonDocument.Parse(line).RootElement.GetProperty("mRID")!.GetString()
-                ?? throw new InvalidOperationException("Could not get the mRID from the line."));
-
-            if (idsToIncludeInOutput.Contains(mrid))
-            {
-                await outputFile.WriteLineAsync(line).ConfigureAwait(false);
-            }
-        }
+        return idsToIncludeInOutput;
     }
 
     // This is done because the default implementation throws an exception if it
