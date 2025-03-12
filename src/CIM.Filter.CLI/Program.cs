@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.CommandLine;
 
-namespace CIM.Filter;
+namespace CIM.Filter.CLI;
 
 internal static class Program
 {
@@ -38,7 +38,7 @@ internal static class Program
         rootCommand.Add(baseVoltageLowerBoundOption);
         rootCommand.Add(baseVoltageUpperBoundOption);
 
-        var logger = LoggerFactory.Create(nameof(CIM.Filter.Program));
+        var logger = LoggerFactory.Create(nameof(CIM.Filter.CLI.Program));
 
         rootCommand.SetHandler(
             async (inputFilePath, outputFilePath, baseVoltageLowerBound, baseVoltageUppperBound) =>

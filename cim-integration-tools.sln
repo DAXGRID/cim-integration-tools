@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.TopologyProcessor.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.TopologyProcessor.CLI", "src\CIM.TopologyProcessor.CLI\CIM.TopologyProcessor.CLI.csproj", "{92AA04F8-6EE2-44FC-AAEB-EBB10C0890F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.Filter", "src\CIM.Filter\CIM.Filter.csproj", "{B6E0807D-D768-4B85-A5C7-487A8AA5DB5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.Filter.CLI", "src\CIM.Filter.CLI\CIM.Filter.CLI.csproj", "{B6E0807D-D768-4B85-A5C7-487A8AA5DB5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

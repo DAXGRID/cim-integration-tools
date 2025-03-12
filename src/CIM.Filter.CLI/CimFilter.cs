@@ -2,7 +2,7 @@ using CIM.Cson;
 using CIM.PhysicalNetworkModel;
 using System.Text.Json;
 
-namespace CIM.Filter;
+namespace CIM.Filter.CLI;
 
 internal static class CimFilter
 {
