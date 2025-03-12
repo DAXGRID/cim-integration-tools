@@ -11,13 +11,13 @@ internal static class Program
 
         var inputFilePathOption = new Option<string>(
             name: "--input-file-path",
-            description: "The path to the input file, example: /home/user/my_file.jsonl."
+            description: "The path to the input file, example: /home/user/my_input_file.jsonl."
         )
         { IsRequired = true };
 
         var outputFilePathOption = new Option<string>(
             name: "--output-file-path",
-            description: "The path to the output file, example: /home/user/my_file.jsonl."
+            description: "The path to the output file, example: /home/user/my_output_file.jsonl."
         )
         { IsRequired = true };
 
