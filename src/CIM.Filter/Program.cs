@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace CIM.Filter;
 
-internal sealed record CimLookup
+internal sealed record CimRelationStructure
 {
     public required Guid Mrid { get; init; }
     public required HashSet<Guid> Guids { get; init; }
@@ -36,19 +36,33 @@ internal static class Program
         const string inputFilePath = "./mapper_output.jsonl";
         const string outputFilePath = "./filter_output.jsonl";
 
-        var typeIdIndex = new Dictionary<string, List<CimLookup>>();
+        await ApplyFilterAsync(inputFilePath, outputFilePath).ConfigureAwait(false);
+    }
+
+    private static async Task ApplyFilterAsync(string inputFilePath, string outputFilePath)
+    {
+        // Used to lookup each types with their relational structure.
+        var typeIdIndex = new Dictionary<string, List<CimRelationStructure>>();
+
+        // Collection for storing all the mrids that has been filtered.
         var idsToIncludeInOutput = new HashSet<Guid>();
+
+        // Collection used to store the related ids.
         var relatedIds = new HashSet<Guid>();
 
         var serializer = new CsonSerializer();
 
-        // Build collection.
+        Console.WriteLine($"Starting processing {inputFilePath}.");
+
         await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
         {
             var source = serializer.DeserializeObject(line);
             var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line)
                 ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
 
+            // In case it is ConductingEquipment we only want the ones in the filter.
+            // We handle both cases in this single passthrough to speed up the process.
+            // It might make the code a bit uglier, but it is much faster on larger datasets.
             if (source is ConductingEquipment)
             {
                 var c = (ConductingEquipment)source;
@@ -90,26 +104,28 @@ internal static class Program
 
                 if (!typeIdIndex.TryGetValue(type, out var idIndex))
                 {
-                    idIndex = new List<CimLookup>();
+                    idIndex = new List<CimRelationStructure>();
                     typeIdIndex.Add(type, idIndex);
                 }
 
-                idIndex.Add(new CimLookup { Mrid = mrid, Guids = guids });
+                idIndex.Add(new CimRelationStructure { Mrid = mrid, Guids = guids });
             }
         }
 
-        var levelOne = new HashSet<string>(typeIdIndex.Select(x => x.Key));
+        var typesToProcess = new HashSet<string>(typeIdIndex.Select(x => x.Key));
         var iteration = 0;
         var previousCount = 0;
 
+        // We stop if nothing is added to the output.
+        // It means that all relations has been found.
         while (previousCount != idsToIncludeInOutput.Count)
         {
             previousCount = idsToIncludeInOutput.Count;
             iteration++;
 
-            Console.WriteLine($"Total count of types {levelOne.Count}. Total count of included {idsToIncludeInOutput.Count}");
+            Console.WriteLine($"Total count of types {typesToProcess.Count}. Total count of included '{idsToIncludeInOutput.Count}'.");
 
-            foreach (var kvp in typeIdIndex.Where(x => levelOne.Contains(x.Key)))
+            foreach (var kvp in typeIdIndex.Where(x => typesToProcess.Contains(x.Key)))
             {
                 foreach (var v in kvp.Value)
                 {
@@ -122,19 +138,19 @@ internal static class Program
                             relatedIds.Add(x);
                         }
 
-                        levelOne.Remove(kvp.Key);
+                        typesToProcess.Remove(kvp.Key);
                     }
                 }
             }
         }
 
         Console.WriteLine($"Writing a total of {idsToIncludeInOutput.Count} CIM objects.");
-
         using var outputFile = new StreamWriter(File.Open(outputFilePath, FileMode.Create));
         await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
         {
-            // This is done for improved performance.
-            var mrid = Guid.Parse(JsonDocument.Parse(line).RootElement.GetProperty("mRID").GetString());
+            var mrid = Guid.Parse(
+                JsonDocument.Parse(line).RootElement.GetProperty("mRID")!.GetString()
+                ?? throw new InvalidOperationException("Could not get the mRID from the line."));
 
             if (idsToIncludeInOutput.Contains(mrid))
             {
