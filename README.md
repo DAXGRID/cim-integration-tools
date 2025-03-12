@@ -36,3 +36,13 @@ Example of how to use the CIM.PostgresImporter.CLI.
   --input-file="./my-input-file.jsonl" \
   --output-file="./my-output-file.jsonl"
 ```
+
+## CIM Filter
+
+```sh
+./CIM.Filter.CLI \
+    --input-file-path=./mapper_output.jsonl \
+    --output-file-path=./filter_output.json \
+    --base-voltage-lower-bound=400 \
+    --base-voltage-upper-bound=9999
+```
