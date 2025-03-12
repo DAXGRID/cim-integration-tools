@@ -4,9 +4,9 @@ using System.Text.Json;
 
 namespace CIM.Filter;
 
-internal static class ProcessFilter
+internal static class BaseVoltageFilter
 {
-    public static async Task<HashSet<Guid>> ProcessAsync(IAsyncEnumerable<string> jsonLines, int baseVoltageLowerBound, int baseVoltageUpperBound)
+    public static async Task<HashSet<Guid>> FilterAsync(IAsyncEnumerable<string> jsonLines, int baseVoltageLowerBound, int baseVoltageUpperBound)
     {
         // Used to lookup each types with their relational structure.
         var typeIdIndex = new Dictionary<string, List<CimRelationStructure>>();

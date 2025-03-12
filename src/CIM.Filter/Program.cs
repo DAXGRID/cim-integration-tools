@@ -11,30 +11,34 @@ internal static class Program
         const int baseVoltageLowerBound = 10000;
         const int baseVoltageUppperBound = int.MaxValue;
 
-        var idsToIncludeInOutput = await ProcessFilter
-            .ProcessAsync(
+        Console.WriteLine($"Filtering base voltage lower bound: '{baseVoltageLowerBound}', upper bound: '{baseVoltageUppperBound}'.");
+        var idsToIncludeInOutput = await BaseVoltageFilter
+            .FilterAsync(
                 File.ReadLinesAsync(inputFilePath),
                 baseVoltageLowerBound,
                 baseVoltageUppperBound)
             .ConfigureAwait(false);
 
-        await WriteOutputAsync(inputFilePath, outputFilePath, idsToIncludeInOutput).ConfigureAwait(false);
+        Console.WriteLine($"Writing a total of {idsToIncludeInOutput.Count} CIM objects to {outputFilePath}.");
+        using var outputFile = new StreamWriter(File.Open(outputFilePath, FileMode.Create));
+        await foreach (var line in FilterOutputAsync(File.ReadLinesAsync(inputFilePath), idsToIncludeInOutput).ConfigureAwait(false))
+        {
+            await outputFile.WriteLineAsync(line).ConfigureAwait(false);
+        }
     }
 
-    private static async Task WriteOutputAsync(string inputFilePath, string outputFilePath, HashSet<Guid> idsToIncludeInOutput)
+    private static async IAsyncEnumerable<string> FilterOutputAsync(IAsyncEnumerable<string> inputStream, HashSet<Guid> idsToIncludeInOutput)
     {
-        Console.WriteLine($"Writing a total of {idsToIncludeInOutput.Count} CIM objects.");
-
-        using var outputFile = new StreamWriter(File.Open(outputFilePath, FileMode.Create));
-        await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
+        await foreach (var line in inputStream.ConfigureAwait(false))
         {
             var mrid = Guid.Parse(
-                JsonDocument.Parse(line).RootElement.GetProperty("mRID")!.GetString()
-                ?? throw new InvalidOperationException("Could not get the mRID from the line."));
+                JsonDocument.Parse(line).RootElement.GetProperty("mRID").GetString()
+                  ?? throw new InvalidOperationException("Could not get the mRID from the line.")
+            );
 
             if (idsToIncludeInOutput.Contains(mrid))
             {
-                await outputFile.WriteLineAsync(line).ConfigureAwait(false);
+                yield return line;
             }
         }
     }
