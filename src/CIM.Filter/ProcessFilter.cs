@@ -6,7 +6,7 @@ namespace CIM.Filter;
 
 internal static class ProcessFilter
 {
-    public static async Task ProcessAsync(string inputFilePath, string outputFilePath)
+    public static async Task ProcessAsync(string inputFilePath, string outputFilePath, int baseVoltageLowerBound, int baseVoltageUpperBound)
     {
         // Used to lookup each types with their relational structure.
         var typeIdIndex = new Dictionary<string, List<CimRelationStructure>>();
@@ -34,7 +34,7 @@ internal static class ProcessFilter
             {
                 var c = (ConductingEquipment)source;
 
-                if (c.BaseVoltage >= 10000)
+                if (c.BaseVoltage >= baseVoltageLowerBound && c.BaseVoltage <= baseVoltageUpperBound)
                 {
                     var mrid = Guid.Parse(c.mRID);
                     idsToIncludeInOutput.Add(mrid);
