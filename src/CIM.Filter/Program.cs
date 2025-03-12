@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace CIM.Filter;
 
-internal sealed record TestType
+internal sealed record CimLookup
 {
     public required Guid Mrid { get; init; }
     public required HashSet<Guid> Guids { get; init; }
@@ -36,7 +36,7 @@ internal static class Program
         const string inputFilePath = "./mapper_output.jsonl";
         const string outputFilePath = "./filter_output.jsonl";
 
-        var typeIdIndex = new Dictionary<string, List<TestType>>();
+        var typeIdIndex = new Dictionary<string, List<CimLookup>>();
         var idsToIncludeInOutput = new HashSet<Guid>();
         var relatedIds = new HashSet<Guid>();
 
@@ -60,12 +60,13 @@ internal static class Program
                 }
             }
 
-            if (!typeIdIndex.ContainsKey(type))
+            if (!typeIdIndex.TryGetValue(type, out var idIndex))
             {
-                typeIdIndex.Add(type, new());
+                idIndex = new List<CimLookup>();
+                typeIdIndex.Add(type, idIndex);
             }
 
-            typeIdIndex[type].Add(new TestType { Mrid = mrid, Guids = guids });
+            idIndex.Add(new CimLookup { Mrid = mrid, Guids = guids });
         }
 
         var conductingTypes = new HashSet<string>();
@@ -82,7 +83,7 @@ internal static class Program
             {
                 var c = (ConductingEquipment)source;
 
-                if (c.BaseVoltage < 10000)
+                if (c.BaseVoltage >= 10000)
                 {
                     idsToIncludeInOutput.Add(Guid.Parse(c.mRID));
                     relatedIds.Add(Guid.Parse(c.mRID));
