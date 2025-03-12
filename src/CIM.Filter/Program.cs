@@ -4,6 +4,12 @@ using System.Text.Json;
 
 namespace CIM.Filter;
 
+internal sealed record TestType
+{
+    public required Guid Mrid { get; init; }
+    public required HashSet<Guid> Guids { get; init; }
+}
+
 internal static class Program
 {
     public static bool TryGetGuidImpl(this JsonElement element, out Guid guid)
@@ -30,10 +36,39 @@ internal static class Program
         const string inputFilePath = "./mapper_output.jsonl";
         const string outputFilePath = "./filter_output.jsonl";
 
-        var idsToIncludeInOutput = new HashSet<string>();
-        var foundTypes = new HashSet<string>();
+        var typeIdIndex = new Dictionary<string, List<TestType>>();
+        var idsToIncludeInOutput = new HashSet<Guid>();
+        var relatedIds = new HashSet<Guid>();
 
         var serializer = new CsonSerializer();
+
+        // Build collection.
+        await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
+        {
+            var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line)
+                ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
+
+            var type = properties["$type"].ToString();
+            var mrid = Guid.Parse(properties["mRID"].ToString());
+
+            var guids = new HashSet<Guid>();
+            foreach (var x in properties.Values)
+            {
+                if (x.TryGetGuidImpl(out var guid))
+                {
+                    guids.Add(guid);
+                }
+            }
+
+            if (!typeIdIndex.ContainsKey(type))
+            {
+                typeIdIndex.Add(type, new());
+            }
+
+            typeIdIndex[type].Add(new TestType { Mrid = mrid, Guids = guids });
+        }
+
+        var conductingTypes = new HashSet<string>();
 
         await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
         {
@@ -41,102 +76,77 @@ internal static class Program
             var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line)
                 ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
 
+            var type = properties["$type"].ToString();
+
             if (source is ConductingEquipment)
             {
                 var c = (ConductingEquipment)source;
 
-                if (c.BaseVoltage >= 10000)
+                if (c.BaseVoltage < 10000)
                 {
-                    idsToIncludeInOutput.Add(c.mRID);
-                    var filteredProperties = properties.Where(x => x.Key != "mRID").ToList();
-                    foreach (var fp in filteredProperties)
+                    idsToIncludeInOutput.Add(Guid.Parse(c.mRID));
+                    relatedIds.Add(Guid.Parse(c.mRID));
+
+                    var guids = new HashSet<Guid>();
+                    foreach (var x in properties.Values)
                     {
-                        if (fp.Value.TryGetGuidImpl(out var idReferenceInner))
+                        if (x.TryGetGuidImpl(out var guid))
                         {
-                            idsToIncludeInOutput.Add(idReferenceInner.ToString());
+                            guids.Add(guid);
                         }
+                    }
+
+                    foreach (var x in guids)
+                    {
+                        relatedIds.Add(x);
                     }
                 }
 
-                foundTypes.Add(properties["$type"].ToString());
+                conductingTypes.Add(type);
             }
         }
 
-        var newInserted = true;
-        var counter = 0;
-        while (newInserted)
+        foreach (var conductingType in conductingTypes)
         {
-            counter++;
-            newInserted = false;
-            Console.WriteLine($"Iteration: {counter}. Total found: {idsToIncludeInOutput.Count}");
+            typeIdIndex.Remove(conductingType);
+        }
 
-            var foundTypesInternal = new HashSet<string>();
+        var levelOne = new HashSet<string>(typeIdIndex.Select(x => x.Key));
 
-            await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
+        var iteration = 0;
+        var previousCount = 0;
+
+        while (previousCount != idsToIncludeInOutput.Count)
+        {
+            previousCount = idsToIncludeInOutput.Count;
+            iteration++;
+
+            Console.WriteLine($"Total count of types {levelOne.Count}. Total count of included {idsToIncludeInOutput.Count}");
+
+            foreach (var kvp in typeIdIndex.Where(x => levelOne.Contains(x.Key)))
             {
-                var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line)
-                    ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
-
-                var internalType = properties["$type"].ToString();
-
-                if (foundTypes.Contains(internalType))
+                foreach (var v in kvp.Value)
                 {
-                    continue;
-                }
-
-                if (idsToIncludeInOutput.Contains(properties["mRID"].ToString()))
-                {
-                    foreach (var property in properties.Where(x => x.Key != "mRID"))
+                    if (relatedIds.Overlaps(v.Guids))
                     {
-                        if (property.Value.TryGetGuidImpl(out var idReference))
+                        idsToIncludeInOutput.Add(v.Mrid);
+                        relatedIds.Add(v.Mrid);
+                        foreach (var x in v.Guids)
                         {
-                            foundTypesInternal.Add(internalType);
-                            if (idsToIncludeInOutput.Add(idReference.ToString()))
-                            {
-                                newInserted = true;
-                            }
+                            relatedIds.Add(x);
                         }
-                    }
-                }
-                else
-                {
-                    foreach (var property in properties.Where(x => x.Key != "mRID"))
-                    {
-                        if (property.Value.TryGetGuidImpl(out var idReference))
-                        {
-                            if (idsToIncludeInOutput.Contains(idReference.ToString()))
-                            {
-                                if (idsToIncludeInOutput.Add(idReference.ToString()))
-                                {
-                                    foundTypesInternal.Add(internalType);
-                                    newInserted = true;
-                                }
 
-                                idsToIncludeInOutput.Add(properties["mRID"].ToString());
-                            }
-                        }
+                        levelOne.Remove(kvp.Key);
                     }
                 }
             }
-
-            foundTypes.UnionWith(foundTypesInternal);
         }
-
-        Console.WriteLine($"The following types was found.");
-
-        foreach (var foundType in foundTypes)
-        {
-            Console.WriteLine(foundType);
-        }
-
-        Console.WriteLine($"Inserting a total of {idsToIncludeInOutput.Count}");
 
         using var outputFile = new StreamWriter(File.Open(outputFilePath, FileMode.Create));
         await foreach (var line in File.ReadLinesAsync(inputFilePath).ConfigureAwait(false))
         {
             // This is done for improved performance.
-            var mrid = JsonDocument.Parse(line).RootElement.GetProperty("mRID").GetString()
-                ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
+            var mrid = Guid.Parse(JsonDocument.Parse(line).RootElement.GetProperty("mRID").GetString());
 
             if (idsToIncludeInOutput.Contains(mrid))
             {
