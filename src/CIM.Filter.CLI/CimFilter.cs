@@ -59,18 +59,12 @@ internal static class CimFilter
                     idsToIncludeInOutput.Add(mrid);
                     relatedIds.Add(mrid);
 
-                    var guids = new HashSet<Guid>();
                     foreach (var x in properties.Values)
                     {
                         if (x.TryGetGuidImpl(out var guid))
                         {
-                            guids.Add(guid);
+                            relatedIds.Add(guid);
                         }
-                    }
-
-                    foreach (var x in guids)
-                    {
-                        relatedIds.Add(x);
                     }
                 }
             }
@@ -98,9 +92,6 @@ internal static class CimFilter
             }
         }
 
-        var typesToProcess = new HashSet<string>(typeIdIndex.Select(x => x.Key));
-        var previousCount = 0;
-
         // Some types requires to be ran multiple times.
         // Because they can be multiple references out.
         var allowMultipleRuns = new HashSet<string>
@@ -110,6 +101,11 @@ internal static class CimFilter
             "LocationExt",
             "BayExt"
         };
+
+        // HashSet to keep track of which types we want to collect.
+        var typesToProcess = new HashSet<string>(typeIdIndex.Select(x => x.Key));
+
+        var previousCount = 0;
 
         // We stop if nothing is added to the output.
         // It means that all relations has been found.
