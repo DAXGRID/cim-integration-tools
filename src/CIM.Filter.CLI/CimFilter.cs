@@ -80,9 +80,9 @@ internal static class CimFilter
                 var mrid = Guid.Parse(properties["mRID"].ToString());
 
                 var guids = new HashSet<Guid>();
-                foreach (var x in properties.Values)
+                foreach (var jsonElement in properties.Values)
                 {
-                    if (x.TryGetGuidImpl(out var guid))
+                    if (jsonElement.TryGetGuidImpl(out var guid))
                     {
                         guids.Add(guid);
                     }
