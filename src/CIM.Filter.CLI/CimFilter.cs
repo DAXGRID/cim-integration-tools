@@ -101,6 +101,16 @@ internal static class CimFilter
         var typesToProcess = new HashSet<string>(typeIdIndex.Select(x => x.Key));
         var previousCount = 0;
 
+        // Some types requires to be ran multiple times.
+        // Because they can be multiple references out.
+        var allowMultipleRuns = new HashSet<string>
+        {
+            "VoltageLevel",
+            "Substation",
+            "LocationExt",
+            "BayExt"
+        };
+
         // We stop if nothing is added to the output.
         // It means that all relations has been found.
         while (previousCount != idsToIncludeInOutput.Count)
@@ -120,7 +130,10 @@ internal static class CimFilter
                             relatedIds.Add(x);
                         }
 
-                        typesToProcess.Remove(kvp.Key);
+                        if (!allowMultipleRuns.Contains(kvp.Key))
+                        {
+                            typesToProcess.Remove(kvp.Key);
+                        }
                     }
                 }
             }
