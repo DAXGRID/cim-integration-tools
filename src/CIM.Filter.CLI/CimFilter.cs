@@ -125,9 +125,9 @@ internal static class CimFilter
                     {
                         idsToIncludeInOutput.Add(v.Mrid);
                         relatedIds.Add(v.Mrid);
-                        foreach (var x in v.Guids)
+                        foreach (var relationMrid in v.Guids)
                         {
-                            relatedIds.Add(x);
+                            relatedIds.Add(relationMrid);
                         }
 
                         if (!allowMultipleRuns.Contains(kvp.Key))
