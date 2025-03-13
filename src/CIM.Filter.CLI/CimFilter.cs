@@ -92,16 +92,6 @@ internal static class CimFilter
             }
         }
 
-        // Some types requires to be ran multiple times.
-        // Because they can be multiple references out.
-        var allowMultipleRuns = new HashSet<string>
-        {
-            "VoltageLevel",
-            "Substation",
-            "LocationExt",
-            "BayExt"
-        };
-
         // HashSet to keep track of which types we want to collect.
         var typesToProcess = new HashSet<string>(typeIdIndex.Select(x => x.Key));
 
@@ -126,7 +116,10 @@ internal static class CimFilter
                             relatedIds.Add(relationMrid);
                         }
 
-                        if (!allowMultipleRuns.Contains(kvp.Key))
+                        // We do not allow certain types to run multiple times.
+                        // Because they will reference Conducting equipment and it will give
+                        // us the full network.
+                        if (kvp.Key == "Terminal")
                         {
                             typesToProcess.Remove(kvp.Key);
                         }
