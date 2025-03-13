@@ -11,8 +11,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
     {
         public static double GetPrimaryVoltageLevel(this Substation st, CimContext context)
         {
-            context = context;
-
             var voltageLevels = context.GetSubstationVoltageLevels(st);
 
             double voltageLevel = 0;
@@ -45,8 +43,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 
         public static VoltageLevel GetVoltageLevel(this Substation st, double voltageLevel, CimContext context, bool throwIfNotFound = true)
         {
-            context = context;
-
             var voltageLevels = context.GetSubstationVoltageLevels(st);
 
             VoltageLevel foundVoltageLevel = null;
@@ -72,8 +68,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
         /// <returns></returns>
         public static List<Equipment> GetEquipments(this Substation st, CimContext context)
         {
-            context = context;
-
             return context.GetSubstationEquipments(st);
         }
     }

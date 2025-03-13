@@ -42,24 +42,15 @@ namespace CIM.PhysicalNetworkModel.LineInfo
                     ).ToList();
 
                     List<EndInfo> ends = new List<EndInfo>();
-                    bool energyConsumersFound = false;
                       
                     // Find reached substations
                     foreach (var traceObj in firstFoundACLSTraceResult)
                     {
-
-                        if (traceObj.mRID == "b2bcbb4e-b4fd-4f51-89c5-cdc95d3377cc")
-                        {
-                        }
-
                         if (!alreadyProcesseed.Contains(traceObj))
                             alreadyProcesseed.Add(traceObj);
 
                         if (traceObj.IsInsideSubstation(_cimContext) && traceObj.GetSubstation(_cimContext).PSRType != "T-Junction")
                             ends.Add(new EndInfo() { StartObj = traceObj, Substation = traceObj.GetSubstation(_cimContext), Bay = traceObj.GetBay(_cimContext) });
-
-                        if (traceObj is EnergyConsumer)
-                            energyConsumersFound = true;
                     }
 
                     // If two ends found, and no energy consumers found, we're dealing with a real "line" according to NRGi DSO

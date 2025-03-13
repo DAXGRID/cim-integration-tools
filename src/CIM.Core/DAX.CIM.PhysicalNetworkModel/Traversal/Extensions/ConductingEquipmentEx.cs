@@ -8,8 +8,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
     {
         public static IEnumerable<IdentifiedObject> Traverse(this IdentifiedObject start, CimContext context, Predicate<ConductingEquipment> ciCriteria, Predicate<ConnectivityNode> cnCriteria = null, bool includeEquipmentsWhereCriteriaIsFalse = false)
         {
-            context = context;
-
             var traversal = new BasicTraversal(start);
 
             return traversal.DFS(context, ciCriteria, cnCriteria, includeEquipmentsWhereCriteriaIsFalse);
@@ -17,8 +15,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 
         public static IEnumerable<IdentifiedObjectWithHopInfo> TraverseWithHopInfo(this IdentifiedObject start, CimContext context, Predicate<ConductingEquipment> ciCriteria, Predicate<ConnectivityNode> cnCriteria = null, bool includeEquipmentsWhereCriteriaIsFalse = false)
         {
-            context = context;
-
             var traversal = new BasicTraversal(start);
 
             return traversal.DFSWithHopInfo(ciCriteria, cnCriteria, includeEquipmentsWhereCriteriaIsFalse, context);
@@ -31,8 +27,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 
         public static bool IsInsideSubstation(this IdentifiedObject identifiedObject, CimContext context)
         {
-            context = context;
-
             if (identifiedObject is Equipment)
                 return ((Equipment)identifiedObject).GetSubstation(context, false) != null;
 
@@ -75,15 +69,11 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 
         public static bool IsInsideSubstation(this VoltageLevel voltageLevel, CimContext context)
         {
-            context = context;
-
             return voltageLevel.GetSubstation(context, false) != null;
         }
 
         public static Substation GetSubstation(this EquipmentContainer equipmentContainer, CimContext context, bool throwIfNotFound = true)
         {
-            context = context;
-
             if (equipmentContainer is Substation)
             {
                 return (Substation)equipmentContainer;
@@ -110,8 +100,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 
         public static Substation GetSubstation(this Equipment conductingEquipment, CimContext context, bool throwIfNotFound = true)
         {
-            context = context;
-
             if (throwIfNotFound)
             {
                 var equipmentContainer = conductingEquipment.EquipmentContainer.Get(context);
@@ -125,7 +113,7 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
                     var equipmentContainer = conductingEquipment.EquipmentContainer.Get(context);
                     return equipmentContainer.GetSubstation(context, throwIfNotFound);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return null;
                 }
@@ -134,8 +122,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 
         public static Substation GetSubstation(this ConnectivityNode connectivityNode, CimContext context, bool throwIfNotFound = true)
         {
-            context = context;
-
             var neighbors = context.GetConnections(connectivityNode);
 
             foreach (var n in neighbors)
@@ -149,8 +135,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 
         public static Substation GetSubstation(this IdentifiedObject identifiedObject, CimContext context, bool throwIfNotFound = true)
         {
-            context = context;
-
             if (identifiedObject is Equipment)
                 return GetSubstation((Equipment)identifiedObject, context, throwIfNotFound);
             else if (identifiedObject is ConnectivityNode)
@@ -171,8 +155,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 
         public static List<ConductingEquipment> GetNeighborConductingEquipments(this ConductingEquipment conductingEquipment, CimContext context)
         {
-            context = context;
-
             List<ConductingEquipment> result = new List<ConductingEquipment>();
 
             var eqConnections = context.GetConnections(conductingEquipment);
@@ -192,8 +174,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 
         public static List<ConductingEquipment> GetNeighborConductingEquipments(this ConnectivityNode cn, CimContext context)
         {
-            context = context;
-
             List<ConductingEquipment> result = new List<ConductingEquipment>();
 
             var cnConnections = context.GetConnections(cn);
@@ -208,8 +188,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
 
         public static Bay GetBay(this IdentifiedObject identifiedObject, CimContext context, bool throwIfNotFound = true)
         {
-            context = context;
-
             if (identifiedObject is Equipment)
             {
                 var equipmentContainer = ((Equipment)identifiedObject).EquipmentContainer.Get(context);
@@ -246,22 +224,16 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
             if (equipmentEquipmentContainer == null)
                 return null;
 
-            context = context;
-
             return context.GetObject<EquipmentContainer>(equipmentEquipmentContainer.@ref);
         }
 
         public static EquipmentContainer Get(this VoltageLevelEquipmentContainer voltageLevelEquipmentContainer, CimContext context)
         {
-            context = context;
-
             return context.GetObject<EquipmentContainer>(voltageLevelEquipmentContainer.@ref);
         }
 
         public static EquipmentContainer Get(this BayVoltageLevel bayVoltageLevel, CimContext context)
         {
-            context = context;
-
             return context.GetObject<EquipmentContainer>(bayVoltageLevel.@ref);
         }
 
@@ -275,8 +247,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
         /// <returns></returns>
         public static Terminal GetTerminal(this ConductingEquipment conductingEquipment, ConductingEquipment connectedTo, CimContext context, bool throwIfNotFound = true)
         {
-            context = context;
-
             var terminalConnections = context.GetConnections(conductingEquipment);
             
             foreach (var connection in terminalConnections)

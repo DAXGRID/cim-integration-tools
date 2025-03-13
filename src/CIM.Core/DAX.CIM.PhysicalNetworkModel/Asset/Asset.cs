@@ -8,7 +8,6 @@
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://daxgrid.net/PhysicalNetworkModel_0_1")]
     public partial class Asset : IdentifiedObject
     {
-
         private string lotNumberField;
 
         private string serialNumberField;
@@ -16,8 +15,6 @@
         private string typeField;
 
         private LifecycleDate lifecycleField;
-
-        //private AssetOrganisationRoles[] organisationRolesField;
 
         private string ownerField;
 
@@ -30,9 +27,6 @@
         private AssetAssetInfo assetInfoField;
 
         private AssetModel[] assetModelField;
-
-        private Manufacturer[] manufacturerField;
-
 
         public string owner
         {

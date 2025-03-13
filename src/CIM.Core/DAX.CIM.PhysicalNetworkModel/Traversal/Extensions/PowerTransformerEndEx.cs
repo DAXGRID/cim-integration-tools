@@ -10,8 +10,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
     {
         public static List<TapChanger> GetTapChangers(this PowerTransformerEnd end, CimContext context)
         {
-            context = context;
-
             return context.GetPowerTransformerEndTapChangers(end);
         }
     }

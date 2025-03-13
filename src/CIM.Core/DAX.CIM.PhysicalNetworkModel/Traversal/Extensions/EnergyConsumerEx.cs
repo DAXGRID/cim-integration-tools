@@ -17,8 +17,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
         /// <returns></returns>
         public static GeneratingUnit GetGeneratingUnit(this EnergyConsumer ec, CimContext context, bool throwIfNotFound = true)
         {
-            context = context;
-
             var genUnit = context.GetEnergyConsumerGeneratingUnit(ec);
 
             if (genUnit != null)
@@ -38,8 +36,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
         /// <returns></returns>
         public static bool HasGeneratingUnit(this EnergyConsumer ec, CimContext context = null)
         {
-            context = context;
-
             var genUnit = context.GetEnergyConsumerGeneratingUnit(ec);
 
             if (genUnit != null)

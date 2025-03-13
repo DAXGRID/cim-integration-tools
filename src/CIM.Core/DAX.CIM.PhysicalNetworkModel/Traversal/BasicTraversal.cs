@@ -27,8 +27,6 @@ namespace CIM.PhysicalNetworkModel.Traversal
         /// <returns>Both conducting equipments and connetivity nodes will be returned in the result.</returns>
         public List<IdentifiedObject> DFS(CimContext context, Predicate<ConductingEquipment> ciCriteria, Predicate<ConnectivityNode> cnCriteria, bool includeEquipmentsWhereCriteriaIsFalse = false)
         {
-            context = context;
-
             Queue<IdentifiedObject> traverseOrder = new Queue<IdentifiedObject>();
             Stack<IdentifiedObject> stack = new Stack<IdentifiedObject>();
             HashSet<IdentifiedObject> visited = new HashSet<IdentifiedObject>();
@@ -90,8 +88,6 @@ namespace CIM.PhysicalNetworkModel.Traversal
 
         public List<IdentifiedObjectWithHopInfo> DFSWithHopInfo(Predicate<ConductingEquipment> ciCriteria, Predicate<ConnectivityNode> cnCriteria, bool includeEquipmentsWhereCriteriaIsFalse, CimContext context)
         {
-            context = context;
-
             Queue<IdentifiedObjectWithHopInfo> traverseOrder = new Queue<IdentifiedObjectWithHopInfo>();
             Stack<IdentifiedObject> stack = new Stack<IdentifiedObject>();
             HashSet<IdentifiedObject> visited = new HashSet<IdentifiedObject>();

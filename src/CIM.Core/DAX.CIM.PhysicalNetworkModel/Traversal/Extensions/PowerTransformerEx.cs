@@ -16,8 +16,6 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
        /// <returns></returns>
         public static List<PowerTransformerEnd> GetEnds(this PowerTransformer pt, CimContext context)
         {
-            context = context;
-
             return context.GetPowerTransformerEnds(pt);
         }
     }
