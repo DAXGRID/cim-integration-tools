@@ -30,7 +30,7 @@ internal static class CimFilter
     public static async Task<HashSet<Guid>> ConductingEquipmentFilterAsync(IAsyncEnumerable<string> jsonLines, Func<Dictionary<string, JsonElement>, bool> filter)
     {
         // Used to lookup each types with their relational structure.
-        var typeIdIndex = new Dictionary<string, List<CimRelationStructure>>();
+        var typeIdIndex = new Dictionary<string, Dictionary<Guid, List<Guid>>>();
 
         // Collection for storing all the mrids that has been filtered.
         var idsToIncludeInOutput = new HashSet<Guid>();
@@ -70,7 +70,7 @@ internal static class CimFilter
             }
             else
             {
-                var guids = new HashSet<Guid>();
+                var guids = new List<Guid>();
                 foreach (var jsonElement in properties.Values)
                 {
                     if (jsonElement.TryGetGuidImpl(out var guid))
@@ -81,11 +81,11 @@ internal static class CimFilter
 
                 if (!typeIdIndex.TryGetValue(type, out var idIndex))
                 {
-                    idIndex = new List<CimRelationStructure>();
+                    idIndex = new Dictionary<Guid, List<Guid>>();
                     typeIdIndex.Add(type, idIndex);
                 }
 
-                idIndex.Add(new CimRelationStructure { Mrid = mrid, Guids = guids });
+                idIndex.Add(mrid, guids);
             }
         }
 
@@ -104,11 +104,11 @@ internal static class CimFilter
             {
                 foreach (var v in kvp.Value)
                 {
-                    if (relatedIds.Overlaps(v.Guids))
+                    if (relatedIds.Overlaps(v.Value))
                     {
-                        idsToIncludeInOutput.Add(v.Mrid);
-                        relatedIds.Add(v.Mrid);
-                        foreach (var relationMrid in v.Guids)
+                        idsToIncludeInOutput.Add(v.Key);
+                        relatedIds.Add(v.Key);
+                        foreach (var relationMrid in v.Value)
                         {
                             relatedIds.Add(relationMrid);
                         }
@@ -157,10 +157,4 @@ internal static class CimFilter
 
         return assembly.GetTypes().Where(t => t.IsSubclassOf(baseType));
     }
-}
-
-internal sealed record CimRelationStructure
-{
-    public required Guid Mrid { get; init; }
-    public required HashSet<Guid> Guids { get; init; }
 }
