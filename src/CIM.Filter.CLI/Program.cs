@@ -1,6 +1,6 @@
-﻿using CIM.PhysicalNetworkModel;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.CommandLine;
+using System.Text.Json;
 
 namespace CIM.Filter.CLI;
 
@@ -71,7 +71,11 @@ internal static class Program
         var idsToIncludeInOutput = await CimFilter
             .ConductingEquipmentFilterAsync(
                 File.ReadLinesAsync(inputFilePath),
-                (ConductingEquipment c) => CimFilter.BaseVoltageFilter(baseVoltageLowerBound, baseVoltageUppperBound, c))
+                (Dictionary<string, JsonElement> properties) =>
+                {
+                    var baseVoltage = properties["BaseVoltage"].GetDouble();
+                    return CimFilter.BaseVoltageFilter(baseVoltageLowerBound, baseVoltageUppperBound, baseVoltage);
+                })
             .ConfigureAwait(false);
 
         logger.LogInformation($"Writing a total of {idsToIncludeInOutput.Count} CIM objects to {outputFilePath}.");

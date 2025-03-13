@@ -1,5 +1,5 @@
-using CIM.Cson;
 using CIM.PhysicalNetworkModel;
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace CIM.Filter.CLI;
@@ -22,12 +22,12 @@ internal static class CimFilter
         }
     }
 
-    public static bool BaseVoltageFilter(int baseVoltageLowerBound, int baseVoltageUpperBound, ConductingEquipment c)
+    public static bool BaseVoltageFilter(int baseVoltageLowerBound, int baseVoltageUpperBound, double baseVoltage)
     {
-        return c.BaseVoltage >= baseVoltageLowerBound && c.BaseVoltage <= baseVoltageUpperBound;
+        return baseVoltage >= baseVoltageLowerBound && baseVoltage <= baseVoltageUpperBound;
     }
 
-    public static async Task<HashSet<Guid>> ConductingEquipmentFilterAsync(IAsyncEnumerable<string> jsonLines, Func<ConductingEquipment, bool> filter)
+    public static async Task<HashSet<Guid>> ConductingEquipmentFilterAsync(IAsyncEnumerable<string> jsonLines, Func<Dictionary<string, JsonElement>, bool> filter)
     {
         // Used to lookup each types with their relational structure.
         var typeIdIndex = new Dictionary<string, List<CimRelationStructure>>();
@@ -38,24 +38,24 @@ internal static class CimFilter
         // Collection used to store the related ids.
         var relatedIds = new HashSet<Guid>();
 
-        var serializer = new CsonSerializer();
+        // To find everything that inherits from ConductingEquipment so we do not need to use CSON deserialize.
+        var conductingTypes = FindSubClassesOf<ConductingEquipment>().Select(x => x.Name).ToList().ToHashSet();
 
         await foreach (var line in jsonLines.ConfigureAwait(false))
         {
-            var source = serializer.DeserializeObject(line);
             var properties = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(line)
                 ?? throw new InvalidOperationException($"Could not deserialize the line {line}.");
+
+            var mrid = properties["mRID"].GetGuid();
+            var type = properties["$type"].GetString() ?? throw new UnreachableException($"Could not get mrid from line: {line}.");
 
             // In case it is ConductingEquipment we only want the ones in the filter.
             // We handle both cases in this single passthrough to speed up the process.
             // It might make the code a bit uglier, but it is much faster on larger datasets.
-            if (source is ConductingEquipment)
+            if (conductingTypes.Contains(type))
             {
-                var c = (ConductingEquipment)source;
-
-                if (filter(c))
+                if (filter(properties))
                 {
-                    var mrid = Guid.Parse(c.mRID);
                     idsToIncludeInOutput.Add(mrid);
                     relatedIds.Add(mrid);
 
@@ -70,9 +70,6 @@ internal static class CimFilter
             }
             else
             {
-                var type = properties["$type"].ToString();
-                var mrid = Guid.Parse(properties["mRID"].ToString());
-
                 var guids = new HashSet<Guid>();
                 foreach (var jsonElement in properties.Values)
                 {
@@ -151,6 +148,14 @@ internal static class CimFilter
         }
 
         return Guid.TryParse(stringValue, out guid);
+    }
+
+    private static IEnumerable<Type> FindSubClassesOf<TBaseType>()
+    {
+        var baseType = typeof(TBaseType);
+        var assembly = baseType.Assembly;
+
+        return assembly.GetTypes().Where(t => t.IsSubclassOf(baseType));
     }
 }
 
