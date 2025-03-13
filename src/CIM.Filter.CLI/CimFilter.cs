@@ -39,7 +39,7 @@ internal static class CimFilter
         var relatedIds = new HashSet<Guid>();
 
         // To find everything that inherits from ConductingEquipment so we do not need to use CSON deserialize.
-        var conductingTypes = FindSubClassesOf<ConductingEquipment>().Select(x => x.Name).ToList().ToHashSet();
+        var conductingTypes = FindSubClassesOf<ConductingEquipment>().Select(x => x.Name).ToHashSet();
 
         await foreach (var line in jsonLines.ConfigureAwait(false))
         {
