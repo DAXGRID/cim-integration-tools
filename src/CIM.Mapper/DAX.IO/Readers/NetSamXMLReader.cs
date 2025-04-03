@@ -30,6 +30,8 @@ namespace DAX.IO.Readers
         private Dictionary<Guid, List<(int,DAXCoordinate)>> _coordsByLocationMrid = new();
         private Dictionary<Guid, List<TerminalInfo>> _terminalsByConductingEquipmentMrid = new();
         private Dictionary<Guid, string> _manufactureByMrid = new();
+        private Dictionary<Guid, List<Dictionary<string, string>>> _powerTransformerEndsByMrid = new();
+        private Dictionary<Guid, Dictionary<string, string>> _ratioTapChangeByMrid = new();
 
 
         private HashSet<string> _secondParseElementsToInclude = new()
@@ -224,6 +226,52 @@ namespace DAX.IO.Readers
                         AddTerminals(feature, mrid.Value);
 
                         // Get related data...
+                        if (classNameLower == "powertransformer")
+                        {
+                            foreach (var powerTransformerEndAttributes in _powerTransformerEndsByMrid[mrid.Value])
+                            {
+                                var endNumber = powerTransformerEndAttributes["endnumber"];
+
+                                foreach (var ptAttr in powerTransformerEndAttributes)
+                                {
+                                    feature.Add($"v{endNumber}.{ptAttr.Key}", ptAttr.Value);
+                                }
+
+                                Guid? powerTransformerEndId = TryParseGuidElement("RatioTapChanger", "mrid", powerTransformerEndAttributes, lineNumber);
+
+                                // check if tap change
+                                if (_ratioTapChangeByMrid.ContainsKey(powerTransformerEndId.Value))
+                                {
+                                    var tabAttributes = _ratioTapChangeByMrid[powerTransformerEndId.Value];
+
+                                    foreach (var tapAttr in tabAttributes)
+                                    {
+                                        feature.Add($"tap.{tapAttr.Key}", tapAttr.Value);
+                                    }
+                                }
+                            }
+
+                            // Add base voltage to power transformer if not specified
+                            if (!feature.ContainsKey("basevoltage"))
+                            {
+                                if (_powerTransformerEndsByMrid.ContainsKey(mrid.Value)) {
+                                    var ends = _powerTransformerEndsByMrid[mrid.Value];
+
+                                    foreach (var end in ends)
+                                    {
+                                        var endNumber = end["endnumber"];
+
+                                        if (endNumber == "1" && end.ContainsKey("basevoltage"))
+                                        {
+                                            feature.Add("basevoltage", end["basevoltage"]);
+                                        }
+                                    }
+
+                                }
+                            }
+
+                        }
+
                         break;
                     }
                     else
@@ -292,6 +340,7 @@ namespace DAX.IO.Readers
                 }
             }
         }
+
         private void AddBaseVoltage(DAXFeature feature, Guid mrid)
         {
             if (feature.ContainsKey("basevoltage"))
@@ -561,6 +610,14 @@ namespace DAX.IO.Readers
                     {
                         AddBayToDict(keyValuePairs, lineNumber);
                     }
+                    else if (classNameLower.StartsWith("powertransformerend"))
+                    {
+                        AddPowerTransformerEndToDict(keyValuePairs, lineNumber);
+                    }
+                    else if (classNameLower.StartsWith("ratiotapchanger"))
+                    {
+                        AddRatioTapChangerToDict(keyValuePairs, lineNumber);
+                    }
 
                     keyValuePairs.Clear();
                 }
@@ -577,6 +634,73 @@ namespace DAX.IO.Readers
             foreach (var invalidCimObjectCount in _invalidCimObjectCount.OrderBy(c => c.Key))
             {
                 Logger.Log(LogLevel.Error, $"Invalid XML element: {invalidCimObjectCount.Key} ({invalidCimObjectCount.Value} XML elements skipped)");
+            }
+        }
+
+        private void AddPowerTransformerEndToDict(Dictionary<string, string> keyValuePairs, int lineNumber)
+        {
+            if (keyValuePairs.ContainsKey("mrid"))
+            {
+                Guid mrid = Guid.Parse(keyValuePairs["mrid"]);
+
+                Guid? powerTransformerId = TryParseGuidElement("PowerTransformerEnd", "powertransformer", keyValuePairs, lineNumber);
+                keyValuePairs.Remove("powertransformer");
+
+                Guid? baseVoltageId = TryParseGuidElement("PowerTransformerEnd", "basevoltage", keyValuePairs, lineNumber);
+                keyValuePairs.Remove("basevoltage");
+
+                var baseVoltage = _baseVoltageByMrid[baseVoltageId.Value];
+                keyValuePairs.Add("basevoltage", baseVoltage.ToString());
+
+                ConvertMultiplier(keyValuePairs, "nominalvoltage");
+                ConvertMultiplier(keyValuePairs, "ratedu");
+                ConvertMultiplier(keyValuePairs, "rateds");
+
+
+                var valueCopy = keyValuePairs.ToDictionary(entry => entry.Key,entry => entry.Value);
+
+                if (_powerTransformerEndsByMrid.ContainsKey(powerTransformerId.Value))
+                {
+                    _powerTransformerEndsByMrid[powerTransformerId.Value].Add(valueCopy);
+                }
+                else
+                {
+                    _powerTransformerEndsByMrid[powerTransformerId.Value] = new List<Dictionary<string, string>>() { valueCopy };
+                }
+            }
+        }
+
+        private void AddRatioTapChangerToDict(Dictionary<string, string> keyValuePairs, int lineNumber)
+        {
+            if (keyValuePairs.ContainsKey("mrid"))
+            {
+                Guid mrid = Guid.Parse(keyValuePairs["mrid"]);
+                keyValuePairs.Remove("mrid");
+
+                Guid? powerTransformerId = TryParseGuidElement("RatioTapChanger", "transformerend", keyValuePairs, lineNumber);
+
+                ConvertMultiplier(keyValuePairs, "neutralu");
+
+
+                var valueCopy = keyValuePairs.ToDictionary(entry => entry.Key, entry => entry.Value);
+
+                _ratioTapChangeByMrid[powerTransformerId.Value] = valueCopy;
+            }
+        }
+
+        private void ConvertMultiplier(Dictionary<string, string> keyValuePairs, string key)
+        {
+            if (keyValuePairs.ContainsKey(key) && keyValuePairs.ContainsKey(key + ".multiplier"))
+            {
+                var value = keyValuePairs[key];
+                var multiplier = keyValuePairs[key + ".multiplier"];
+
+                var intValue = ConvertValueWithMultipierToInteger(value, multiplier);
+
+                keyValuePairs.Remove(key);
+                keyValuePairs.Remove(key + ".multiplier");
+
+                keyValuePairs.Add(key, intValue.ToString());
             }
         }
 

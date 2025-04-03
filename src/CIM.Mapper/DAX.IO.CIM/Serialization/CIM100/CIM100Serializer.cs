@@ -1,6 +1,7 @@
 ﻿using CIM.PhysicalNetworkModel;
 using DAX.IO.CIM.Processing;
 using DAX.Util;
+using System.Globalization;
 
 namespace DAX.IO.CIM.Serialization.CIM100
 {
@@ -21,6 +22,8 @@ namespace DAX.IO.CIM.Serialization.CIM100
         bool _includeEquipment;
         bool _includeAsset;
         bool _includeLocation;
+
+        private CultureInfo _cultureInfo = new CultureInfo("EN-US");
 
         public CIM100Serializer()
         {
@@ -387,7 +390,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                         if (val != null)
                         {
-                            xmlObj.ratedCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value) };
+                            xmlObj.ratedCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                         }
                     }
 
@@ -469,7 +472,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                         if (val != null)
                         {
-                            xmlObj.ratedCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value) };
+                            xmlObj.ratedCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                         }
                     }
 
@@ -480,7 +483,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                         if (val != null)
                         {
-                            xmlObj.ratedVoltage = new Voltage() { multiplier = UnitMultiplier.none, unit = UnitSymbol.V, Value = Convert.ToDouble(val.Value) };
+                            xmlObj.ratedVoltage = new Voltage() { multiplier = UnitMultiplier.none, unit = UnitSymbol.V, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                         }
                     }
 
@@ -491,7 +494,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                         if (val != null)
                         {
-                            xmlObj.ratedBreakingCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value) };
+                            xmlObj.ratedBreakingCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                         }
                     }
 
@@ -502,7 +505,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                         if (val != null)
                         {
-                            xmlObj.ratedMakingCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value) };
+                            xmlObj.ratedMakingCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                         }
                     }
 
@@ -513,7 +516,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                         if (val != null)
                         {
-                            xmlObj.ratedWithstandCurrent1sec = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value) };
+                            xmlObj.ratedWithstandCurrent1sec = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                         }
                     }
 
@@ -524,7 +527,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                         if (val != null)
                         {
-                            xmlObj.ratedWithstandCurrent3sek = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value) };
+                            xmlObj.ratedWithstandCurrent3sek = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                         }
                     }
 
@@ -560,7 +563,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                         if (val != null)
                         {
-                            xmlObj.ratedCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value) };
+                            xmlObj.ratedCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                         }
                     }
 
@@ -571,7 +574,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                         if (val != null)
                         {
-                            xmlObj.ratedVoltage = new Voltage() { multiplier = UnitMultiplier.none, unit = UnitSymbol.V, Value = Convert.ToDouble(val.Value) };
+                            xmlObj.ratedVoltage = new Voltage() { multiplier = UnitMultiplier.none, unit = UnitSymbol.V, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                         }
                     }
 
@@ -654,28 +657,28 @@ namespace DAX.IO.CIM.Serialization.CIM100
         private void MapWireInfoFields(CIMIdentifiedObject ce, WireInfoExt xmlObj)
         {
             if (ce.ContainsPropertyValue("cim.bch"))
-                ((WireInfoExt)xmlObj).bch = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.bch")), multiplier = UnitMultiplier.micro };
+                ((WireInfoExt)xmlObj).bch = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.bch"), _cultureInfo), multiplier = UnitMultiplier.micro };
 
             if (ce.ContainsPropertyValue("cim.b0ch"))
-                ((WireInfoExt)xmlObj).b0ch = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.b0ch")), multiplier = UnitMultiplier.micro };
+                ((WireInfoExt)xmlObj).b0ch = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.b0ch"), _cultureInfo), multiplier = UnitMultiplier.micro };
 
             if (ce.ContainsPropertyValue("cim.gch"))
-                ((WireInfoExt)xmlObj).gch = new Conductance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.gch")), multiplier = UnitMultiplier.micro };
+                ((WireInfoExt)xmlObj).gch = new Conductance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.gch"), _cultureInfo), multiplier = UnitMultiplier.micro };
 
             if (ce.ContainsPropertyValue("cim.g0ch"))
-                ((WireInfoExt)xmlObj).g0ch = new Conductance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.g0ch")), multiplier = UnitMultiplier.micro };
+                ((WireInfoExt)xmlObj).g0ch = new Conductance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.g0ch"), _cultureInfo), multiplier = UnitMultiplier.micro };
 
             if (ce.ContainsPropertyValue("cim.r"))
-                ((WireInfoExt)xmlObj).r = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.r"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((WireInfoExt)xmlObj).r = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.r"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.r0"))
-                ((WireInfoExt)xmlObj).r0 = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.r0"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((WireInfoExt)xmlObj).r0 = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.r0"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.x"))
-                ((WireInfoExt)xmlObj).x = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.x"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((WireInfoExt)xmlObj).x = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.x"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.x0"))
-                ((WireInfoExt)xmlObj).x0 = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.x0"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((WireInfoExt)xmlObj).x0 = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.x0"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             // Rated current
             if (ce.ContainsPropertyValue("cim.ratedcurrent"))
@@ -684,7 +687,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 if (val != null)
                 {
-                    xmlObj.ratedCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value) };
+                    xmlObj.ratedCurrent = new CurrentFlow() { multiplier = UnitMultiplier.none, unit = UnitSymbol.A, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                 }
             }
 
@@ -695,12 +698,12 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 if (val != null)
                 {
-                    xmlObj.ratedVoltage = new Voltage() { multiplier = UnitMultiplier.none, unit = UnitSymbol.V, Value = Convert.ToDouble(val.Value) };
+                    xmlObj.ratedVoltage = new Voltage() { multiplier = UnitMultiplier.none, unit = UnitSymbol.V, Value = Convert.ToDouble(val.Value, _cultureInfo) };
                 }
             }
 
             if (ce.ContainsPropertyValue("cim.ratedwithstandcurrent1sec"))
-                ((WireInfoExt)xmlObj).ratedWithstandCurrent1sec = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ratedwithstandcurrent1sec")) };
+                ((WireInfoExt)xmlObj).ratedWithstandCurrent1sec = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ratedwithstandcurrent1sec"), _cultureInfo) };
         }
 
         private IEnumerable<IdentifiedObject> ProcessLeafObject(CIMIdentifiedObject cimObj, EquipmentContainer equipmentContainer, int equipmentContainerVoltageLevel, Dictionary<int, VoltageLevel> substationVoltageLevels)
@@ -904,10 +907,10 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     var assetInfo = new CurrentTransformerInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
 
                     if (cimObj.ContainsPropertyValue("cim.primarycurrent"))
-                        assetInfo.primaryCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.primarycurrent")), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
+                        assetInfo.primaryCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.primarycurrent"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
 
                     if (cimObj.ContainsPropertyValue("cim.secondarycurrent"))
-                        assetInfo.secondaryCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.secondarycurrent")), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
+                        assetInfo.secondaryCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.secondarycurrent"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
 
                     ce.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
 
@@ -933,7 +936,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                     // maximumcurrent
                     if (ce.ContainsPropertyValue("cim.maximumcurrent"))
-                        currentTransformer.maximumCurrent = new CurrentFlow() { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.maximumcurrent")) };
+                        currentTransformer.maximumCurrent = new CurrentFlow() { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.maximumcurrent"), _cultureInfo) };
 
                     if (_includeEquipment)
                         yield return xmlObj;
@@ -958,10 +961,10 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     var assetInfo = new PotentialTransformerInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
 
                     if (cimObj.ContainsPropertyValue("cim.primaryvoltage"))
-                        assetInfo.primaryVoltage = new Voltage() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.primaryvoltage")), multiplier = UnitMultiplier.c, unit = UnitSymbol.V };
+                        assetInfo.primaryVoltage = new Voltage() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.primaryvoltage"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.V };
 
                     if (cimObj.ContainsPropertyValue("cim.secondaryvoltage"))
-                        assetInfo.secondaryVoltage = new Voltage() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.secondaryvoltage")), multiplier = UnitMultiplier.c, unit = UnitSymbol.V };
+                        assetInfo.secondaryVoltage = new Voltage() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.secondaryvoltage"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.V };
 
                     ce.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
 
@@ -1007,13 +1010,13 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     var assetInfo = new PowerTransformerInfoExt { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
 
                     if (cimObj.ContainsPropertyValue("ext.thermalrateds"))
-                        assetInfo.thermalRatedS = new ApparentPower { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.thermalrateds")) * 1000000, multiplier = UnitMultiplier.c, unit = UnitSymbol.VA };
+                        assetInfo.thermalRatedS = new ApparentPower { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.thermalrateds"), _cultureInfo) * 1000000, multiplier = UnitMultiplier.c, unit = UnitSymbol.VA };
 
                     if (cimObj.ContainsPropertyValue("ext.lowerbound"))
-                        assetInfo.lowerBound = new PU() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.lowerbound")), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
+                        assetInfo.lowerBound = new PU() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.lowerbound"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
 
                     if (cimObj.ContainsPropertyValue("ext.upperbound"))
-                        assetInfo.upperBound = new PU() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.upperbound")), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
+                        assetInfo.upperBound = new PU() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.upperbound"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
 
                     assetInfo.hasInternalDeltaWinding = false;
 
@@ -1055,18 +1058,6 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                         foreach (var cimTerminal in ptTerminals)
                         {
-                            double baseVoltage = 400;
-
-                            if (cimTerminal.ConnectivityNode != null)
-                            {
-                                var acSegments = cimTerminal.ConnectivityNode.GetNeighbours(CIMClassEnum.ACLineSegment);
-
-                                if (acSegments.Count > 0)
-                                {
-                                    baseVoltage = acSegments[0].VoltageLevel;
-                                }
-                            }
-
                             ConnectivityNode xmlCn = null;
 
                             if (cimTerminal.ConnectivityNode != null)
@@ -1089,7 +1080,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                                 PowerTransformer = new PowerTransformerEndPowerTransformer() { @ref = xmlObj.mRID },
                                 endNumber = "" + cimTerminal.EndNumber,
                                 Terminal = new TransformerEndTerminal() { @ref = cimTerminal.mRID.ToString() },
-                                BaseVoltage = baseVoltage
+                                BaseVoltage = Convert.ToSingle(ce.GetPropertyValueAsString($"cim.v{cimTerminal.EndNumber}.nominalvoltage"), _cultureInfo)
                             };
 
                             CheckIfProcessed(xmlTe.mRID, xmlTe);
@@ -1106,23 +1097,23 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                             // Fælles for begge viklinger
                             if (ce.ContainsPropertyValue("cim.v1.rateds"))
-                                xmlTe.ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v1.rateds")) };
+                                xmlTe.ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v1.rateds"), _cultureInfo) };
 
                             if (ce.ContainsPropertyValue("ext.loss"))
-                                xmlTe.loss = new KiloActivePower { unit = UnitSymbol.W, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("ext.loss")) };
+                                xmlTe.loss = new KiloActivePower { unit = UnitSymbol.W, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("ext.loss"), _cultureInfo) };
 
                             if (ce.ContainsPropertyValue("ext.losszero"))
-                                xmlTe.lossZero = new KiloActivePower { unit = UnitSymbol.W, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("ext.losszero")) };
+                                xmlTe.lossZero = new KiloActivePower { unit = UnitSymbol.W, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("ext.losszero"), _cultureInfo) };
 
                             if (ce.ContainsPropertyValue("ext.ratingFactor"))
-                                xmlTe.ratingFactor = new PerCent() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.ratingFactor")), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
+                                xmlTe.ratingFactor = new PerCent() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.ratingFactor"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
 
 
                             // Vinkling 1
                             if (cimTerminal.EndNumber == 1)
                             {
                                 if (ce.ContainsPropertyValue("cim.v1.nominalvoltage"))
-                                    xmlTe.nominalVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v1.nominalvoltage")) };
+                                    xmlTe.nominalVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v1.nominalvoltage"), _cultureInfo) };
 
                                 if (ce.ContainsPropertyValue("cim.v1.phaseangleclock"))
                                     xmlTe.phaseAngleClock = ce.GetPropertyValueAsString("cim.v1.phaseangleclock");
@@ -1134,13 +1125,13 @@ namespace DAX.IO.CIM.Serialization.CIM100
                                     xmlTe.grounded = ParseBoolString(ce.GetPropertyValueAsString("cim.v1.grounded"));
 
                                 if (ce.ContainsPropertyValue("cim.v1.ratedu"))
-                                    xmlTe.ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v1.ratedu")) };
+                                    xmlTe.ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v1.ratedu"), _cultureInfo) };
 
                                 if (ce.ContainsPropertyValue("ext.v1.uk"))
-                                    xmlTe.uk = new PerCent() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v1.uk")) };
+                                    xmlTe.uk = new PerCent() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v1.uk"), _cultureInfo) };
 
                                 if (ce.ContainsPropertyValue("ext.v1.excitingcurrentzero"))
-                                    xmlTe.excitingCurrentZero = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v1.excitingcurrentzero")) };
+                                    xmlTe.excitingCurrentZero = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v1.excitingcurrentzero"), _cultureInfo) };
 
                                 if (ce.ContainsPropertyValue("cim.v1.r"))
                                     xmlTe.r = new Resistance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = ConvertToDouble(ce.GetPropertyValueAsString("cim.v1.r")) };
@@ -1172,7 +1163,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                             if (cimTerminal.EndNumber == 2)
                             {
                                 if (ce.ContainsPropertyValue("cim.v2.nominalvoltage"))
-                                    xmlTe.nominalVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v2.nominalvoltage")) };
+                                    xmlTe.nominalVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v2.nominalvoltage"), _cultureInfo) };
 
                                 if (ce.ContainsPropertyValue("cim.v2.phaseangleclock"))
                                     xmlTe.phaseAngleClock = ce.GetPropertyValueAsString("cim.v2.phaseangleclock");
@@ -1184,19 +1175,19 @@ namespace DAX.IO.CIM.Serialization.CIM100
                                     xmlTe.grounded = ParseBoolString(ce.GetPropertyValueAsString("cim.v2.grounded"));
 
                                 if (ce.ContainsPropertyValue("cim.v2.ratedu"))
-                                    xmlTe.ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v2.ratedu")) };
+                                    xmlTe.ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v2.ratedu"), _cultureInfo) };
 
                                 if (ce.ContainsPropertyValue("ext.v2.uk"))
-                                    xmlTe.uk = new PerCent() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v2.uk")) };
+                                    xmlTe.uk = new PerCent() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v2.uk"), _cultureInfo) };
 
                                 if (ce.ContainsPropertyValue("ext.v2.excitingcurrentzero"))
-                                    xmlTe.excitingCurrentZero = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v2.excitingcurrentzero")) };
+                                    xmlTe.excitingCurrentZero = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v2.excitingcurrentzero"), _cultureInfo) };
 
                                 if (ce.ContainsPropertyValue("cim.v2.r"))
-                                    xmlTe.r = new Resistance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.v2.r")) };
+                                    xmlTe.r = new Resistance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.v2.r"), _cultureInfo) };
 
                                 if (ce.ContainsPropertyValue("cim.v2.x"))
-                                    xmlTe.x = new Reactance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.v2.x")) };
+                                    xmlTe.x = new Reactance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.v2.x"), _cultureInfo) };
                             }
 
 
@@ -1237,11 +1228,11 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                             if (ce.ContainsPropertyValue("tap.stepvoltageincrement"))
                             {
-                                tap.stepVoltageIncrement = new PerCent() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("tap.stepvoltageincrement")) };
+                                tap.stepVoltageIncrement = new PerCent() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("tap.stepvoltageincrement"), _cultureInfo) };
                             }
 
                             if (ce.ContainsPropertyValue("tap.neutralu"))
-                                tap.neutralU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("tap.neutralu")) };
+                                tap.neutralU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("tap.neutralu"), _cultureInfo) };
 
                             if (_includeEquipment)
                                 yield return tap;
@@ -1271,25 +1262,25 @@ namespace DAX.IO.CIM.Serialization.CIM100
                         ((BusbarSectionExt)xmlObj).EquipmentContainer = new EquipmentEquipmentContainer() { @ref = substationVoltageLevels[cimObj.VoltageLevel].mRID };
                
                     if (ce.ContainsPropertyValue("cim.ipmax"))
-                        ((BusbarSectionExt)xmlObj).ipMax = new CurrentFlow() { unit = UnitSymbol.A, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ipmax")) };
+                        ((BusbarSectionExt)xmlObj).ipMax = new CurrentFlow() { unit = UnitSymbol.A, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ipmax"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.powerfactormin"))
                     {
-                        ((BusbarSectionExt)xmlObj).powerFactorMin = Convert.ToSingle(ce.GetPropertyValueAsString("cim.powerfactormin"));
+                        ((BusbarSectionExt)xmlObj).powerFactorMin = Convert.ToSingle(ce.GetPropertyValueAsString("cim.powerfactormin"), _cultureInfo);
                         ((BusbarSectionExt)xmlObj).powerFactorMinSpecified = true;
                     }
 
                     if (ce.ContainsPropertyValue("cim.powerfactormax"))
                     {
-                        ((BusbarSectionExt)xmlObj).powerFactorMax = Convert.ToSingle(ce.GetPropertyValueAsString("cim.powerfactormax"));
+                        ((BusbarSectionExt)xmlObj).powerFactorMax = Convert.ToSingle(ce.GetPropertyValueAsString("cim.powerfactormax"), _cultureInfo);
                         ((BusbarSectionExt)xmlObj).powerFactorMaxSpecified = true;
                     }
 
                     if (ce.ContainsPropertyValue("cim.sspmin"))
-                        ((BusbarSectionExt)xmlObj).sspMin = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.m, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.sspmin")) };
+                        ((BusbarSectionExt)xmlObj).sspMin = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.m, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.sspmin"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.sspmax"))
-                        ((BusbarSectionExt)xmlObj).sspMax = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.m, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.sspmax")) };
+                        ((BusbarSectionExt)xmlObj).sspMax = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.m, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.sspmax"), _cultureInfo) };
 
                     foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
 
@@ -1327,25 +1318,25 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
 
                     if (ce.ContainsPropertyValue("cim.nominalu"))
-                        ((PetersenCoil)xmlObj).nominalU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nominalu")) };
+                        ((PetersenCoil)xmlObj).nominalU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nominalu"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.offsetcurrent"))
-                        ((PetersenCoil)xmlObj).offsetCurrent = new CurrentFlow() { unit = UnitSymbol.A,  multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.offsetcurrent")) };
+                        ((PetersenCoil)xmlObj).offsetCurrent = new CurrentFlow() { unit = UnitSymbol.A,  multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.offsetcurrent"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.positioncurrent"))
-                        ((PetersenCoil)xmlObj).positionCurrent = new CurrentFlow() { unit = UnitSymbol.A,  multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.positioncurrent")) };
+                        ((PetersenCoil)xmlObj).positionCurrent = new CurrentFlow() { unit = UnitSymbol.A,  multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.positioncurrent"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.xgroundmin"))
-                        ((PetersenCoil)xmlObj).xGroundMin = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.xgroundmin")) };
+                        ((PetersenCoil)xmlObj).xGroundMin = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.xgroundmin"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.xgroundmax"))
-                        ((PetersenCoil)xmlObj).xGroundMax = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.xgroundmax")) };
+                        ((PetersenCoil)xmlObj).xGroundMax = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.xgroundmax"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.xgroundnominal"))
-                        ((PetersenCoil)xmlObj).xGroundNominal = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.xgroundnominal")) };
+                        ((PetersenCoil)xmlObj).xGroundNominal = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.xgroundnominal"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.r"))
-                        ((PetersenCoil)xmlObj).r = new Resistance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r")) };
+                        ((PetersenCoil)xmlObj).r = new Resistance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r"), _cultureInfo) };
 
                     ((PetersenCoil)xmlObj).mode = PetersenCoilModeKind.automaticPositioning;
 
@@ -1388,46 +1379,46 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
                     
                     if (ce.ContainsPropertyValue("cim.ratedu"))
-                        ((SynchronousMachine)xmlObj).ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedu")) };
+                        ((SynchronousMachine)xmlObj).ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedu"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.rateds"))
-                        ((SynchronousMachine)xmlObj).ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.rateds")) };
+                        ((SynchronousMachine)xmlObj).ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.rateds"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.ratedpowerfactor"))
                     {
-                        ((SynchronousMachine)xmlObj).ratedPowerFactor = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedpowerfactor"));
+                        ((SynchronousMachine)xmlObj).ratedPowerFactor = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedpowerfactor"), _cultureInfo);
                         ((SynchronousMachine)xmlObj).ratedPowerFactorSpecified = true;
                     }
 
                     if (ce.ContainsPropertyValue("cim.maxq"))
-                        ((SynchronousMachine)xmlObj).maxQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxq")) };
+                        ((SynchronousMachine)xmlObj).maxQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxq"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.minq"))
-                        ((SynchronousMachine)xmlObj).minQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minq")) };
+                        ((SynchronousMachine)xmlObj).minQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minq"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.qpercent"))
-                        ((SynchronousMachine)xmlObj).qPercent = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.qpercent")) };
+                        ((SynchronousMachine)xmlObj).qPercent = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.qpercent"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.referencepriority"))
                         ((SynchronousMachine)xmlObj).referencePriority = ce.GetPropertyValueAsString("cim.referencepriority");
 
                     if (ce.ContainsPropertyValue("cim.ikk"))
-                        ((SynchronousMachine)xmlObj).ikk = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ikk")) };
+                        ((SynchronousMachine)xmlObj).ikk = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ikk"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.mu"))
                     {
-                        ((SynchronousMachine)xmlObj).mu = Convert.ToSingle(ce.GetPropertyValueAsString("cim.mu"));
+                        ((SynchronousMachine)xmlObj).mu = Convert.ToSingle(ce.GetPropertyValueAsString("cim.mu"), _cultureInfo);
                         ((SynchronousMachine)xmlObj).muSpecified = true;
                     }
 
                     if (ce.ContainsPropertyValue("cim.r"))
-                        ((SynchronousMachine)xmlObj).r = new Resistance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r")) };
+                        ((SynchronousMachine)xmlObj).r = new Resistance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.r0"))
-                        ((SynchronousMachine)xmlObj).r0 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r0")) };
+                        ((SynchronousMachine)xmlObj).r0 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r0"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.r2"))
-                        ((SynchronousMachine)xmlObj).r2 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r2")) };
+                        ((SynchronousMachine)xmlObj).r2 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r2"), _cultureInfo) };
 
 
                     if (ce.ContainsPropertyValue("cim.shortcircuitrotortype"))
@@ -1445,16 +1436,16 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     }
 
                     if (ce.ContainsPropertyValue("cim.voltageregulationrange"))
-                        ((SynchronousMachine)xmlObj).voltageRegulationRange = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.voltageregulationrange")) };
+                        ((SynchronousMachine)xmlObj).voltageRegulationRange = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.voltageregulationrange"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.x0"))
-                        ((SynchronousMachine)xmlObj).x0 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.x0")) };
+                        ((SynchronousMachine)xmlObj).x0 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.x0"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.x2"))
-                        ((SynchronousMachine)xmlObj).x2 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.x2")) };
+                        ((SynchronousMachine)xmlObj).x2 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.x2"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.satdirectsubtransx"))
-                        ((SynchronousMachine)xmlObj).satDirectSubtransX = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.satdirectsubtransx")) };
+                        ((SynchronousMachine)xmlObj).satDirectSubtransX = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.satdirectsubtransx"), _cultureInfo) };
 
                     if (_includeEquipment)
                         yield return xmlObj;
@@ -1476,22 +1467,22 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
                     
                     if (ce.ContainsPropertyValue("cim.ratedu"))
-                        ((AsynchronousMachine)xmlObj).ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedu")) };
+                        ((AsynchronousMachine)xmlObj).ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedu"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.rateds"))
-                        ((AsynchronousMachine)xmlObj).ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.rateds")) };
+                        ((AsynchronousMachine)xmlObj).ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.rateds"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.ratedpowerfactor"))
                     {
-                        ((AsynchronousMachine)xmlObj).ratedPowerFactor = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedpowerfactor"));
+                        ((AsynchronousMachine)xmlObj).ratedPowerFactor = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedpowerfactor"), _cultureInfo);
                         ((AsynchronousMachine)xmlObj).ratedPowerFactorSpecified = true;
                     }
 
                     if (ce.ContainsPropertyValue("cim.nominalfrequency"))
-                        ((AsynchronousMachine)xmlObj).nominalFrequency = new Frequency() { unit = UnitSymbol.Hz, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nominalfrequency")) };
+                        ((AsynchronousMachine)xmlObj).nominalFrequency = new Frequency() { unit = UnitSymbol.Hz, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nominalfrequency"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.nominelspeed"))
-                        ((AsynchronousMachine)xmlObj).nominalSpeed = new RotationSpeed() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nominelspeed")) };
+                        ((AsynchronousMachine)xmlObj).nominalSpeed = new RotationSpeed() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nominelspeed"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.converterfeddrive"))
                     {
@@ -1504,10 +1495,10 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     }
 
                     if (ce.ContainsPropertyValue("cim.efficiency"))
-                        ((AsynchronousMachine)xmlObj).efficiency = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.efficiency")) };
+                        ((AsynchronousMachine)xmlObj).efficiency = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.efficiency"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.iairratio"))
-                        ((AsynchronousMachine)xmlObj).iaIrRatio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.iairratio"));
+                        ((AsynchronousMachine)xmlObj).iaIrRatio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.iairratio"), _cultureInfo);
 
                     if (ce.ContainsPropertyValue("cim.polepairnumber"))
                         ((AsynchronousMachine)xmlObj).polePairNumber = ce.GetPropertyValueAsString("cim.polepairnumber");
@@ -1523,7 +1514,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     }
 
                     if (ce.ContainsPropertyValue("cim.rxlockedrotorratio"))
-                        ((AsynchronousMachine)xmlObj).rxLockedRotorRatio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.rxlockedrotorratio"));
+                        ((AsynchronousMachine)xmlObj).rxLockedRotorRatio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.rxlockedrotorratio"), _cultureInfo);
 
                     if (_includeEquipment)
                         yield return xmlObj;
@@ -1540,22 +1531,22 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     var assetInfo = new LinearShuntCompensatorInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
 
                     if (cimObj.ContainsPropertyValue("cim.ratedvoltage"))
-                        assetInfo.ratedVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedvoltage")) };
+                        assetInfo.ratedVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedvoltage"), _cultureInfo) };
 
                     if (cimObj.ContainsPropertyValue("cim.assetinfo.minimumreactivepower"))
-                        assetInfo.minimumReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.minimumreactivepower")), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
+                        assetInfo.minimumReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.minimumreactivepower"), _cultureInfo), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
 
                     if (cimObj.ContainsPropertyValue("cim.assetinfo.maximumreactivepower"))
-                        assetInfo.maximumReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.maximumreactivepower")), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
+                        assetInfo.maximumReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.maximumreactivepower"), _cultureInfo), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
 
                     if (cimObj.ContainsPropertyValue("cim.assetinfo.actualreactivepower"))
-                        assetInfo.actualReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.actualreactivepower")), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
+                        assetInfo.actualReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.actualreactivepower"), _cultureInfo), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
 
                     if (cimObj.ContainsPropertyValue("cim.assetinfo.loss"))
-                        assetInfo.loss = new ActivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.loss")), multiplier = UnitMultiplier.none, unit = UnitSymbol.W };
+                        assetInfo.loss = new ActivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.loss"), _cultureInfo), multiplier = UnitMultiplier.none, unit = UnitSymbol.W };
 
                     if (cimObj.ContainsPropertyValue("cim.assetinfo.qualityfactory"))
-                        assetInfo.qualityFactory = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.assetinfo.qualityfactory"));
+                        assetInfo.qualityFactory = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.assetinfo.qualityfactory"), _cultureInfo);
 
                     if (cimObj.ContainsPropertyValue("cim.assetinfo.technology"))
                         assetInfo.technology = cimObj.GetPropertyValueAsString("cim.assetinfo.technology");
@@ -1572,7 +1563,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
                     
                     if (ce.ContainsPropertyValue("cim.nomu"))
-                        ((LinearShuntCompensator)xmlObj).nomU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nomu")) };
+                        ((LinearShuntCompensator)xmlObj).nomU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nomu"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.normalsections"))
                         ((LinearShuntCompensator)xmlObj).normalSections = ce.GetPropertyValueAsString("cim.normalsections");
@@ -1581,16 +1572,16 @@ namespace DAX.IO.CIM.Serialization.CIM100
                         ((LinearShuntCompensator)xmlObj).maximumSections = ce.GetPropertyValueAsString("cim.maximumsections");
 
                     if (ce.ContainsPropertyValue("cim.bpersection"))
-                        ((LinearShuntCompensator)xmlObj).bPerSection = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.bpersection")) };
+                        ((LinearShuntCompensator)xmlObj).bPerSection = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.bpersection"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.gpersection"))
-                        ((LinearShuntCompensator)xmlObj).gPerSection = new Conductance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.gpersection") )};
+                        ((LinearShuntCompensator)xmlObj).gPerSection = new Conductance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.gpersection"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.b0persection"))
-                        ((LinearShuntCompensator)xmlObj).b0PerSection = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.b0persection")) };
+                        ((LinearShuntCompensator)xmlObj).b0PerSection = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.b0persection"), _cultureInfo) };
 
                     if (ce.ContainsPropertyValue("cim.g0persection"))
-                        ((LinearShuntCompensator)xmlObj).g0PerSection = new Conductance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.g0persection")) };
+                        ((LinearShuntCompensator)xmlObj).g0PerSection = new Conductance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.g0persection"), _cultureInfo) };
 
                     if (_includeEquipment)
                         yield return xmlObj;
@@ -1900,59 +1891,59 @@ namespace DAX.IO.CIM.Serialization.CIM100
         private void MapACLineSegmentFields(CIMIdentifiedObject ce, ACLineSegmentExt xmlObj)
         {
           
-                ////////////
-                // Transfer all electric parameters
+            ////////////
+            // Transfer all electric parameters
 
-                if (ce.ContainsPropertyValue("cim.length"))
-                ((ACLineSegmentExt)xmlObj).length = new Length() { multiplier = UnitMultiplier.none, unit = UnitSymbol.m, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.length")) };
+            if (ce.ContainsPropertyValue("cim.length"))
+                ((ACLineSegmentExt)xmlObj).length = new Length() { multiplier = UnitMultiplier.none, unit = UnitSymbol.m, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.length"), _cultureInfo) };
 
             if (ce.ContainsPropertyValue("cim.bch"))
-                ((ACLineSegmentExt)xmlObj).bch = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.bch")) ,  multiplier = UnitMultiplier.micro };
+                ((ACLineSegmentExt)xmlObj).bch = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.bch"), _cultureInfo) ,  multiplier = UnitMultiplier.micro };
 
             if (ce.ContainsPropertyValue("cim.b0ch"))
-                ((ACLineSegmentExt)xmlObj).b0ch = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.b0ch")),  multiplier = UnitMultiplier.micro };
+                ((ACLineSegmentExt)xmlObj).b0ch = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.b0ch"), _cultureInfo),  multiplier = UnitMultiplier.micro };
 
             if (ce.ContainsPropertyValue("cim.gch"))
-                ((ACLineSegmentExt)xmlObj).gch = new Conductance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.gch")), multiplier = UnitMultiplier.micro };
+                ((ACLineSegmentExt)xmlObj).gch = new Conductance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.gch"), _cultureInfo), multiplier = UnitMultiplier.micro };
 
             if (ce.ContainsPropertyValue("cim.g0ch"))
-                ((ACLineSegmentExt)xmlObj).g0ch = new Conductance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.g0ch")), multiplier = UnitMultiplier.micro };
+                ((ACLineSegmentExt)xmlObj).g0ch = new Conductance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.g0ch"), _cultureInfo), multiplier = UnitMultiplier.micro };
 
             if (ce.ContainsPropertyValue("cim.r"))
-                ((ACLineSegmentExt)xmlObj).r = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.r"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((ACLineSegmentExt)xmlObj).r = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.r"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.r0"))
-                ((ACLineSegmentExt)xmlObj).r0 = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.r0"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((ACLineSegmentExt)xmlObj).r0 = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.r0"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.x"))
-                ((ACLineSegmentExt)xmlObj).x = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.x"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((ACLineSegmentExt)xmlObj).x = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.x"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.x0"))
-                ((ACLineSegment)xmlObj).x0 = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.x0"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((ACLineSegment)xmlObj).x0 = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.x0"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.c"))
-                ((ACLineSegmentExt)xmlObj).c = new Capacitance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.c")),  multiplier = UnitMultiplier.micro };
+                ((ACLineSegmentExt)xmlObj).c = new Capacitance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.c"), _cultureInfo),  multiplier = UnitMultiplier.micro };
 
             if (ce.ContainsPropertyValue("cim.c0"))
-                ((ACLineSegmentExt)xmlObj).c0 = new Capacitance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.c0")),  multiplier = UnitMultiplier.micro };
+                ((ACLineSegmentExt)xmlObj).c0 = new Capacitance { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.c0"), _cultureInfo),  multiplier = UnitMultiplier.micro };
 
             if (ce.ContainsPropertyValue("cim.maximumcurrent"))
-                ((ACLineSegmentExt)xmlObj).maximumCurrent = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.none,  Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.maximumcurrent")) };
+                ((ACLineSegmentExt)xmlObj).maximumCurrent = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.none,  Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.maximumcurrent"), _cultureInfo) };
 
             if (ce.ContainsPropertyValue("cim.neutral_r"))
-                ((ACLineSegmentExt)xmlObj).neutral_r = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.neutral_r"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((ACLineSegmentExt)xmlObj).neutral_r = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.neutral_r"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.neutral_r0"))
-                ((ACLineSegmentExt)xmlObj).neutral_r0 = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.neutral_r0"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((ACLineSegmentExt)xmlObj).neutral_r0 = new Resistance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.neutral_r0"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.neutral_x"))
-                ((ACLineSegmentExt)xmlObj).neutral_x = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.neutral_x"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((ACLineSegmentExt)xmlObj).neutral_x = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.neutral_x"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.neutral_x0"))
-                ((ACLineSegmentExt)xmlObj).neutral_x0 = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.neutral_x0"))), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
+                ((ACLineSegmentExt)xmlObj).neutral_x0 = new Reactance { Value = Convert.ToSingle(Convert.ToDouble(ce.GetPropertyValueAsString("cim.neutral_x0"), _cultureInfo)), unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none };
 
             if (ce.ContainsPropertyValue("cim.ik"))
-                ((ACLineSegmentExt)xmlObj).iK = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.k, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ik")) };
+                ((ACLineSegmentExt)xmlObj).iK = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.k, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ik"), _cultureInfo) };
         }
 
         private void MapExternalNetworkInjectionFields(CIMIdentifiedObject ce, ExternalNetworkInjection xmlObj)
@@ -1960,7 +1951,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
             ////////////
             // Transfer all electric parameters
 
-            double lenKm = Convert.ToDouble(ce.GetPropertyValueAsString("cim.length")) / 1000;
+            double lenKm = Convert.ToDouble(ce.GetPropertyValueAsString("cim.length"), _cultureInfo) / 1000;
 
             ((ExternalNetworkInjection)xmlObj).ikSecond = false;
             ((ExternalNetworkInjection)xmlObj).ikSecondSpecified = true;
@@ -1974,46 +1965,46 @@ namespace DAX.IO.CIM.Serialization.CIM100
             }
 
             if (ce.ContainsPropertyValue("cim.maxinitialsymshccurrent"))
-                ((ExternalNetworkInjection)xmlObj).maxInitialSymShCCurrent = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.k,  Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.maxinitialsymshccurrent")) };
+                ((ExternalNetworkInjection)xmlObj).maxInitialSymShCCurrent = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.k,  Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.maxinitialsymshccurrent"), _cultureInfo) };
 
             if (ce.ContainsPropertyValue("cim.maxr0tox0ratio"))
-                ((ExternalNetworkInjection)xmlObj).maxR0ToX0Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxr0tox0ratio"));
+                ((ExternalNetworkInjection)xmlObj).maxR0ToX0Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxr0tox0ratio"), _cultureInfo);
 
             if (ce.ContainsPropertyValue("cim.maxr1tox1ratio"))
-                ((ExternalNetworkInjection)xmlObj).maxR1ToX1Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxr1tox1ratio"));
+                ((ExternalNetworkInjection)xmlObj).maxR1ToX1Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxr1tox1ratio"), _cultureInfo);
 
             if (ce.ContainsPropertyValue("cim.maxz0toz1ratio"))
-                ((ExternalNetworkInjection)xmlObj).maxZ0ToZ1Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxz0toz1ratio"));
+                ((ExternalNetworkInjection)xmlObj).maxZ0ToZ1Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxz0toz1ratio"), _cultureInfo);
 
             if (ce.ContainsPropertyValue("cim.mininitialsymshccurrent"))
-                ((ExternalNetworkInjection)xmlObj).minInitialSymShCCurrent = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.k,  Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.mininitialsymshccurrent")) };
+                ((ExternalNetworkInjection)xmlObj).minInitialSymShCCurrent = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.k,  Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.mininitialsymshccurrent"), _cultureInfo) };
 
             if (ce.ContainsPropertyValue("cim.minr0tox0ratio"))
-                ((ExternalNetworkInjection)xmlObj).minR0ToX0Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minr0tox0ratio"));
+                ((ExternalNetworkInjection)xmlObj).minR0ToX0Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minr0tox0ratio"), _cultureInfo);
 
             if (ce.ContainsPropertyValue("cim.minr1tox1ratio"))
-                ((ExternalNetworkInjection)xmlObj).minR1ToX1Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minr1tox1ratio"));
+                ((ExternalNetworkInjection)xmlObj).minR1ToX1Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minr1tox1ratio"), _cultureInfo);
 
             if (ce.ContainsPropertyValue("cim.minz0toz1ratio"))
-                ((ExternalNetworkInjection)xmlObj).minZ0ToZ1Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minz0toz1ratio"));
+                ((ExternalNetworkInjection)xmlObj).minZ0ToZ1Ratio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minz0toz1ratio"), _cultureInfo);
 
             if (ce.ContainsPropertyValue("cim.voltagefactor"))
-                ((ExternalNetworkInjection)xmlObj).voltageFactor = new PU() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.voltagefactor")) };
+                ((ExternalNetworkInjection)xmlObj).voltageFactor = new PU() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.voltagefactor"), _cultureInfo) };
 
             if (ce.ContainsPropertyValue("cim.governorscd"))
-                ((ExternalNetworkInjection)xmlObj).governorSCD = new ActivePowerPerFrequency { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.governorscd")) };
+                ((ExternalNetworkInjection)xmlObj).governorSCD = new ActivePowerPerFrequency { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.governorscd"), _cultureInfo) };
 
             if (ce.ContainsPropertyValue("cim.maxp"))
-                ((ExternalNetworkInjection)xmlObj).maxP = new ActivePower() { unit = UnitSymbol.W, multiplier = UnitMultiplier.M, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxp")) };
+                ((ExternalNetworkInjection)xmlObj).maxP = new ActivePower() { unit = UnitSymbol.W, multiplier = UnitMultiplier.M, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxp"), _cultureInfo) };
 
             if (ce.ContainsPropertyValue("cim.maxq"))
-                ((ExternalNetworkInjection)xmlObj).maxQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.M, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxq")) };
+                ((ExternalNetworkInjection)xmlObj).maxQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.M, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxq"), _cultureInfo) };
 
             if (ce.ContainsPropertyValue("cim.minp"))
-                ((ExternalNetworkInjection)xmlObj).minP = new ActivePower() { unit = UnitSymbol.W, multiplier = UnitMultiplier.M, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minp")) };
+                ((ExternalNetworkInjection)xmlObj).minP = new ActivePower() { unit = UnitSymbol.W, multiplier = UnitMultiplier.M, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minp"), _cultureInfo) };
 
             if (ce.ContainsPropertyValue("cim.minq"))
-                ((ExternalNetworkInjection)xmlObj).minQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.M, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minq")) };
+                ((ExternalNetworkInjection)xmlObj).minQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.M, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minq"), _cultureInfo) };
 
 
         }
@@ -2326,7 +2317,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
             else if (!Double.TryParse(value, out doubleValue))
                 return 0;
             else
-                return Convert.ToDouble(value);
+                return Convert.ToDouble(value, _cultureInfo);
         }
 
 
