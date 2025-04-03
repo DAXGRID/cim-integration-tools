@@ -237,6 +237,14 @@ namespace CIM.PhysicalNetworkModel.Traversal.Internals
             }
         }
 
+        public bool Exists(string mRID)
+        {
+            if (_objects.ContainsKey(mRID))
+                return true;
+            else
+                return false;
+        }
+
         public override List<IdentifiedObject> GetAllObjects()
         {
             return _objects.Values.ToList();
