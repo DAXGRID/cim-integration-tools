@@ -13,7 +13,7 @@ namespace CIM.PowerFactoryExporter
     /// </summary>
     public class CimArchiveWriter
     {
-        public CimArchiveWriter(IEnumerable<PhysicalNetworkModel.IdentifiedObject> cimObjects, string outputFolder, string archiveName, Guid modelRdfId)
+        public CimArchiveWriter(IEnumerable<PhysicalNetworkModel.IdentifiedObject> cimObjects, string outputFolder, string archiveName, Guid modelRdfId, string organizationName)
         {
             var mappingContext = new MappingContext();
 
