@@ -72,7 +72,7 @@ namespace CIM.PowerFactoryExporter.Tests
 
                 string folder = testFolder + "/pf";
 
-                var writer = new CimArchiveWriter(cimObjects, folder, "10kv", Guid.Parse("b8a2ec4d-8337-4a1c-9aec-32b8335435c0"), ExportKind.MediumVoltage);
+                var writer = new CimArchiveWriter(cimObjects, folder, "10kv", Guid.Parse("b8a2ec4d-8337-4a1c-9aec-32b8335435c0"));
             }
         }
     }

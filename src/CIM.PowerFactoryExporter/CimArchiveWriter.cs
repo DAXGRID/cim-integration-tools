@@ -10,54 +10,12 @@ namespace CIM.PowerFactoryExporter
 {
     /// <summary>
     /// Create a PF CIM archive (zip file with CIM RDF XML files).
-    /// Tailored Konstant needs.
     /// </summary>
     public class CimArchiveWriter
     {
-        public CimArchiveWriter(IEnumerable<PhysicalNetworkModel.IdentifiedObject> cimObjects, string outputFolder, string archiveName, Guid modelRdfId, ExportKind exportKind, string split60kVStationName = null)
+        public CimArchiveWriter(IEnumerable<PhysicalNetworkModel.IdentifiedObject> cimObjects, string outputFolder, string archiveName, Guid modelRdfId)
         {
-            double minVoltageLevel = 0;
-
-            double maxVoltageLevel = 1000000;
-
-            if (exportKind == ExportKind.HighAndMediumAndLowVoltage)
-            {
-                minVoltageLevel = 0;
-            }
-            else if (exportKind == ExportKind.HighAndMediumVoltage)
-                minVoltageLevel = 10000;
-            else if (exportKind == ExportKind.HighVoltage)
-                minVoltageLevel = 20000;
-            else if (exportKind == ExportKind.MediumAndLowVoltage)
-            {
-                minVoltageLevel = 0;
-                maxVoltageLevel = 20000;
-            }
-            else if (exportKind == ExportKind.MediumVoltage)
-            {
-                minVoltageLevel = 10000;
-                maxVoltageLevel = 20000;
-            }
-
-            HashSet<string> stations = null;
-
-
-            bool split60Kv = false;
-
-            if (split60kVStationName != null)
-            {
-                split60Kv = true;
-                stations = new HashSet<string>() { split60kVStationName };
-            }
-
-         
-
-
             var mappingContext = new MappingContext();
-
-            // Reinitialize cim context to filtered objects
-            CimContext _context = new InMemCimContext(cimObjects);
-
 
             var converter = new PNM2PowerFactoryCimConverter(cimObjects,
                new List<IPreProcessor> {
@@ -66,19 +24,14 @@ namespace CIM.PowerFactoryExporter
                     new DanishDSODataPrepare(mappingContext)
                });
 
-            // Reinitialize cim context to converted objects
-            var outputCimObjects = converter.GetCimObjects().ToList();
-
-            _context = CreateCimArchive(outputFolder, archiveName, modelRdfId, mappingContext, outputCimObjects);
-
+            var _ = CreateCimArchive(outputFolder, archiveName, modelRdfId, mappingContext, converter.GetCimObjects());
         }
 
-        private static CimContext CreateCimArchive(string outputFolder, string archiveName, Guid modelRdfId, MappingContext mappingContext, List<IdentifiedObject> outputCimObjects)
+        private static CimContext CreateCimArchive(string outputFolder, string archiveName, Guid modelRdfId, MappingContext mappingContext, IEnumerable<IdentifiedObject> outputCimObjects)
         {
             // We need to reinitialize context, because converter has modified objects
             CimContext _context = new InMemCimContext(outputCimObjects);
             Dictionary<string, string> assetToEqRefs = new Dictionary<string, string>();
-
 
             System.IO.Directory.CreateDirectory(outputFolder);
             System.IO.Directory.CreateDirectory(outputFolder + "\\files");
@@ -101,7 +54,6 @@ namespace CIM.PowerFactoryExporter
             var lineContext = new LineInfoContext(_context);
             //lineContext.CreateLineInfo();
             Dictionary<SimpleLine, string> lineToGuid = new Dictionary<SimpleLine, string>();
-
 
             foreach (var line in lineContext.GetLines())
             {
@@ -220,15 +172,5 @@ namespace CIM.PowerFactoryExporter
             ZipFile.CreateFromDirectory(startPath, zipPath);
             return _context;
         }
-    }
-
-    public enum ExportKind
-    {
-        HighVoltage = 1,
-        HighAndMediumVoltage = 2,
-        HighAndMediumAndLowVoltage = 3,
-        MediumAndLowVoltage = 4,
-        MediumVoltageSplit = 5,
-        MediumVoltage = 6
     }
 }
