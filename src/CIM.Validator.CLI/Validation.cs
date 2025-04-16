@@ -48,7 +48,7 @@ internal static class Validation
         return null;
     }
 
-    public static ValidationError? TerminalNumbering(ConductingEquipment c, IEnumerable<Terminal> terminals)
+    public static ValidationError? ReferencedTerminalSequenceNumber(ConductingEquipment c, IEnumerable<Terminal> terminals)
     {
         var expectedSequenceNumber = 0;
         foreach (var sequenceNumber in terminals.OrderBy(x => x.sequenceNumber).Select(x => x.sequenceNumber))
