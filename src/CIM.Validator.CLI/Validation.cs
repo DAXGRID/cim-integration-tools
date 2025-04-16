@@ -45,7 +45,6 @@ internal static class Validation
             };
         }
 
-        // Lookup terminals here for conducting equipment and verify that it matches.
         return null;
     }
 
