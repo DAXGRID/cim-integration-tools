@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CIM.Cson;
+using CIM.PhysicalNetworkModel;
+using Microsoft.Extensions.Logging;
 using System.CommandLine;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace CIM.Validator.CLI;
 
@@ -9,33 +10,36 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
+        const string inputFile = "";
+        const string outputFile = "";
+
         var rootCommand = new RootCommand("CIM Validator CLI.");
 
         var logger = LoggerFactory.Create(nameof(CIM.Validator.CLI));
 
         logger.LogInformation("Starting CIM Validator.");
 
-        var validationErrors = new List<ValidationError>
-        {
-            new ValidationError
-            {
-                Mrid = Guid.NewGuid(),
-                TypeName = "PowerTransformerEnd",
-                Code = "NO_RATED_S",
-                Description = "ratedS value not set",
-                Severity = Severity.Warning
-            },
-            new ValidationError
-            {
-                Mrid = Guid.NewGuid(),
-                TypeName = "PowerTransformerEnd",
-                Code = "NO_RATED_S",
-                Description = "ratedS value not set",
-                Severity = Severity.Warning
-            },
-        };
 
-        using (var sw = new StreamWriter("./warnings.jsonl"))
+        var validations = new List<Func<IdentifiedObject, ValidationError?>>();
+        validations.Add(Validation.BaseVoltageValidation);
+
+        var validationErrors = new List<ValidationError>();
+
+        var serializer = new CsonSerializer();
+        await foreach (var line in File.ReadLinesAsync(inputFile).ConfigureAwait(false))
+        {
+            var x = serializer.DeserializeObject(line);
+            foreach (var validate in validations)
+            {
+                var validationError = validate(x);
+                if (validationError is not null)
+                {
+                    validationErrors.Add(validationError);
+                }
+            }
+        }
+
+        using (var sw = new StreamWriter(outputFile))
         {
             foreach (var validationError in validationErrors)
             {
@@ -45,26 +49,4 @@ internal static class Program
 
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
-}
-
-internal enum Severity
-{
-    Warning,
-    Error
-}
-
-internal sealed record ValidationError
-{
-    [JsonPropertyName("$type")]
-    public string Type { get; private init; } = "ValidationError";
-
-    public required string TypeName { get; init; }
-
-    public required Guid Mrid { get; init; }
-
-    public required Severity Severity { get; init; }
-
-    public required string Code { get; init; }
-
-    public required string Description { get; init; }
 }
