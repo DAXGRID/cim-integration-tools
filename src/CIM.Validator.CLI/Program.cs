@@ -35,7 +35,7 @@ internal static class Program
             },
         };
 
-        using (StreamWriter sw = new StreamWriter("./warnings.jsonl"))
+        using (var sw = new StreamWriter("./warnings.jsonl"))
         {
             foreach (var validationError in validationErrors)
             {
