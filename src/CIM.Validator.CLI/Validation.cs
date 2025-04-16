@@ -23,7 +23,7 @@ internal static class Validation
         return null;
     }
 
-    public static ValidationError? WrongNumberOfTerminals(ConductingEquipment c, IEnumerable<Terminal> terminals)
+    public static ValidationError? NumberOfTerminals(ConductingEquipment c, IEnumerable<Terminal> terminals)
     {
         Func<int, bool> validate = c switch
         {
