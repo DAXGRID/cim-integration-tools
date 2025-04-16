@@ -1,4 +1,5 @@
 using CIM.PhysicalNetworkModel;
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace CIM.Validator.CLI;
@@ -45,6 +46,27 @@ internal static class Validation
         }
 
         // Lookup terminals here for conducting equipment and verify that it matches.
+        return null;
+    }
+
+    public static ValidationError? TerminalNumbering(ConductingEquipment c, IEnumerable<Terminal> terminals)
+    {
+        var expectedSequenceNumber = 0;
+        foreach (var sequenceNumber in terminals.OrderBy(x => x.sequenceNumber).Select(x => x.sequenceNumber))
+        {
+            expectedSequenceNumber++;
+            if (expectedSequenceNumber != int.Parse(sequenceNumber, CultureInfo.InvariantCulture))
+            {
+                return new ValidationError
+                {
+                    Mrid = Guid.Parse(c.mRID),
+                    TypeName = c.GetType().Name,
+                    Code = "TERMINAL_NUMBERING_IS_INVALID",
+                    Description = "Terminal numbering is invalid, should always be a valid sequence.",
+                    Severity = Severity.Warning
+                };
+            }
+        }
         return null;
     }
 }
