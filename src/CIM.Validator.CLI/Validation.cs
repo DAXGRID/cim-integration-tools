@@ -22,9 +22,9 @@ internal static class Validation
         return null;
     }
 
-    public static ValidationError? WrongNumberOfTerminals(ConductingEquipment c)
+    public static ValidationError? WrongNumberOfTerminals(ConductingEquipment c, IEnumerable<Terminal> terminals)
     {
-        Func<int, bool> x = c switch
+        Func<int, bool> validate = c switch
         {
             // Missing Generator, ask Jesper??
             EnergyConsumer or BusbarSection or Connector or PetersenCoil or LinearShuntCompensator => (int x) => (x == 1),
@@ -32,8 +32,19 @@ internal static class Validation
             _ => (int x) => (x == 2),
         };
 
-        // Lookup terminals here for conducting equipment and verify that it matches.
+        if (!validate(terminals.Count()))
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(c.mRID),
+                TypeName = c.GetType().Name,
+                Code = "WRONG_NUMBER_OF_TERMINALS",
+                Description = "Wrong number of terminals on conducting equipment.",
+                Severity = Severity.Warning
+            };
+        }
 
+        // Lookup terminals here for conducting equipment and verify that it matches.
         return null;
     }
 }

@@ -10,7 +10,7 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        const string inputFile = "/home/notation/Downloads/mapper_output.jsonl";
+        const string inputFile = "./mapper_output.jsonl";
         const string outputFile = "./warnings.jsonl";
 
         var rootCommand = new RootCommand("CIM Validator CLI.");
@@ -18,12 +18,6 @@ internal static class Program
         var logger = LoggerFactory.Create(nameof(CIM.Validator.CLI));
 
         logger.LogInformation("Starting CIM Validator.");
-
-        var validationsConductingEquipment = new List<Func<ConductingEquipment, ValidationError?>>
-        {
-            Validation.BaseVoltage,
-            Validation.WrongNumberOfTerminals
-        };
 
         var conductingEquipments = new List<ConductingEquipment>();
         var terminals = new List<Terminal>();
@@ -46,11 +40,21 @@ internal static class Program
             }
         }
 
+        var terminalsByConductingEquipment = terminals
+            .GroupBy(x => x.ConductingEquipment.@ref)
+            .ToDictionary(x => x.Key, x => x.ToList());
+
         foreach (var conductingEquipment in conductingEquipments)
         {
+            var validationsConductingEquipment = new List<Func<ValidationError?>>
+            {
+                () => Validation.BaseVoltage(conductingEquipment),
+                () => Validation.WrongNumberOfTerminals(conductingEquipment, terminalsByConductingEquipment.GetValueOrDefault(conductingEquipment.mRID) ?? new List<Terminal>())
+            };
+
             foreach (var validate in validationsConductingEquipment)
             {
-                var validationError = validate(conductingEquipment);
+                var validationError = validate();
                 if (validationError is not null)
                 {
                     validationErrors.Add(validationError);
