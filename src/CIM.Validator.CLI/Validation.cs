@@ -48,6 +48,23 @@ internal static class Validation
         return null;
     }
 
+    public static ValidationError? ReferencedTerminalConnectivityNode(ConductingEquipment c, IEnumerable<Terminal> terminals)
+    {
+        if (!terminals.Any(x => x.ConnectivityNode is not null))
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(c.mRID),
+                TypeName = c.GetType().Name,
+                Code = "MANDATORY_SINGLE_CONNECTIVY_NODE",
+                Description = "Mandatory so have at least one terminal pointing to a conducting equipment point to a connectivity node.",
+                Severity = Severity.Warning
+            };
+        }
+
+        return null;
+    }
+
     public static ValidationError? ReferencedTerminalSequenceNumber(ConductingEquipment c, IEnumerable<Terminal> terminals)
     {
         var expectedSequenceNumber = 0;
