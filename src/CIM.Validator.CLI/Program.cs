@@ -46,10 +46,13 @@ internal static class Program
 
         foreach (var conductingEquipment in conductingEquipments)
         {
+            var conductingEquipmentTerminals = terminalsByConductingEquipment.GetValueOrDefault(conductingEquipment.mRID) ?? new List<Terminal>();
+
             var validationsConductingEquipment = new List<Func<ValidationError?>>
             {
                 () => Validation.BaseVoltage(conductingEquipment),
-                () => Validation.WrongNumberOfTerminals(conductingEquipment, terminalsByConductingEquipment.GetValueOrDefault(conductingEquipment.mRID) ?? new List<Terminal>())
+                () => Validation.WrongNumberOfTerminals(conductingEquipment, conductingEquipmentTerminals),
+                () => Validation.TerminalNumbering(conductingEquipment, conductingEquipmentTerminals)
             };
 
             foreach (var validate in validationsConductingEquipment)
