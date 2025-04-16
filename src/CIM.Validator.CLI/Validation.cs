@@ -64,6 +64,7 @@ internal sealed record ValidationError
 
     public required Guid Mrid { get; init; }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public required Severity Severity { get; init; }
 
     public required string Code { get; init; }
