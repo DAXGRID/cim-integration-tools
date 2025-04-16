@@ -10,8 +10,8 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        const string inputFile = "";
-        const string outputFile = "";
+        const string inputFile = "/home/notation/Downloads/mapper_output.jsonl";
+        const string outputFile = "./warnings.jsonl";
 
         var rootCommand = new RootCommand("CIM Validator CLI.");
 
@@ -19,19 +19,38 @@ internal static class Program
 
         logger.LogInformation("Starting CIM Validator.");
 
+        var validationsConductingEquipment = new List<Func<ConductingEquipment, ValidationError?>>
+        {
+            Validation.BaseVoltage,
+            Validation.WrongNumberOfTerminals
+        };
 
-        var validations = new List<Func<IdentifiedObject, ValidationError?>>();
-        validations.Add(Validation.BaseVoltageValidation);
+        var conductingEquipments = new List<ConductingEquipment>();
+        var terminals = new List<Terminal>();
 
         var validationErrors = new List<ValidationError>();
 
         var serializer = new CsonSerializer();
         await foreach (var line in File.ReadLinesAsync(inputFile).ConfigureAwait(false))
         {
-            var x = serializer.DeserializeObject(line);
-            foreach (var validate in validations)
+            var identifiedObject = serializer.DeserializeObject(line);
+
+            if (identifiedObject is ConductingEquipment)
             {
-                var validationError = validate(x);
+                conductingEquipments.Add((ConductingEquipment)identifiedObject);
+            }
+
+            if (identifiedObject is Terminal)
+            {
+                terminals.Add((Terminal)identifiedObject);
+            }
+        }
+
+        foreach (var conductingEquipment in conductingEquipments)
+        {
+            foreach (var validate in validationsConductingEquipment)
+            {
+                var validationError = validate(conductingEquipment);
                 if (validationError is not null)
                 {
                     validationErrors.Add(validationError);

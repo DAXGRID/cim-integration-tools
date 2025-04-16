@@ -1,23 +1,38 @@
-using System.Text.Json.Serialization;
 using CIM.PhysicalNetworkModel;
+using System.Text.Json.Serialization;
 
 namespace CIM.Validator.CLI;
 
 internal static class Validation
 {
-    public static ValidationError? BaseVoltageValidation(IdentifiedObject identifiedObject)
+    public static ValidationError? BaseVoltage(ConductingEquipment c)
     {
-        if (identifiedObject is ConductingEquipment && ((ConductingEquipment)identifiedObject).BaseVoltage > 0)
+        if (c.BaseVoltage > 0)
         {
             return new ValidationError
             {
-                Mrid = Guid.Parse(identifiedObject.mRID),
-                TypeName = identifiedObject.GetType().Name,
+                Mrid = Guid.Parse(c.mRID),
+                TypeName = c.GetType().Name,
                 Code = "BASE_VOLTAGE_LESS_OR_EQUAL_TO_ZERO",
                 Description = "Conducting equipment should have base voltage greater than 0.",
                 Severity = Severity.Warning
             };
         }
+
+        return null;
+    }
+
+    public static ValidationError? WrongNumberOfTerminals(ConductingEquipment c)
+    {
+        Func<int, bool> x = c switch
+        {
+            // Missing Generator, ask Jesper??
+            EnergyConsumer or BusbarSection or Connector or PetersenCoil or LinearShuntCompensator => (int x) => (x == 1),
+            PowerTransformer => (int x) => (x > 2),
+            _ => (int x) => (x == 2),
+        };
+
+        // Lookup terminals here for conducting equipment and verify that it matches.
 
         return null;
     }
