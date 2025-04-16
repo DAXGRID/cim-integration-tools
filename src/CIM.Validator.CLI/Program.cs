@@ -51,7 +51,7 @@ internal static class Program
             var validationsConductingEquipment = new List<Func<ValidationError?>>
             {
                 () => Validation.BaseVoltage(conductingEquipment),
-                () => Validation.WrongNumberOfTerminals(conductingEquipment, conductingEquipmentTerminals),
+                () => Validation.NumberOfTerminals(conductingEquipment, conductingEquipmentTerminals),
                 () => Validation.TerminalNumbering(conductingEquipment, conductingEquipmentTerminals)
             };
 
