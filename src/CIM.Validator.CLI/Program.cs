@@ -52,7 +52,7 @@ internal static class Program
             {
                 () => Validation.BaseVoltage(conductingEquipment),
                 () => Validation.NumberOfTerminals(conductingEquipment, conductingEquipmentTerminals),
-                () => Validation.TerminalNumbering(conductingEquipment, conductingEquipmentTerminals)
+                () => Validation.ReferencedTerminalSequenceNumber(conductingEquipment, conductingEquipmentTerminals)
             };
 
             foreach (var validate in validationsConductingEquipment)
