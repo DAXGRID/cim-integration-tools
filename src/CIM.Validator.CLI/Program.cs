@@ -56,7 +56,9 @@ internal enum Severity
 internal sealed record ValidationError
 {
     [JsonPropertyName("$type")]
-    public string TypeName { get; private init; } = "ValidationError";
+    public string Type { get; private init; } = "ValidationError";
+
+    public required string TypeName { get; init; }
 
     public required Guid Mrid { get; init; }
 
