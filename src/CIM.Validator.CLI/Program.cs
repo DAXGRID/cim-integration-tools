@@ -21,10 +21,14 @@ internal static class Program
 
         logger.LogInformation("Starting CIM Validator.");
 
-        var (conductingEquipments, terminals) = await LoadCimAsync(inputFile).ConfigureAwait(false);
+        var (conductingEquipments, terminals, powerTransformerEnds) = await LoadCimAsync(inputFile).ConfigureAwait(false);
 
         var terminalsByConductingEquipment = terminals
             .GroupBy(x => x.ConductingEquipment.@ref)
+            .ToFrozenDictionary(x => x.Key, x => x.ToArray());
+
+        var powerTransformerEndsByConductingEquipment = powerTransformerEnds
+            .GroupBy(x => x.PowerTransformer.@ref)
             .ToFrozenDictionary(x => x.Key, x => x.ToArray());
 
         var validationErrors = new ConcurrentBag<ValidationError>();
@@ -41,6 +45,15 @@ internal static class Program
                 () => ConductingEquipmentValidation.ReferencedTerminalSequenceNumber(conductingEquipment, conductingEquipmentTerminals),
                 () => ConductingEquipmentValidation.ReferencedTerminalConnectivityNode(conductingEquipment, conductingEquipmentTerminals)
             };
+
+            if (conductingEquipment is PowerTransformer)
+            {
+                validations.Add(
+                    () => PowerTransformerValidation.PowerTransformerEndPerTerminal(
+                        (PowerTransformer)conductingEquipment,
+                        terminalsByConductingEquipment[conductingEquipment.mRID],
+                        powerTransformerEndsByConductingEquipment[conductingEquipment.mRID]));
+            }
 
             foreach (var validate in validations)
             {
@@ -92,10 +105,11 @@ internal static class Program
         }
     }
 
-    private static async Task<(FrozenSet<ConductingEquipment>, FrozenSet<Terminal>)> LoadCimAsync(string inputFile)
+    private static async Task<(FrozenSet<ConductingEquipment>, FrozenSet<Terminal>, FrozenSet<PowerTransformerEnd>)> LoadCimAsync(string inputFile)
     {
         var conductingEquipments = new List<ConductingEquipment>();
         var terminals = new List<Terminal>();
+        var powerTransformerEnds = new List<PowerTransformerEnd>();
 
         var serializer = new CsonSerializer();
         await foreach (var line in File.ReadLinesAsync(inputFile).ConfigureAwait(false))
@@ -106,13 +120,16 @@ internal static class Program
             {
                 conductingEquipments.Add((ConductingEquipment)identifiedObject);
             }
-
-            if (identifiedObject is Terminal)
+            else if (identifiedObject is Terminal)
             {
                 terminals.Add((Terminal)identifiedObject);
             }
+            else if (identifiedObject is PowerTransformerEnd)
+            {
+                powerTransformerEnds.Add((PowerTransformerEnd)identifiedObject);
+            }
         }
 
-        return (conductingEquipments.ToFrozenSet(), terminals.ToFrozenSet());
+        return (conductingEquipments.ToFrozenSet(), terminals.ToFrozenSet(), powerTransformerEnds.ToFrozenSet());
     }
 }
