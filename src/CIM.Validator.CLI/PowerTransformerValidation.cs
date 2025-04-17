@@ -14,7 +14,7 @@ internal static class PowerTransformerValidation
                 TypeName = powerTransformer.GetType().Name,
                 Code = "ONE_POWER_TRANSFORMER_END_PER_TERMINAL",
                 Description = "One power transformer end per terminal is required.",
-                Severity = Severity.Warning
+                Severity = Severity.Error
             };
         }
 
