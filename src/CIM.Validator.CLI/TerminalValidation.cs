@@ -1,5 +1,5 @@
-using System.Collections.Frozen;
 using CIM.PhysicalNetworkModel;
+using System.Collections.Frozen;
 
 namespace CIM.Validator.CLI;
 
@@ -47,8 +47,25 @@ internal static class TerminalValidation
             {
                 Mrid = Guid.Parse(t.mRID),
                 TypeName = t.GetType().Name,
-                Code = "TERMINAL_NUMBER_REQUIRED",
+                Code = "TERMINAL_IS_MISSING_MANDATORY_NUMBER_ATTRIBUTE",
                 Description = "All terminals require a sequence number.",
+                Severity = Severity.Warning
+            };
+        }
+
+        return null;
+    }
+
+    public static ValidationError? TerminalSequenceNumberValidValue(Terminal t)
+    {
+        if (!int.TryParse(t.sequenceNumber, out var sequenceNumber) && sequenceNumber <= 0)
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(t.mRID),
+                TypeName = t.GetType().Name,
+                Code = "TERMINAL_NUMBER_ATTRIBUTE_HAS_INVALID_VALUE ",
+                Description = "Sequence number should always be a whole number and be greater or equal to 1.",
                 Severity = Severity.Warning
             };
         }
