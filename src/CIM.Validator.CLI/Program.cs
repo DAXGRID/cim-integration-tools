@@ -63,6 +63,7 @@ internal static class Program
                 () => TerminalValidation.ConductingEquipmentReferenceExist(terminal, conductingEquipmentLookup),
                 () => TerminalValidation.SequenceNumberRequired(terminal),
                 () => TerminalValidation.SequenceNumberValidValue(terminal),
+                () => TerminalValidation.PhaseRequired(terminal),
             };
 
             foreach (var validate in validations)
