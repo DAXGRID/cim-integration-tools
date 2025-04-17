@@ -27,10 +27,10 @@ internal static class Validation
     {
         Func<int, bool> validate = c switch
         {
-            // Missing Generator, ask Jesper??
-            EnergyConsumer or BusbarSection or Connector or PetersenCoil or LinearShuntCompensator or RotatingMachine => (int x) => (x == 1),
-            PowerTransformer => (int x) => (x > 2),
-            _ => (int x) => (x == 2),
+            BusbarSection or LinearShuntCompensator or NonlinearShuntCompensator or SynchronousMachine or AsynchronousMachine or PetersenCoil or EnergyConsumer => (int x) => (x == 1),
+            Breaker or LoadBreakSwitch or Disconnector or Fuse or GroundDisconnector or ACLineSegmentExt => (int x) => (x == 2),
+            PowerTransformer => (int x) => (x > 1),
+            _ => (int x) => throw new ArgumentException($"Could not handle type {c.GetType().Name}")
         };
 
         if (!validate(terminals.Count))
