@@ -8,7 +8,7 @@ internal static class Validation
 {
     public static ValidationError? BaseVoltage(ConductingEquipment c)
     {
-        if (c.BaseVoltage > 0)
+        if (c.BaseVoltage <= 0)
         {
             return new ValidationError
             {
