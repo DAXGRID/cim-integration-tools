@@ -72,4 +72,21 @@ internal static class TerminalValidation
 
         return null;
     }
+
+    public static ValidationError? PhaseRequired(Terminal t)
+    {
+        if (!t.phasesSpecified)
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(t.mRID),
+                TypeName = t.GetType().Name,
+                Code = "TERMINAL_IS_MISSING_MANDATORY_FASE_ATTRIBUTE",
+                Description = "Terminal 'phases' is required.",
+                Severity = Severity.Warning
+            };
+        }
+
+        return null;
+    }
 }
