@@ -53,6 +53,12 @@ internal static class Program
                         (PowerTransformer)conductingEquipment,
                         terminalsByConductingEquipment[conductingEquipment.mRID],
                         powerTransformerEndsByConductingEquipment[conductingEquipment.mRID]));
+
+                validations.Add(
+                    () => PowerTransformerValidation.PowerTransformerEndNumberMatchesTerminalNumber(
+                        (PowerTransformer)conductingEquipment,
+                        terminalsByConductingEquipment[conductingEquipment.mRID],
+                        powerTransformerEndsByConductingEquipment[conductingEquipment.mRID]));
             }
 
             foreach (var validate in validations)

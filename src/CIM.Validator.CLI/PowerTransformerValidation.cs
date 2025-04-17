@@ -20,4 +20,21 @@ internal static class PowerTransformerValidation
 
         return null;
     }
+
+    public static ValidationError? PowerTransformerEndNumberMatchesTerminalNumber(PowerTransformer powerTransformer, IReadOnlyList<Terminal> terminals, IReadOnlyList<PowerTransformerEnd> powerTransformerEnds)
+    {
+        if (!powerTransformerEnds.All(e => e.endNumber == terminals.FirstOrDefault(t => t.mRID == e.Terminal.@ref)?.sequenceNumber))
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(powerTransformer.mRID),
+                TypeName = powerTransformer.GetType().Name,
+                Code = "POWER_TRANSFORMER_END_NUMBER_MATCHES_TERMINAL_NUMBER",
+                Description = "All the powertransformer end numbers need to match the sequence number of the terminal it is pointing to.",
+                Severity = Severity.Warning
+            };
+        }
+
+        return null;
+    }
 }
