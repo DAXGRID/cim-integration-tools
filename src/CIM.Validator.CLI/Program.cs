@@ -28,11 +28,13 @@ internal static class Program
             .ToFrozenDictionary(x => x.Key, x => x.ToArray());
 
         var validationErrors = new ConcurrentBag<ValidationError>();
+
+        // Validates conducting equipment
         Parallel.ForEach(conductingEquipments, (conductingEquipment) =>
         {
             var conductingEquipmentTerminals = terminalsByConductingEquipment.GetValueOrDefault(conductingEquipment.mRID) ?? Array.Empty<Terminal>();
 
-            var validationsConductingEquipment = new List<Func<ValidationError?>>
+            var validations = new List<Func<ValidationError?>>
             {
                 () => ConductingEquipmentValidation.BaseVoltage(conductingEquipment),
                 () => ConductingEquipmentValidation.NumberOfTerminals(conductingEquipment, conductingEquipmentTerminals),
@@ -40,7 +42,25 @@ internal static class Program
                 () => ConductingEquipmentValidation.ReferencedTerminalConnectivityNode(conductingEquipment, conductingEquipmentTerminals)
             };
 
-            foreach (var validate in validationsConductingEquipment)
+            foreach (var validate in validations)
+            {
+                var validationError = validate();
+                if (validationError is not null)
+                {
+                    validationErrors.Add(validationError);
+                }
+            }
+        });
+
+        // Validates terminals equipment
+        Parallel.ForEach(terminals, (terminal) =>
+        {
+            var validations = new List<Func<ValidationError?>>
+            {
+                () => TerminalValidation.ConductingEquipmentReference(terminal)
+            };
+
+            foreach (var validate in validations)
             {
                 var validationError = validate();
                 if (validationError is not null)
