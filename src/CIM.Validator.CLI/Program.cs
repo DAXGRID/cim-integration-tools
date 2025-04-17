@@ -21,14 +21,13 @@ internal static class Program
 
         logger.LogInformation("Starting CIM Validator.");
 
-        var validationErrors = new ConcurrentBag<ValidationError>();
-
         var (conductingEquipments, terminals) = await LoadCimAsync(inputFile).ConfigureAwait(false);
 
         var terminalsByConductingEquipment = terminals
             .GroupBy(x => x.ConductingEquipment.@ref)
             .ToFrozenDictionary(x => x.Key, x => x.ToArray());
 
+        var validationErrors = new ConcurrentBag<ValidationError>();
         Parallel.ForEach(conductingEquipments, (conductingEquipment) =>
         {
             var conductingEquipmentTerminals = terminalsByConductingEquipment.GetValueOrDefault(conductingEquipment.mRID) ?? Array.Empty<Terminal>();
