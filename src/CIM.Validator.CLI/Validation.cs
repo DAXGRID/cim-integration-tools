@@ -23,7 +23,7 @@ internal static class Validation
         return null;
     }
 
-    public static ValidationError? NumberOfTerminals(ConductingEquipment c, IEnumerable<Terminal> terminals)
+    public static ValidationError? NumberOfTerminals(ConductingEquipment c, IReadOnlyCollection<Terminal> terminals)
     {
         Func<int, bool> validate = c switch
         {
@@ -33,7 +33,7 @@ internal static class Validation
             _ => (int x) => (x == 2),
         };
 
-        if (!validate(terminals.Count()))
+        if (!validate(terminals.Count))
         {
             return new ValidationError
             {
