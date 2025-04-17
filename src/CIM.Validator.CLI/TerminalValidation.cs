@@ -39,7 +39,7 @@ internal static class TerminalValidation
         return null;
     }
 
-    public static ValidationError? TerminalSequenceNumberRequired(Terminal t)
+    public static ValidationError? SequenceNumberRequired(Terminal t)
     {
         if (string.IsNullOrWhiteSpace(t.sequenceNumber))
         {
@@ -56,7 +56,7 @@ internal static class TerminalValidation
         return null;
     }
 
-    public static ValidationError? TerminalSequenceNumberValidValue(Terminal t)
+    public static ValidationError? SequenceNumberValidValue(Terminal t)
     {
         if (!int.TryParse(t.sequenceNumber, out var sequenceNumber) && sequenceNumber <= 0)
         {
