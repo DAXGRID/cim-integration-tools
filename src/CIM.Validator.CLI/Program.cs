@@ -52,12 +52,15 @@ internal static class Program
             }
         });
 
+        var conductingEquipmentLookup = conductingEquipments.Select(x => Guid.Parse(x.mRID)).ToFrozenSet();
+
         // Validates terminals equipment
         Parallel.ForEach(terminals, (terminal) =>
         {
             var validations = new List<Func<ValidationError?>>
             {
-                () => TerminalValidation.ConductingEquipmentReference(terminal)
+                () => TerminalValidation.ConductingEquipmentReferenceId(terminal),
+                () => TerminalValidation.ConductingEquipmentReferenceExist(terminal, conductingEquipmentLookup),
             };
 
             foreach (var validate in validations)
