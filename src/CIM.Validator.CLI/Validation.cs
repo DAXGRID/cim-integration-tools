@@ -28,7 +28,7 @@ internal static class Validation
         Func<int, bool> validate = c switch
         {
             // Missing Generator, ask Jesper??
-            EnergyConsumer or BusbarSection or Connector or PetersenCoil or LinearShuntCompensator => (int x) => (x == 1),
+            EnergyConsumer or BusbarSection or Connector or PetersenCoil or LinearShuntCompensator or RotatingMachine => (int x) => (x == 1),
             PowerTransformer => (int x) => (x > 2),
             _ => (int x) => (x == 2),
         };
