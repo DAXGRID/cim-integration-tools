@@ -38,4 +38,21 @@ internal static class TerminalValidation
 
         return null;
     }
+
+    public static ValidationError? TerminalSequenceNumberRequired(Terminal t)
+    {
+        if (string.IsNullOrWhiteSpace(t.sequenceNumber))
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(t.mRID),
+                TypeName = t.GetType().Name,
+                Code = "TERMINAL_NUMBER_REQUIRED",
+                Description = "All terminals require a sequence number.",
+                Severity = Severity.Warning
+            };
+        }
+
+        return null;
+    }
 }
