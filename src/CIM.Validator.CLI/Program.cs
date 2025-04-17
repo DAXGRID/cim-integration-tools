@@ -34,10 +34,10 @@ internal static class Program
 
             var validationsConductingEquipment = new List<Func<ValidationError?>>
             {
-                () => Validation.BaseVoltage(conductingEquipment),
-                () => Validation.NumberOfTerminals(conductingEquipment, conductingEquipmentTerminals),
-                () => Validation.ReferencedTerminalSequenceNumber(conductingEquipment, conductingEquipmentTerminals),
-                () => Validation.ReferencedTerminalConnectivityNode(conductingEquipment, conductingEquipmentTerminals)
+                () => ConductingEquipmentValidation.BaseVoltage(conductingEquipment),
+                () => ConductingEquipmentValidation.NumberOfTerminals(conductingEquipment, conductingEquipmentTerminals),
+                () => ConductingEquipmentValidation.ReferencedTerminalSequenceNumber(conductingEquipment, conductingEquipmentTerminals),
+                () => ConductingEquipmentValidation.ReferencedTerminalConnectivityNode(conductingEquipment, conductingEquipmentTerminals)
             };
 
             foreach (var validate in validationsConductingEquipment)
