@@ -6,7 +6,7 @@ internal static class TerminalValidation
 {
     public static ValidationError? ConductingEquipmentReference(Terminal t)
     {
-        if (t.ConductingEquipment is null)
+        if (t.ConductingEquipment?.@ref is null)
         {
             return new ValidationError
             {
