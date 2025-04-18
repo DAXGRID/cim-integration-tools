@@ -23,6 +23,7 @@ internal static class CimValidation
             .ToFrozenDictionary(x => x.Key, x => x.ToArray());
 
         var equipmentContainersByMrid = equipmentContainers.ToFrozenDictionary(x => Guid.Parse(x.mRID), x => x);
+        var terminalsByMrid = terminals.ToFrozenDictionary(x => Guid.Parse(x.mRID), x => x);
 
         var conductionEquipmentErrors = conductingEquipments.AsParallel().SelectMany(conductingEquipment =>
         {
@@ -137,7 +138,12 @@ internal static class CimValidation
         {
             var validations = new List<Func<ValidationError?>>
             {
-                () => AuxiliaryEquipmentValidation.HasTerminal(auxiliaryEquipment)
+                () => AuxiliaryEquipmentValidation.HasTerminal(auxiliaryEquipment),
+                () => AuxiliaryEquipmentValidation.TerminalReferenceExist(
+                    auxiliaryEquipment,
+                    terminalsByMrid.TryGetValue(
+                        auxiliaryEquipment.Terminal?.@ref is not null ? Guid.Parse(auxiliaryEquipment.Terminal.@ref) : Guid.Empty,
+                        out var terminal) ? terminal : null)
             };
 
             return validations.Select(validate => validate()).Where(x => x is not null);
