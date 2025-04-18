@@ -43,7 +43,8 @@ internal static class Program
                 () => ConductingEquipmentValidation.BaseVoltage(conductingEquipment),
                 () => ConductingEquipmentValidation.NumberOfTerminals(conductingEquipment, conductingEquipmentTerminals),
                 () => ConductingEquipmentValidation.ReferencedTerminalSequenceNumber(conductingEquipment, conductingEquipmentTerminals),
-                () => ConductingEquipmentValidation.ReferencedTerminalConnectivityNode(conductingEquipment, conductingEquipmentTerminals)
+                () => ConductingEquipmentValidation.ReferencedTerminalConnectivityNode(conductingEquipment, conductingEquipmentTerminals),
+                () => ConductingEquipmentValidation.EquipmentContainerRelation(conductingEquipment)
             };
 
             if (conductingEquipment is PowerTransformer)

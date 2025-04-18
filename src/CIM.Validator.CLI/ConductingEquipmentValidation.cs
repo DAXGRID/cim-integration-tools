@@ -5,6 +5,24 @@ namespace CIM.Validator.CLI;
 
 internal static class ConductingEquipmentValidation
 {
+    public static ValidationError? EquipmentContainerRelation(ConductingEquipment c)
+    {
+        // All conducting equipment, but ACLineSegment needs to reference an equipment container.
+        if (string.IsNullOrWhiteSpace(c.EquipmentContainer?.@ref) && c is not ACLineSegment)
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(c.mRID),
+                TypeName = c.GetType().Name,
+                Code = "REQUIRED_EQUIPMENT_CONTAINER_REFERENCE",
+                Description = "Conducting equipment should have a reference to an equipment container.",
+                Severity = Severity.Warning
+            };
+        }
+
+        return null;
+    }
+
     public static ValidationError? BaseVoltage(ConductingEquipment c)
     {
         if (c.BaseVoltage <= 0)
