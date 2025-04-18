@@ -133,6 +133,7 @@ internal static class ConductingEquipmentValidation
                 };
             }
         }
+
         return null;
     }
 }
