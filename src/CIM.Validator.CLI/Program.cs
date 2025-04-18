@@ -108,6 +108,30 @@ internal static class Program
             }
         });
 
+        // Validate equipment containers.
+        Parallel.ForEach(equipmentContainers, (equipmentContainer) =>
+        {
+            var validations = new List<Func<ValidationError?>>();
+
+            if (equipmentContainer is Bay)
+            {
+                var bay = (Bay)equipmentContainer;
+                validations.Add(() => EquipmentContainerValidation.EquipmentContainerCorrectType(
+                    (Bay)equipmentContainer,
+                    equipmentContainersByMrid.TryGetValue(bay.VoltageLevel?.@ref is not null ? Guid.Parse(bay.VoltageLevel.@ref) : Guid.Empty, out var parentEquipmentContainer)
+                    ? parentEquipmentContainer : null));
+            }
+
+            foreach (var validate in validations)
+            {
+                var validationError = validate();
+                if (validationError is not null)
+                {
+                    validationErrors.Add(validationError);
+                }
+            }
+        });
+
         // Validate current transformers.
         Parallel.ForEach(currentTransformers, (currentTransformer) =>
         {
