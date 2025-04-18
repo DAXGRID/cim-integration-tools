@@ -9,9 +9,21 @@ internal static class ConductingEquipmentValidation
     {
         // If equipment container is null we cannot verify it.
         // ACLineSegment, EnergyConsumer never has an equipment container.
-        if (equipmentContainer is null || c is ACLineSegment || c is EnergyConsumer)
+        if (c is ACLineSegment || c is EnergyConsumer)
         {
             return null;
+        }
+
+        if (equipmentContainer is null)
+        {
+             return new ValidationError
+            {
+                Mrid = Guid.Parse(c.mRID),
+                TypeName = c.GetType().Name,
+                Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
+                Description = $"Cannot validate equipment container type because the reference is missing.",
+                Severity = Severity.Warning
+            };
         }
 
         var typeMatch = c switch
