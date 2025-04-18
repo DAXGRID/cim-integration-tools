@@ -21,7 +21,7 @@ internal static class Program
 
         logger.LogInformation("Starting CIM Validator.");
 
-        var (conductingEquipments, terminals, powerTransformerEnds, equipmentContainers) = await LoadCimAsync(inputFile).ConfigureAwait(false);
+        var (conductingEquipments, terminals, powerTransformerEnds, equipmentContainers, currentTransformers) = await LoadCimAsync(inputFile).ConfigureAwait(false);
 
         var terminalsByConductingEquipment = terminals
             .GroupBy(x => x.ConductingEquipment.@ref)
@@ -103,6 +103,28 @@ internal static class Program
             }
         });
 
+        // Validate current transformers.
+        Parallel.ForEach(currentTransformers, (currentTransformer) =>
+        {
+            var validations = new List<Func<ValidationError?>>
+            {
+                () => CurrentTransformerValidation.ValidateEquipmentContainerType(
+                    currentTransformer,
+                    equipmentContainersByMrid.TryGetValue(
+                        currentTransformer.EquipmentContainer?.@ref is not null ? Guid.Parse(currentTransformer.EquipmentContainer.@ref) : Guid.Empty,
+                        out var equipmentContainer) ? equipmentContainer : null)
+            };
+
+            foreach (var validate in validations)
+            {
+                var validationError = validate();
+                if (validationError is not null)
+                {
+                    validationErrors.Add(validationError);
+                }
+            }
+        });
+
         await WriteValidationErrors(outputFile, validationErrors).ConfigureAwait(false);
 
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
@@ -119,12 +141,18 @@ internal static class Program
         }
     }
 
-    private static async Task<(FrozenSet<ConductingEquipment>, FrozenSet<Terminal>, FrozenSet<PowerTransformerEnd>, FrozenSet<EquipmentContainer>)> LoadCimAsync(string inputFile)
+    private static async Task<(
+        FrozenSet<ConductingEquipment>,
+        FrozenSet<Terminal>,
+        FrozenSet<PowerTransformerEnd>,
+        FrozenSet<EquipmentContainer>,
+        FrozenSet<CurrentTransformer>)> LoadCimAsync(string inputFile)
     {
         var conductingEquipments = new List<ConductingEquipment>();
         var terminals = new List<Terminal>();
         var powerTransformerEnds = new List<PowerTransformerEnd>();
         var equipmentContainers = new List<EquipmentContainer>();
+        var currentTransformers = new List<CurrentTransformer>();
 
         var serializer = new CsonSerializer();
         await foreach (var line in File.ReadLinesAsync(inputFile).ConfigureAwait(false))
@@ -147,13 +175,18 @@ internal static class Program
             {
                 equipmentContainers.Add((EquipmentContainer)identifiedObject);
             }
+            else if (identifiedObject is CurrentTransformer)
+            {
+                currentTransformers.Add((CurrentTransformer)identifiedObject);
+            }
         }
 
         return (
             conductingEquipments.ToFrozenSet(),
             terminals.ToFrozenSet(),
             powerTransformerEnds.ToFrozenSet(),
-            equipmentContainers.ToFrozenSet()
+            equipmentContainers.ToFrozenSet(),
+            currentTransformers.ToFrozenSet()
         );
     }
 }
