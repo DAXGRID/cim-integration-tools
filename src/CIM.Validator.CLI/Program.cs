@@ -117,8 +117,16 @@ internal static class Program
             {
                 var bay = (Bay)equipmentContainer;
                 validations.Add(() => EquipmentContainerValidation.EquipmentContainerCorrectType(
-                    (Bay)equipmentContainer,
+                    bay,
                     equipmentContainersByMrid.TryGetValue(bay.VoltageLevel?.@ref is not null ? Guid.Parse(bay.VoltageLevel.@ref) : Guid.Empty, out var parentEquipmentContainer)
+                    ? parentEquipmentContainer : null));
+            }
+            else if (equipmentContainer is VoltageLevel)
+            {
+                var voltageLevel = (VoltageLevel)equipmentContainer;
+                validations.Add(() => EquipmentContainerValidation.EquipmentContainerCorrectType(
+                    voltageLevel,
+                    equipmentContainersByMrid.TryGetValue(voltageLevel.EquipmentContainer1?.@ref is not null ? Guid.Parse(voltageLevel.EquipmentContainer1.@ref) : Guid.Empty, out var parentEquipmentContainer)
                     ? parentEquipmentContainer : null));
             }
 
