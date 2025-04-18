@@ -5,10 +5,43 @@ namespace CIM.Validator.CLI;
 
 internal static class ConductingEquipmentValidation
 {
+    public static ValidationError? EquipmentContainerCorrectType(ConductingEquipment c, EquipmentContainer? equipmentContainer)
+    {
+        // If equipment container is null we cannot verify it.
+        // ACLineSegment, EnergyConsumer never has an equipment container.
+        if (equipmentContainer is null || c is ACLineSegment || c is EnergyConsumer)
+        {
+            return null;
+        }
+
+        var typeMatch = c switch
+        {
+            Breaker or LoadBreakSwitch or Disconnector or Fuse or GroundDisconnector or PetersenCoil => typeof(Bay),
+            BusbarSection or LinearShuntCompensator or NonlinearShuntCompensator or SynchronousMachine or AsynchronousMachine => typeof(VoltageLevel),
+            PowerTransformer => typeof(Substation),
+            _ => throw new ArgumentException($"Could not handle type of conducting equipment: '{c.GetType().Name}' with mrid: '{c.mRID}'. Equipment id: '{equipmentContainer.mRID}'.")
+        };
+
+        // This has been done because we want to support equal type but also something like BayExt mathcing Bay
+        if (!equipmentContainer.GetType().IsAssignableTo(typeMatch))
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(c.mRID),
+                TypeName = c.GetType().Name,
+                Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
+                Description = $"The referenced equipment container for the conducting equipment should be of type: '{typeMatch.Name}'. Current type is '{equipmentContainer.GetType().Name}'.",
+                Severity = Severity.Warning
+            };
+        }
+
+        return null;
+    }
+
     public static ValidationError? EquipmentContainerRelation(ConductingEquipment c)
     {
-        // All conducting equipment, but ACLineSegment needs to reference an equipment container.
-        if (string.IsNullOrWhiteSpace(c.EquipmentContainer?.@ref) && c is not ACLineSegment)
+        // All conducting equipment, but ACLineSegment and EnergyConsumer needs to have a reference to a equipment container.
+        if (string.IsNullOrWhiteSpace(c.EquipmentContainer?.@ref) && c is not ACLineSegment && c is not EnergyConsumer)
         {
             return new ValidationError
             {
