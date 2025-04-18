@@ -25,7 +25,8 @@ internal static class Program
              powerTransformerEnds,
              equipmentContainers,
              currentTransformers,
-             faultIndicators) = await LoadCimFromFile(inputFile).ConfigureAwait(false);
+             faultIndicators,
+             auxiliaryEquipments) = await LoadCimFromFile(inputFile).ConfigureAwait(false);
 
         var validationErrors = CimValidation
             .Validate(
@@ -34,7 +35,8 @@ internal static class Program
                 powerTransformerEnds,
                 equipmentContainers,
                 currentTransformers,
-                faultIndicators)
+                faultIndicators,
+                auxiliaryEquipments)
             .ToList()
             .AsReadOnly();
 
@@ -60,7 +62,8 @@ internal static class Program
         FrozenSet<PowerTransformerEnd>,
         FrozenSet<EquipmentContainer>,
         FrozenSet<CurrentTransformer>,
-        FrozenSet<FaultIndicator>)> LoadCimFromFile(string inputFile)
+        FrozenSet<FaultIndicator>,
+        FrozenSet<AuxiliaryEquipment>)> LoadCimFromFile(string inputFile)
     {
         var conductingEquipments = new List<ConductingEquipment>();
         var terminals = new List<Terminal>();
@@ -68,6 +71,7 @@ internal static class Program
         var equipmentContainers = new List<EquipmentContainer>();
         var currentTransformers = new List<CurrentTransformer>();
         var faultIndicators = new List<FaultIndicator>();
+        var auxiliaryEquipments = new List<AuxiliaryEquipment>();
 
         var serializer = new CsonSerializer();
         await foreach (var line in File.ReadLinesAsync(inputFile).ConfigureAwait(false))
@@ -98,6 +102,10 @@ internal static class Program
             {
                 faultIndicators.Add((FaultIndicator)identifiedObject);
             }
+            else if (identifiedObject is AuxiliaryEquipment)
+            {
+                auxiliaryEquipments.Add((AuxiliaryEquipment)identifiedObject);
+            }
         }
 
         return (
@@ -106,7 +114,8 @@ internal static class Program
             powerTransformerEnds.ToFrozenSet(),
             equipmentContainers.ToFrozenSet(),
             currentTransformers.ToFrozenSet(),
-            faultIndicators.ToFrozenSet()
+            faultIndicators.ToFrozenSet(),
+            auxiliaryEquipments.ToFrozenSet()
         );
     }
 }
