@@ -1,7 +1,6 @@
 ﻿using CIM.Cson;
 using CIM.PhysicalNetworkModel;
 using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
 using System.Collections.Frozen;
 using System.CommandLine;
 using System.Text.Json;
@@ -38,10 +37,7 @@ internal static class Program
 
         var equipmentContainersByMrid = equipmentContainers.ToFrozenDictionary(x => Guid.Parse(x.mRID), x => x);
 
-        var validationErrors = new ConcurrentBag<ValidationError>();
-
-        // Validates conducting equipment
-        Parallel.ForEach(conductingEquipments, (conductingEquipment) =>
+        var conductionEquipmentErrors = conductingEquipments.AsParallel().SelectMany(conductingEquipment =>
         {
             var conductingEquipmentTerminals = terminalsByConductingEquipment.GetValueOrDefault(conductingEquipment.mRID) ?? Array.Empty<Terminal>();
 
@@ -74,20 +70,13 @@ internal static class Program
                         powerTransformerEndsByConductingEquipment[conductingEquipment.mRID]));
             }
 
-            foreach (var validate in validations)
-            {
-                var validationError = validate();
-                if (validationError is not null)
-                {
-                    validationErrors.Add(validationError);
-                }
-            }
+            return validations.Select(validate => validate()).Where(x => x is not null);
         });
 
         var conductingEquipmentLookup = conductingEquipments.Select(x => Guid.Parse(x.mRID)).ToFrozenSet();
 
         // Validates terminals equipment
-        Parallel.ForEach(terminals, (terminal) =>
+        var terminalValidationErrors = terminals.AsParallel().SelectMany((terminal) =>
         {
             var validations = new List<Func<ValidationError?>>
             {
@@ -98,18 +87,11 @@ internal static class Program
                 () => TerminalValidation.PhaseRequired(terminal),
             };
 
-            foreach (var validate in validations)
-            {
-                var validationError = validate();
-                if (validationError is not null)
-                {
-                    validationErrors.Add(validationError);
-                }
-            }
+            return validations.Select(validate => validate()).Where(x => x is not null);
         });
 
         // Validate equipment containers.
-        Parallel.ForEach(equipmentContainers, (equipmentContainer) =>
+        var equipmentContainerValidationErrors = equipmentContainers.AsParallel().SelectMany((equipmentContainer) =>
         {
             var validations = new List<Func<ValidationError?>>();
 
@@ -130,18 +112,11 @@ internal static class Program
                     ? parentEquipmentContainer : null));
             }
 
-            foreach (var validate in validations)
-            {
-                var validationError = validate();
-                if (validationError is not null)
-                {
-                    validationErrors.Add(validationError);
-                }
-            }
+            return validations.Select(validate => validate()).Where(x => x is not null);
         });
 
         // Validate current transformers.
-        Parallel.ForEach(currentTransformers, (currentTransformer) =>
+        var currentTransformerValidationErrors = currentTransformers.AsParallel().SelectMany((currentTransformer) =>
         {
             var validations = new List<Func<ValidationError?>>
             {
@@ -152,18 +127,11 @@ internal static class Program
                         out var equipmentContainer) ? equipmentContainer : null)
             };
 
-            foreach (var validate in validations)
-            {
-                var validationError = validate();
-                if (validationError is not null)
-                {
-                    validationErrors.Add(validationError);
-                }
-            }
+            return validations.Select(validate => validate()).Where(x => x is not null);
         });
 
         // Validate fault indicators.
-        Parallel.ForEach(faultIndicators, (faultIndicator) =>
+        var faultIndicatorValidationErrors = faultIndicators.AsParallel().SelectMany((faultIndicator) =>
         {
             var validations = new List<Func<ValidationError?>>
             {
@@ -174,22 +142,24 @@ internal static class Program
                         out var equipmentContainer) ? equipmentContainer : null)
             };
 
-            foreach (var validate in validations)
-            {
-                var validationError = validate();
-                if (validationError is not null)
-                {
-                    validationErrors.Add(validationError);
-                }
-            }
+            return validations.Select(validate => validate()).Where(x => x is not null);
         });
+
+        var validationErrors = new List<ValidationError>()
+            .Concat(conductionEquipmentErrors)
+            .Concat(terminalValidationErrors)
+            .Concat(equipmentContainerValidationErrors)
+            .Concat(currentTransformerValidationErrors)
+            .Concat(faultIndicatorValidationErrors)
+            .ToList()
+            .AsReadOnly();
 
         await WriteValidationErrors(outputFile, validationErrors).ConfigureAwait(false);
 
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
 
-    private static async Task WriteValidationErrors(string outputFile, ConcurrentBag<ValidationError> validationErrors)
+    private static async Task WriteValidationErrors(string outputFile, IReadOnlyList<ValidationError?> validationErrors)
     {
         using (var sw = new StreamWriter(outputFile))
         {
