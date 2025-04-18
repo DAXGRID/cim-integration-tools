@@ -16,7 +16,7 @@ internal static class ConductingEquipmentValidation
 
         if (equipmentContainer is null)
         {
-             return new ValidationError
+            return new ValidationError
             {
                 Mrid = Guid.Parse(c.mRID),
                 TypeName = c.GetType().Name,
