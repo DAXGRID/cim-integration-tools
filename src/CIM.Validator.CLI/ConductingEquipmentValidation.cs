@@ -34,7 +34,7 @@ internal static class ConductingEquipmentValidation
             _ => throw new ArgumentException($"Could not handle type of conducting equipment: '{c.GetType().Name}' with mrid: '{c.mRID}'. Equipment id: '{equipmentContainer.mRID}'.")
         };
 
-        // This has been done because we want to support equal type but also something like BayExt mathcing Bay
+        // This has been done because we want to support equal type but also something like BayExt matching Bay
         if (!equipmentContainer.GetType().IsAssignableTo(typeMatch))
         {
             return new ValidationError
