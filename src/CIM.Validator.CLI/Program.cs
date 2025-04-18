@@ -21,7 +21,7 @@ internal static class Program
 
         logger.LogInformation("Starting CIM Validator.");
 
-        var (conductingEquipments, terminals, powerTransformerEnds) = await LoadCimAsync(inputFile).ConfigureAwait(false);
+        var (conductingEquipments, terminals, powerTransformerEnds, equipmentContainers) = await LoadCimAsync(inputFile).ConfigureAwait(false);
 
         var terminalsByConductingEquipment = terminals
             .GroupBy(x => x.ConductingEquipment.@ref)
@@ -30,6 +30,8 @@ internal static class Program
         var powerTransformerEndsByConductingEquipment = powerTransformerEnds
             .GroupBy(x => x.PowerTransformer.@ref)
             .ToFrozenDictionary(x => x.Key, x => x.ToArray());
+
+        var equipmentContainersByMrid = equipmentContainers.ToFrozenDictionary(x => Guid.Parse(x.mRID), x => x);
 
         var validationErrors = new ConcurrentBag<ValidationError>();
 
@@ -44,7 +46,12 @@ internal static class Program
                 () => ConductingEquipmentValidation.NumberOfTerminals(conductingEquipment, conductingEquipmentTerminals),
                 () => ConductingEquipmentValidation.ReferencedTerminalSequenceNumber(conductingEquipment, conductingEquipmentTerminals),
                 () => ConductingEquipmentValidation.ReferencedTerminalConnectivityNode(conductingEquipment, conductingEquipmentTerminals),
-                () => ConductingEquipmentValidation.EquipmentContainerRelation(conductingEquipment)
+                () => ConductingEquipmentValidation.EquipmentContainerRelation(conductingEquipment),
+                () => ConductingEquipmentValidation.EquipmentContainerCorrectType(
+                    conductingEquipment,
+                    equipmentContainersByMrid.TryGetValue(
+                        conductingEquipment.EquipmentContainer?.@ref is not null ? Guid.Parse(conductingEquipment.EquipmentContainer.@ref) : Guid.Empty,
+                        out var equipmentContainer) ? equipmentContainer : null)
             };
 
             if (conductingEquipment is PowerTransformer)
@@ -112,11 +119,12 @@ internal static class Program
         }
     }
 
-    private static async Task<(FrozenSet<ConductingEquipment>, FrozenSet<Terminal>, FrozenSet<PowerTransformerEnd>)> LoadCimAsync(string inputFile)
+    private static async Task<(FrozenSet<ConductingEquipment>, FrozenSet<Terminal>, FrozenSet<PowerTransformerEnd>, FrozenSet<EquipmentContainer>)> LoadCimAsync(string inputFile)
     {
         var conductingEquipments = new List<ConductingEquipment>();
         var terminals = new List<Terminal>();
         var powerTransformerEnds = new List<PowerTransformerEnd>();
+        var equipmentContainers = new List<EquipmentContainer>();
 
         var serializer = new CsonSerializer();
         await foreach (var line in File.ReadLinesAsync(inputFile).ConfigureAwait(false))
@@ -135,8 +143,17 @@ internal static class Program
             {
                 powerTransformerEnds.Add((PowerTransformerEnd)identifiedObject);
             }
+            else if (identifiedObject is EquipmentContainer)
+            {
+                equipmentContainers.Add((EquipmentContainer)identifiedObject);
+            }
         }
 
-        return (conductingEquipments.ToFrozenSet(), terminals.ToFrozenSet(), powerTransformerEnds.ToFrozenSet());
+        return (
+            conductingEquipments.ToFrozenSet(),
+            terminals.ToFrozenSet(),
+            powerTransformerEnds.ToFrozenSet(),
+            equipmentContainers.ToFrozenSet()
+        );
     }
 }
