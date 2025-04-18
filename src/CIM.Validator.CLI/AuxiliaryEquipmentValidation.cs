@@ -20,4 +20,21 @@ internal static class AuxiliaryEquipmentValidation
 
         return null;
     }
+
+    public static ValidationError? TerminalReferenceExist(AuxiliaryEquipment a, Terminal? t)
+    {
+        if (!string.IsNullOrWhiteSpace(a.Terminal?.@ref) && t is null)
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(a.mRID),
+                TypeName = a.GetType().Name,
+                Code = "AUXILIARY_EQUIPMENT_TERMINAL_REFERENCE_DOES_NOT_EXIST",
+                Description = "Auxiliary equipment reference to terminal '{a.Terminal?.@ref}' do not exist.",
+                Severity = Severity.Error
+            };
+        }
+
+        return null;
+    }
 }
