@@ -28,12 +28,13 @@ internal static class Program
              faultIndicators) = await LoadCimFromFile(inputFile).ConfigureAwait(false);
 
         var validationErrors = CimValidation
-            .Validate(conductingEquipments,
-                      terminals,
-                      powerTransformerEnds,
-                      equipmentContainers,
-                      currentTransformers,
-                      faultIndicators)
+            .Validate(
+                conductingEquipments,
+                terminals,
+                powerTransformerEnds,
+                equipmentContainers,
+                currentTransformers,
+                faultIndicators)
             .ToList()
             .AsReadOnly();
 
