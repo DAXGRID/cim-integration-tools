@@ -11,7 +11,8 @@ internal static class CimValidation
      FrozenSet<PowerTransformerEnd> powerTransformerEnds,
      FrozenSet<EquipmentContainer> equipmentContainers,
      FrozenSet<CurrentTransformer> currentTransformers,
-     FrozenSet<FaultIndicator> faultIndicators)
+     FrozenSet<FaultIndicator> faultIndicators,
+     FrozenSet<AuxiliaryEquipment> auxiliaryEquipments)
     {
         var terminalsByConductingEquipment = terminals
             .GroupBy(x => x.ConductingEquipment.@ref)
@@ -131,12 +132,24 @@ internal static class CimValidation
             return validations.Select(validate => validate()).Where(x => x is not null);
         });
 
+        // Validate auxiliary equipment indicators.
+        var auxiliaryEquipmentValidationErrors = auxiliaryEquipments.AsParallel().SelectMany((auxiliaryEquipment) =>
+        {
+            var validations = new List<Func<ValidationError?>>
+            {
+                () => AuxiliaryEquipmentValidation.HasTerminal(auxiliaryEquipment)
+            };
+
+            return validations.Select(validate => validate()).Where(x => x is not null);
+        });
+
         return [
             ..conductionEquipmentErrors,
             ..terminalValidationErrors,
             ..equipmentContainerValidationErrors,
             ..currentTransformerValidationErrors,
-            ..faultIndicatorValidationErrors
+            ..faultIndicatorValidationErrors,
+            ..auxiliaryEquipmentValidationErrors
         ];
     }
 }
