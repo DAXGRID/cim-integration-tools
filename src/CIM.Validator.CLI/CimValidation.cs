@@ -1,5 +1,5 @@
-using System.Collections.Frozen;
 using CIM.PhysicalNetworkModel;
+using System.Collections.Frozen;
 
 namespace CIM.Validator.CLI;
 
@@ -131,10 +131,12 @@ internal static class CimValidation
             return validations.Select(validate => validate()).Where(x => x is not null);
         });
 
-        return [..conductionEquipmentErrors,
-                ..terminalValidationErrors,
-                ..equipmentContainerValidationErrors,
-                ..currentTransformerValidationErrors,
-                ..faultIndicatorValidationErrors];
+        return [
+            ..conductionEquipmentErrors,
+            ..terminalValidationErrors,
+            ..equipmentContainerValidationErrors,
+            ..currentTransformerValidationErrors,
+            ..faultIndicatorValidationErrors
+        ];
     }
 }
