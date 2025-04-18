@@ -8,7 +8,7 @@ internal static class FaultIndicatorValidation
     {
         if (equipmentContainer is null)
         {
-             return new ValidationError
+            return new ValidationError
             {
                 Mrid = Guid.Parse(f.mRID),
                 TypeName = typeof(FaultIndicator).Name,
