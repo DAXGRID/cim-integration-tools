@@ -12,7 +12,8 @@ internal static class CimValidation
      FrozenSet<EquipmentContainer> equipmentContainers,
      FrozenSet<CurrentTransformer> currentTransformers,
      FrozenSet<FaultIndicator> faultIndicators,
-     FrozenSet<AuxiliaryEquipment> auxiliaryEquipments)
+     FrozenSet<AuxiliaryEquipment> auxiliaryEquipments,
+     FrozenSet<Location> locations)
     {
         var terminalsByConductingEquipment = terminals
             .GroupBy(x => x.ConductingEquipment.@ref)
@@ -24,6 +25,7 @@ internal static class CimValidation
 
         var equipmentContainersByMrid = equipmentContainers.ToFrozenDictionary(x => Guid.Parse(x.mRID), x => x);
         var terminalsByMrid = terminals.ToFrozenDictionary(x => Guid.Parse(x.mRID), x => x);
+        var locationsByMrid = locations.ToFrozenDictionary(x => Guid.Parse(x.mRID), x => x);
 
         var conductionEquipmentErrors = conductingEquipments.AsParallel().SelectMany(conductingEquipment =>
         {
@@ -102,7 +104,12 @@ internal static class CimValidation
             else if (equipmentContainer is Substation)
             {
                 var substation = (Substation)equipmentContainer;
+
+                locationsByMrid.TryGetValue(
+                    substation.Location.@ref is not null ? Guid.Parse(substation.Location.@ref) : Guid.Empty, out var substationLocation);
+
                 validations.Add(() => SubstationValidation.PsrType(substation));
+                validations.Add(() => SubstationValidation.LocationRequired(substation, substationLocation));
             }
 
             return validations.Select(validate => validate()).Where(x => x is not null);

@@ -4,6 +4,35 @@ namespace CIM.Validator.CLI;
 
 internal static class SubstationValidation
 {
+    public static ValidationError? LocationRequired(Substation s, Location? l)
+    {
+        if (string.IsNullOrWhiteSpace(s.Location.@ref))
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(s.mRID),
+                TypeName = s.GetType().Name,
+                Code = "SUBSTATION_MISSING_LOCATION_REFERENCE",
+                Description = "The substation is missing the required location reference.",
+                Severity = Severity.Error
+            };
+        }
+
+        if (l is null)
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(s.mRID),
+                TypeName = s.GetType().Name,
+                Code = "SUBSTATION_LOCATION_REFERENCED_DO_NOT_EXIST",
+                Description = "The location that the substation has reference to does not exist: '{s.Location.@ref}'.",
+                Severity = Severity.Error
+            };
+        }
+
+        return null;
+    }
+
     public static ValidationError? PsrType(Substation s)
     {
         return s.PSRType switch
