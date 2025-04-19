@@ -26,7 +26,9 @@ internal static class Program
              equipmentContainers,
              currentTransformers,
              faultIndicators,
-             auxiliaryEquipments) = await LoadCimFromFile(inputFile).ConfigureAwait(false);
+             auxiliaryEquipments,
+             locations
+        ) = await LoadCimFromFile(inputFile).ConfigureAwait(false);
 
         var validationErrors = CimValidation
             .Validate(
@@ -36,7 +38,8 @@ internal static class Program
                 equipmentContainers,
                 currentTransformers,
                 faultIndicators,
-                auxiliaryEquipments)
+                auxiliaryEquipments,
+                locations)
             .ToList()
             .AsReadOnly();
 
@@ -63,7 +66,9 @@ internal static class Program
         FrozenSet<EquipmentContainer>,
         FrozenSet<CurrentTransformer>,
         FrozenSet<FaultIndicator>,
-        FrozenSet<AuxiliaryEquipment>)> LoadCimFromFile(string inputFile)
+        FrozenSet<AuxiliaryEquipment>,
+        FrozenSet<Location>
+    )> LoadCimFromFile(string inputFile)
     {
         var conductingEquipments = new List<ConductingEquipment>();
         var terminals = new List<Terminal>();
@@ -72,6 +77,7 @@ internal static class Program
         var currentTransformers = new List<CurrentTransformer>();
         var faultIndicators = new List<FaultIndicator>();
         var auxiliaryEquipments = new List<AuxiliaryEquipment>();
+        var locations = new List<Location>();
 
         var serializer = new CsonSerializer();
         await foreach (var line in File.ReadLinesAsync(inputFile).ConfigureAwait(false))
@@ -106,6 +112,10 @@ internal static class Program
             {
                 auxiliaryEquipments.Add((AuxiliaryEquipment)identifiedObject);
             }
+            else if (identifiedObject is Location)
+            {
+                locations.Add((Location)identifiedObject);
+            }
         }
 
         return (
@@ -115,7 +125,8 @@ internal static class Program
             equipmentContainers.ToFrozenSet(),
             currentTransformers.ToFrozenSet(),
             faultIndicators.ToFrozenSet(),
-            auxiliaryEquipments.ToFrozenSet()
+            auxiliaryEquipments.ToFrozenSet(),
+            locations.ToFrozenSet()
         );
     }
 }
