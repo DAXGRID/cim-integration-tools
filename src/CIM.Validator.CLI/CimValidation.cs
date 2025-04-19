@@ -99,6 +99,11 @@ internal static class CimValidation
                     equipmentContainersByMrid.TryGetValue(voltageLevel.EquipmentContainer1?.@ref is not null ? Guid.Parse(voltageLevel.EquipmentContainer1.@ref) : Guid.Empty, out var parentEquipmentContainer)
                     ? parentEquipmentContainer : null));
             }
+            else if (equipmentContainer is Substation)
+            {
+                var substation = (Substation)equipmentContainer;
+                validations.Add(() => SubstationValidation.PsrType(substation));
+            }
 
             return validations.Select(validate => validate()).Where(x => x is not null);
         });
