@@ -21,6 +21,23 @@ internal static class AuxiliaryEquipmentValidation
         return null;
     }
 
+    public static ValidationError? ReferencesBay(AuxiliaryEquipment a, EquipmentContainer? e)
+    {
+        if (e is not Bay)
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(a.mRID),
+                TypeName = a.GetType().Name,
+                Code = "AUXILIARY_EQUIPMENT_CONTAINER_SHOULD_BE_BAY",
+                Description = "Auxiliary equipments should reference an equipment container of type Bay.",
+                Severity = Severity.Warning
+            };
+        }
+
+        return null;
+    }
+
     public static ValidationError? TerminalReferenceExist(AuxiliaryEquipment a, Terminal? t)
     {
         if (!string.IsNullOrWhiteSpace(a.Terminal?.@ref) && t is null)
