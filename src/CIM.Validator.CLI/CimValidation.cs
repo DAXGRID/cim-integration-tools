@@ -143,7 +143,12 @@ internal static class CimValidation
                     auxiliaryEquipment,
                     terminalsByMrid.TryGetValue(
                         auxiliaryEquipment.Terminal?.@ref is not null ? Guid.Parse(auxiliaryEquipment.Terminal.@ref) : Guid.Empty,
-                        out var terminal) ? terminal : null)
+                        out var terminal) ? terminal : null),
+                () => AuxiliaryEquipmentValidation.ReferencesBay(
+                    auxiliaryEquipment,
+                    equipmentContainersByMrid.TryGetValue(
+                        auxiliaryEquipment.EquipmentContainer?.@ref is not null ? Guid.Parse(auxiliaryEquipment.EquipmentContainer.@ref) : Guid.Empty,
+                        out var equipmentContainer) ? equipmentContainer : null)
             };
 
             return validations.Select(validate => validate()).Where(x => x is not null);
