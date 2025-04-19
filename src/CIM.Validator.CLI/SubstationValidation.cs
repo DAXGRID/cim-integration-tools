@@ -30,6 +30,18 @@ internal static class SubstationValidation
             };
         }
 
+        if (l is LocationExt && ((LocationExt)l).coordinates.Length != 1)
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(s.mRID),
+                TypeName = s.GetType().Name,
+                Code = "SUBSTATION_LOCATION_SHOULD_BE_POINT",
+                Description = "The location of the substation should always be a point.",
+                Severity = Severity.Error
+            };
+        }
+
         return null;
     }
 
