@@ -60,6 +60,21 @@ internal static class CimValidation
                         powerTransformerEndsByConductingEquipment[conductingEquipment.mRID]));
             }
 
+            if (conductingEquipment is ACLineSegment)
+            {
+                var acLineSegment = (ACLineSegment)conductingEquipment;
+                LocationExt? location = null;
+                if (acLineSegment.Location?.@ref is not null)
+                {
+                    if (locationsByMrid.TryGetValue(Guid.Parse(acLineSegment.Location.@ref), out var outLocation))
+                    {
+                        location = (LocationExt)outLocation;
+                    }
+                }
+
+                validations.Add(() => AcLineSegmentValidation.ValidateLocation(acLineSegment, location));
+            }
+
             return validations.Select(validate => validate()).Where(x => x is not null);
         });
 
