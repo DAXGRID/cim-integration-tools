@@ -27,7 +27,8 @@ internal static class Program
              currentTransformers,
              faultIndicators,
              auxiliaryEquipments,
-             locations
+             locations,
+             usagePoints
         ) = await LoadCimFromFile(inputFile).ConfigureAwait(false);
 
         var validationErrors = CimValidation
@@ -39,7 +40,9 @@ internal static class Program
                 currentTransformers,
                 faultIndicators,
                 auxiliaryEquipments,
-                locations)
+                locations,
+                usagePoints
+            )
             .ToList()
             .AsReadOnly();
 
@@ -67,7 +70,8 @@ internal static class Program
         FrozenSet<CurrentTransformer>,
         FrozenSet<FaultIndicator>,
         FrozenSet<AuxiliaryEquipment>,
-        FrozenSet<Location>
+        FrozenSet<Location>,
+        FrozenSet<UsagePoint>
     )> LoadCimFromFile(string inputFile)
     {
         var conductingEquipments = new List<ConductingEquipment>();
@@ -78,6 +82,7 @@ internal static class Program
         var faultIndicators = new List<FaultIndicator>();
         var auxiliaryEquipments = new List<AuxiliaryEquipment>();
         var locations = new List<Location>();
+        var usagePoints = new List<UsagePoint>();
 
         var serializer = new CsonSerializer();
         await foreach (var line in File.ReadLinesAsync(inputFile).ConfigureAwait(false))
@@ -116,6 +121,10 @@ internal static class Program
             {
                 locations.Add((Location)identifiedObject);
             }
+            else if (identifiedObject is UsagePoint)
+            {
+                usagePoints.Add((UsagePoint)identifiedObject);
+            }
         }
 
         return (
@@ -126,7 +135,8 @@ internal static class Program
             currentTransformers.ToFrozenSet(),
             faultIndicators.ToFrozenSet(),
             auxiliaryEquipments.ToFrozenSet(),
-            locations.ToFrozenSet()
+            locations.ToFrozenSet(),
+            usagePoints.ToFrozenSet()
         );
     }
 }

@@ -13,7 +13,8 @@ internal static class CimValidation
      FrozenSet<CurrentTransformer> currentTransformers,
      FrozenSet<FaultIndicator> faultIndicators,
      FrozenSet<AuxiliaryEquipment> auxiliaryEquipments,
-     FrozenSet<Location> locations)
+     FrozenSet<Location> locations,
+     FrozenSet<UsagePoint> usagePoints)
     {
         var terminalsByConductingEquipment = terminals
             .GroupBy(x => x.ConductingEquipment.@ref)
@@ -192,6 +193,17 @@ internal static class CimValidation
                     equipmentContainersByMrid.TryGetValue(
                         auxiliaryEquipment.EquipmentContainer?.@ref is not null ? Guid.Parse(auxiliaryEquipment.EquipmentContainer.@ref) : Guid.Empty,
                         out var equipmentContainer) ? equipmentContainer : null)
+            };
+
+            return validations.Select(validate => validate()).Where(x => x is not null);
+        });
+
+        // Validate usage points
+        var usagePointValidations = usagePoints.AsParallel().SelectMany((usagePoint) =>
+        {
+            var validations = new List<Func<ValidationError?>>
+            {
+                () => UsagePointValidation.EquipmentReference(usagePoint)
             };
 
             return validations.Select(validate => validate()).Where(x => x is not null);
