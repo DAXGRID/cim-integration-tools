@@ -215,7 +215,8 @@ internal static class CimValidation
             ..equipmentContainerValidationErrors,
             ..currentTransformerValidationErrors,
             ..faultIndicatorValidationErrors,
-            ..auxiliaryEquipmentValidationErrors
+            ..auxiliaryEquipmentValidationErrors,
+            ..usagePointValidations
         ];
     }
 }
