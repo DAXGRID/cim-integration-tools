@@ -209,6 +209,17 @@ internal static class CimValidation
             return validations.Select(validate => validate()).Where(x => x is not null);
         });
 
+        // Validate location
+        var locationValidations = locations.AsParallel().SelectMany((location) =>
+        {
+            var validations = new List<Func<ValidationError?>>
+            {
+                () => LocationValidation.CoordinateSystem(location)
+            };
+
+            return validations.Select(validate => validate()).Where(x => x is not null);
+        });
+
         return [
             ..conductionEquipmentErrors,
             ..terminalValidationErrors,
@@ -216,7 +227,8 @@ internal static class CimValidation
             ..currentTransformerValidationErrors,
             ..faultIndicatorValidationErrors,
             ..auxiliaryEquipmentValidationErrors,
-            ..usagePointValidations
+            ..usagePointValidations,
+            ..locationValidations
         ];
     }
 }
