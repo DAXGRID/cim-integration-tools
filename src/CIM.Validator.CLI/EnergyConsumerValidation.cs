@@ -32,7 +32,7 @@ internal static class EnergyConsumerValidation
         }
 
         // The referenced location should be a line.
-        if (l is LocationExt && ((LocationExt)l).coordinates.Length == 1)
+        if (l is LocationExt && ((LocationExt)l).coordinates.Length != 1)
         {
             return new ValidationError
             {
