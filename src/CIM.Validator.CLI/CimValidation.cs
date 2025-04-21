@@ -76,6 +76,20 @@ internal static class CimValidation
 
                 validations.Add(() => AcLineSegmentValidation.ValidateLocation(acLineSegment, location));
             }
+            else if (conductingEquipment is EnergyConsumer)
+            {
+                var energyConsumer = (EnergyConsumer)conductingEquipment;
+                Location? location = null;
+                if (energyConsumer.Location?.@ref is not null)
+                {
+                    if (locationsByMrid.TryGetValue(Guid.Parse(energyConsumer.Location.@ref), out var outLocation))
+                    {
+                        location = outLocation;
+                    }
+                }
+
+                validations.Add(() => EnergyConsumerValidation.ValidateLocation(energyConsumer, location));
+            }
 
             return validations.Select(validate => validate()).Where(x => x is not null);
         });
