@@ -8,8 +8,9 @@ internal static class ConductingEquipmentValidation
     public static ValidationError? EquipmentContainerCorrectType(ConductingEquipment c, EquipmentContainer? equipmentContainer)
     {
         // If equipment container is null we cannot verify it.
-        // ACLineSegment, EnergyConsumer never has an equipment container.
-        if (c is ACLineSegment || c is EnergyConsumer)
+        // ACLineSegment is allowed to not have one, but if it has one it needs to be a VoltageLevel
+        // EnergyConsumer never has an equipment container.
+        if ((c is ACLineSegment && equipmentContainer is null) || c is EnergyConsumer)
         {
             return null;
         }
@@ -29,7 +30,7 @@ internal static class ConductingEquipmentValidation
         var typeMatch = c switch
         {
             Breaker or LoadBreakSwitch or Disconnector or Fuse or GroundDisconnector or PetersenCoil => typeof(Bay),
-            BusbarSection or LinearShuntCompensator or NonlinearShuntCompensator or SynchronousMachine or AsynchronousMachine => typeof(VoltageLevel),
+            BusbarSection or LinearShuntCompensator or NonlinearShuntCompensator or SynchronousMachine or AsynchronousMachine or ACLineSegment => typeof(VoltageLevel),
             PowerTransformer => typeof(Substation),
             _ => throw new ArgumentException($"Could not handle type of conducting equipment: '{c.GetType().Name}' with mrid: '{c.mRID}'. Equipment id: '{equipmentContainer.mRID}'.")
         };
