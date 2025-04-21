@@ -66,12 +66,12 @@ internal static class CimValidation
             if (conductingEquipment is ACLineSegment)
             {
                 var acLineSegment = (ACLineSegment)conductingEquipment;
-                LocationExt? location = null;
+                Location? location = null;
                 if (acLineSegment.Location?.@ref is not null)
                 {
                     if (locationsByMrid.TryGetValue(Guid.Parse(acLineSegment.Location.@ref), out var outLocation))
                     {
-                        location = (LocationExt)outLocation;
+                        location = outLocation;
                     }
                 }
 

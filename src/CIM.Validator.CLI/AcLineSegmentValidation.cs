@@ -4,7 +4,7 @@ namespace CIM.Validator.CLI;
 
 internal static class AcLineSegmentValidation
 {
-    public static ValidationError? ValidateLocation(ACLineSegment a, LocationExt? location)
+    public static ValidationError? ValidateLocation(ACLineSegment a, Location? location)
     {
         if (string.IsNullOrWhiteSpace(a.EquipmentContainer?.@ref))
         {
@@ -40,7 +40,7 @@ internal static class AcLineSegmentValidation
         }
 
         // The referenced location should be a line.
-        if (location.coordinates.Length > 1)
+        if (location is LocationExt && ((LocationExt)location).coordinates.Length > 1)
         {
             return new ValidationError
             {
