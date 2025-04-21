@@ -47,17 +47,20 @@ internal static class CimValidation
 
             if (conductingEquipment is PowerTransformer)
             {
+                var terminal = terminalsByConductingEquipment[conductingEquipment.mRID];
+                var powerTransformerEnd = powerTransformerEndsByConductingEquipment[conductingEquipment.mRID];
+
                 validations.Add(
                     () => PowerTransformerValidation.PowerTransformerEndPerTerminal(
                         (PowerTransformer)conductingEquipment,
-                        terminalsByConductingEquipment[conductingEquipment.mRID],
-                        powerTransformerEndsByConductingEquipment[conductingEquipment.mRID]));
+                        terminal,
+                        powerTransformerEnd));
 
                 validations.Add(
                     () => PowerTransformerValidation.PowerTransformerEndNumberMatchesTerminalNumber(
                         (PowerTransformer)conductingEquipment,
-                        terminalsByConductingEquipment[conductingEquipment.mRID],
-                        powerTransformerEndsByConductingEquipment[conductingEquipment.mRID]));
+                        terminal,
+                        powerTransformerEnd));
             }
 
             if (conductingEquipment is ACLineSegment)
