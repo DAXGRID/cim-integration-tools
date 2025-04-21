@@ -62,8 +62,7 @@ internal static class CimValidation
                         terminal,
                         powerTransformerEnd));
             }
-
-            if (conductingEquipment is ACLineSegment)
+            else if (conductingEquipment is ACLineSegment)
             {
                 var acLineSegment = (ACLineSegment)conductingEquipment;
                 Location? location = null;
