@@ -138,7 +138,7 @@ internal static class CimValidation
                 var substation = (Substation)equipmentContainer;
 
                 locationsByMrid.TryGetValue(
-                    substation.Location.@ref is not null ? Guid.Parse(substation.Location.@ref) : Guid.Empty, out var substationLocation);
+                    substation.Location?.@ref is not null ? Guid.Parse(substation.Location.@ref) : Guid.Empty, out var substationLocation);
 
                 validations.Add(() => SubstationValidation.PsrType(substation));
                 validations.Add(() => SubstationValidation.LocationRequired(substation, substationLocation));
