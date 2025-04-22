@@ -6,7 +6,7 @@ internal static class SubstationValidation
 {
     public static ValidationError? LocationRequired(Substation s, Location? l)
     {
-        if (string.IsNullOrWhiteSpace(s.Location.@ref))
+        if (string.IsNullOrWhiteSpace(s.Location?.@ref))
         {
             return new ValidationError
             {
