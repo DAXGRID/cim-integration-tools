@@ -226,7 +226,8 @@ internal static class CimValidation
         {
             var validations = new List<Func<ValidationError?>>
             {
-                () => PowerTransformerEndValidation.BaseVoltageRequired(powerTransformerEnd)
+                () => PowerTransformerEndValidation.BaseVoltageRequired(powerTransformerEnd),
+                () => PowerTransformerEndValidation.PowerTransformerRequired(powerTransformerEnd)
             };
 
             return validations.Select(validate => validate()).Where(x => x is not null);
