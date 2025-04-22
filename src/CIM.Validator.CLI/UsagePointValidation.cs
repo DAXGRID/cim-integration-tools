@@ -6,7 +6,7 @@ internal static class UsagePointValidation
 {
     public static ValidationError? EquipmentReference(UsagePoint u)
     {
-        if (string.IsNullOrWhiteSpace(u.Equipments.@ref))
+        if (string.IsNullOrWhiteSpace(u.Equipments?.@ref))
         {
             return new ValidationError
             {
