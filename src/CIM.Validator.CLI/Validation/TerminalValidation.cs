@@ -1,7 +1,7 @@
 using CIM.PhysicalNetworkModel;
 using System.Collections.Frozen;
 
-namespace CIM.Validator.CLI;
+namespace CIM.Validator.CLI.Validation;
 
 internal static class TerminalValidation
 {

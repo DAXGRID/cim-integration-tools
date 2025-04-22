@@ -1,4 +1,5 @@
 using CIM.PhysicalNetworkModel;
+using CIM.Validator.CLI.Validation;
 using System.Collections.Frozen;
 
 namespace CIM.Validator.CLI;
@@ -227,7 +228,8 @@ internal static class CimValidation
             var validations = new List<Func<ValidationError?>>
             {
                 () => PowerTransformerEndValidation.BaseVoltageRequired(powerTransformerEnd),
-                () => PowerTransformerEndValidation.PowerTransformerRequired(powerTransformerEnd)
+                () => PowerTransformerEndValidation.PowerTransformerRequired(powerTransformerEnd),
+                () => PowerTransformerEndValidation.TerminalRequired(powerTransformerEnd)
             };
 
             return validations.Select(validate => validate()).Where(x => x is not null);

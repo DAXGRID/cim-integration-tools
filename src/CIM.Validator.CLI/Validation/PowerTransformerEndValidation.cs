@@ -1,6 +1,6 @@
 using CIM.PhysicalNetworkModel;
 
-namespace CIM.Validator.CLI;
+namespace CIM.Validator.CLI.Validation;
 
 internal static class PowerTransformerEndValidation
 {
@@ -13,7 +13,7 @@ internal static class PowerTransformerEndValidation
                 Mrid = Guid.Parse(p.mRID),
                 TypeName = p.GetType().Name,
                 Code = "POWER_TRANSFORMER_END_REQUIRES_BASEVOLTAGE_GREATER_THAN_ZERO",
-                Description = "",
+                Description = "Power transformer end requires a base voltage greater than zero.",
                 Severity = Severity.Error
             };
         }
@@ -30,7 +30,24 @@ internal static class PowerTransformerEndValidation
                 Mrid = Guid.Parse(p.mRID),
                 TypeName = p.GetType().Name,
                 Code = "POWER_TRANSFORMER_END_REQUIRES_POWER_TRANSFORMER",
-                Description = "",
+                Description = "Power transformer end requires a reference to a power transformer.",
+                Severity = Severity.Error
+            };
+        }
+
+        return null;
+    }
+
+    public static ValidationError? TerminalRequired(PowerTransformerEnd p)
+    {
+        if (p.Terminal?.@ref is null)
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(p.mRID),
+                TypeName = p.GetType().Name,
+                Code = "POWER_TRANSFORMER_END_REQUIRES_TERMINAL",
+                Description = "Power transformer end requires a reference to a terminal.",
                 Severity = Severity.Error
             };
         }

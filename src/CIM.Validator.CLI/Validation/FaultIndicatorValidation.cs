@@ -1,6 +1,6 @@
 using CIM.PhysicalNetworkModel;
 
-namespace CIM.Validator.CLI;
+namespace CIM.Validator.CLI.Validation;
 
 internal static class FaultIndicatorValidation
 {

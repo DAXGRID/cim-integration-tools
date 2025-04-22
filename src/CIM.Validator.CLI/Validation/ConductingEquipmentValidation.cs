@@ -1,7 +1,7 @@
 using CIM.PhysicalNetworkModel;
 using System.Globalization;
 
-namespace CIM.Validator.CLI;
+namespace CIM.Validator.CLI.Validation;
 
 internal static class ConductingEquipmentValidation
 {
