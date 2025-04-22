@@ -221,6 +221,17 @@ internal static class CimValidation
             return validations.Select(validate => validate()).Where(x => x is not null);
         });
 
+        // Validate location
+        var powerTransformerEndValidations = powerTransformerEnds.AsParallel().SelectMany((powerTransformerEnd) =>
+        {
+            var validations = new List<Func<ValidationError?>>
+            {
+                () => PowerTransformerEndValidation.BaseVoltageRequired(powerTransformerEnd)
+            };
+
+            return validations.Select(validate => validate()).Where(x => x is not null);
+        });
+
         return [
             ..conductionEquipmentErrors,
             ..terminalValidationErrors,
@@ -229,7 +240,8 @@ internal static class CimValidation
             ..faultIndicatorValidationErrors,
             ..auxiliaryEquipmentValidationErrors,
             ..usagePointValidations,
-            ..locationValidations
+            ..locationValidations,
+            ..powerTransformerEndValidations
         ];
     }
 }
