@@ -32,4 +32,26 @@ internal static class FaultIndicatorValidation
 
         return null;
     }
+
+    public static ValidationError? ResetKindRequired(FaultIndicator f)
+    {
+        if (f is not FaultIndicatorExt)
+        {
+            return null;
+        }
+
+        if (((FaultIndicatorExt)f).resetKindSpecified)
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(f.mRID),
+                TypeName = typeof(FaultIndicator).Name,
+                Code = "FAULT_INDICATOR_RESET_KIND_REQUIRED",
+                Description = "The reset kind has not been specified on the fault indicator.",
+                Severity = Severity.Error
+            };
+        }
+
+        return null;
+    }
 }

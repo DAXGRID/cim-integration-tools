@@ -169,6 +169,7 @@ internal static class CimValidation
         {
             var validations = new List<Func<ValidationError?>>
             {
+                () => FaultIndicatorValidation.ResetKindRequired(faultIndicator),
                 () => FaultIndicatorValidation.ValidateEquipmentContainerType(
                     faultIndicator,
                     equipmentContainersByMrid.TryGetValue(
