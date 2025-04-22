@@ -1,10 +1,12 @@
 ﻿using CIM.PhysicalNetworkModel;
 using DAX.CIM.Serialization.NetSam1_3.Equipment;
+using DAX.CIM.Serialization.NetSam1_3.Measurement;
 using DAX.IO.CIM;
 using DAX.Util;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Xml;
 
@@ -228,25 +230,38 @@ namespace DAX.IO.Readers
                         // Get related data...
                         if (classNameLower == "powertransformer")
                         {
-                            foreach (var powerTransformerEndAttributes in _powerTransformerEndsByMrid[mrid.Value])
+
+                            if (_powerTransformerEndsByMrid.ContainsKey(mrid.Value))
                             {
-                                var endNumber = powerTransformerEndAttributes["endnumber"];
-
-                                foreach (var ptAttr in powerTransformerEndAttributes)
+                                foreach (var powerTransformerEndAttributes in _powerTransformerEndsByMrid[mrid.Value])
                                 {
-                                    feature.Add($"v{endNumber}.{ptAttr.Key}", ptAttr.Value);
-                                }
+                                    var endNumber = powerTransformerEndAttributes["endnumber"];
 
-                                Guid? powerTransformerEndId = TryParseGuidElement("RatioTapChanger", "mrid", powerTransformerEndAttributes, lineNumber);
+                                    // Convert base voltage reference to base voltage value
+                                    Guid? baseVoltageId = TryParseGuidElement("PowerTransformerEnd", "basevoltage", powerTransformerEndAttributes, lineNumber);
 
-                                // check if tap change
-                                if (_ratioTapChangeByMrid.ContainsKey(powerTransformerEndId.Value))
-                                {
-                                    var tabAttributes = _ratioTapChangeByMrid[powerTransformerEndId.Value];
+                                    powerTransformerEndAttributes.Remove("basevoltage");
 
-                                    foreach (var tapAttr in tabAttributes)
+                                    if (baseVoltageId.HasValue)
+                                        powerTransformerEndAttributes.Add("basevoltage", _baseVoltageByMrid[baseVoltageId.Value].ToString());
+
+
+                                    foreach (var ptAttr in powerTransformerEndAttributes)
                                     {
-                                        feature.Add($"tap.{tapAttr.Key}", tapAttr.Value);
+                                        feature.Add($"v{endNumber}.{ptAttr.Key}", ptAttr.Value);
+                                    }
+
+                                    Guid? powerTransformerEndId = TryParseGuidElement("RatioTapChanger", "mrid", powerTransformerEndAttributes, lineNumber);
+
+                                    // check if tap change
+                                    if (_ratioTapChangeByMrid.ContainsKey(powerTransformerEndId.Value))
+                                    {
+                                        var tabAttributes = _ratioTapChangeByMrid[powerTransformerEndId.Value];
+
+                                        foreach (var tapAttr in tabAttributes)
+                                        {
+                                            feature.Add($"tap.{tapAttr.Key}", tapAttr.Value);
+                                        }
                                     }
                                 }
                             }
@@ -645,13 +660,7 @@ namespace DAX.IO.Readers
 
                 Guid? powerTransformerId = TryParseGuidElement("PowerTransformerEnd", "powertransformer", keyValuePairs, lineNumber);
                 keyValuePairs.Remove("powertransformer");
-
-                Guid? baseVoltageId = TryParseGuidElement("PowerTransformerEnd", "basevoltage", keyValuePairs, lineNumber);
-                keyValuePairs.Remove("basevoltage");
-
-                var baseVoltage = _baseVoltageByMrid[baseVoltageId.Value];
-                keyValuePairs.Add("basevoltage", baseVoltage.ToString());
-
+         
                 ConvertMultiplier(keyValuePairs, "nominalvoltage");
                 ConvertMultiplier(keyValuePairs, "ratedu");
                 ConvertMultiplier(keyValuePairs, "rateds");
@@ -786,18 +795,24 @@ namespace DAX.IO.Readers
         {
             var newValue = value.Replace(",", ".");
 
+            BigInteger result = 0;
+
             if (multiplier == "none")
-                return Int32.Parse(newValue);
+                result = BigInteger.Parse(newValue);
             else if (multiplier == "k")
-                return Convert.ToInt32(Double.Parse(newValue, CultureInfo.InvariantCulture) * 1000);
+                result = new BigInteger(Double.Parse(newValue, CultureInfo.InvariantCulture) * 1000);
             else if (multiplier == "M")
-                return Convert.ToInt32(Double.Parse(newValue, CultureInfo.InvariantCulture) * 1000000);
+                result = new BigInteger(Double.Parse(newValue, CultureInfo.InvariantCulture) * 1000000);
             else if (multiplier == "G")
-                return Convert.ToInt32(Double.Parse(newValue, CultureInfo.InvariantCulture) * 1000000000);
+                result = new BigInteger(Double.Parse(newValue, CultureInfo.InvariantCulture) * 1000000000);
             else if (multiplier == "T")
-                return Convert.ToInt32(Double.Parse(newValue, CultureInfo.InvariantCulture) * 1000000000000);
+                result = new BigInteger(Double.Parse(newValue, CultureInfo.InvariantCulture) * 1000000000000);
+
+            // We need to do this hack, because the CIM objects return only have int 32 bit attribute definitions
+            if (result > Int32.MaxValue)
+                return Int32.MaxValue;
             else
-                return 0;
+                return (Int32)result;
         }
 
         private void AddVoltageLevelToDict(Dictionary<string, string> keyValuePairs, int lineNumber)
