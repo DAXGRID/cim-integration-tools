@@ -103,7 +103,7 @@ internal static class ConductingEquipmentValidation
                 Mrid = Guid.Parse(c.mRID),
                 TypeName = c.GetType().Name,
                 Code = "WRONG_NUMBER_OF_TERMINALS",
-                Description = "Wrong number of terminals on conducting equipment.",
+                Description = $"Wrong number of terminals ({terminals.Count}) on conducting equipment.",
                 Severity = Severity.Warning
             };
         }
