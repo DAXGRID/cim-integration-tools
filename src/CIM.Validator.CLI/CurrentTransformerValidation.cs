@@ -32,4 +32,27 @@ internal static class CurrentTransformerValidation
 
         return null;
     }
+
+    public static ValidationError? MaximumCurrentRequired(CurrentTransformer c)
+    {
+        // We can only check maximum current on the current transformer extension type.
+        if (c is not CurrentTransformerExt)
+        {
+            return null;
+        }
+
+        if (((CurrentTransformerExt)c).maximumCurrent is null)
+        {
+            return new ValidationError
+            {
+                Mrid = Guid.Parse(c.mRID),
+                TypeName = c.GetType().Name,
+                Code = "CURRENT_TRANSFORMER_EXT_REQUIRES_MAXIMUM_CURRENT",
+                Description = $"Maximum current is required on current transformer extension.",
+                Severity = Severity.Warning
+            };
+        }
+
+        return null;
+    }
 }

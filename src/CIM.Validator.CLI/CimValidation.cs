@@ -156,7 +156,8 @@ internal static class CimValidation
                     currentTransformer,
                     equipmentContainersByMrid.TryGetValue(
                         currentTransformer.EquipmentContainer?.@ref is not null ? Guid.Parse(currentTransformer.EquipmentContainer.@ref) : Guid.Empty,
-                        out var equipmentContainer) ? equipmentContainer : null)
+                        out var equipmentContainer) ? equipmentContainer : null),
+                () => CurrentTransformerValidation.MaximumCurrentRequired(currentTransformer)
             };
 
             return validations.Select(validate => validate()).Where(x => x is not null);
