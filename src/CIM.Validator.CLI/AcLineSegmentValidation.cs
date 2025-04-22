@@ -14,7 +14,7 @@ internal static class AcLineSegmentValidation
         // If AC line segment does not have an equipment container reference
         // it is laying in the ground and not part of a transformer station,
         // it therefore requires a reference to a location object.
-        if (string.IsNullOrWhiteSpace(a.Location.@ref))
+        if (string.IsNullOrWhiteSpace(a.Location?.@ref))
         {
             return new ValidationError
             {
