@@ -10,7 +10,7 @@ internal static class UsagePointValidation
         {
             return new ValidationError
             {
-                Mrid = u.mRID,
+                TypeReferenceMrid = u.mRID,
                 TypeName = u.GetType().Name,
                 Code = "USAGE_POINT_EQUIPMENT_REFERENCE_REQUIRED",
                 Description = "Usage point always requires an equipment reference.",

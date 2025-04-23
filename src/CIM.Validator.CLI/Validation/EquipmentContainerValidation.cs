@@ -10,7 +10,7 @@ internal static class EquipmentContainerValidation
         {
             return new ValidationError
             {
-                Mrid = v.mRID,
+                TypeReferenceMrid = v.mRID,
                 TypeName = typeof(VoltageLevel).Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"Cannot validate equipment container type because the reference is missing.",
@@ -22,7 +22,7 @@ internal static class EquipmentContainerValidation
         {
             return new ValidationError
             {
-                Mrid = v.mRID,
+                TypeReferenceMrid = v.mRID,
                 TypeName = typeof(VoltageLevel).Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"The equipment container for the current transformer should be of type: '{typeof(Substation).Name}'. Current type is '{equipmentContainer.GetType().Name}'.",
@@ -40,7 +40,7 @@ internal static class EquipmentContainerValidation
         {
             return new ValidationError
             {
-                Mrid = b.mRID,
+                TypeReferenceMrid = b.mRID,
                 TypeName = typeof(Bay).Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"Cannot validate equipment container type because the reference is missing.",
@@ -52,7 +52,7 @@ internal static class EquipmentContainerValidation
         {
             return new ValidationError
             {
-                Mrid = b.mRID,
+                TypeReferenceMrid = b.mRID,
                 TypeName = typeof(Bay).Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"The equipment container for the current transformer should be of type: '{typeof(VoltageLevel).Name}'. Current type is '{equipmentContainer.GetType().Name}'.",

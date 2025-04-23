@@ -10,7 +10,7 @@ internal static class AuxiliaryEquipmentValidation
         {
             return new ValidationError
             {
-                Mrid = a.mRID,
+                TypeReferenceMrid = a.mRID,
                 TypeName = a.GetType().Name,
                 Code = "AUXILIARY_EQUIPMENT_REQUIRE_TERMINAL_REFERENCE",
                 Description = "Auxiliary equipment requires terminal reference.",
@@ -27,7 +27,7 @@ internal static class AuxiliaryEquipmentValidation
         {
             return new ValidationError
             {
-                Mrid = a.mRID,
+                TypeReferenceMrid = a.mRID,
                 TypeName = a.GetType().Name,
                 Code = "AUXILIARY_EQUIPMENT_CONTAINER_SHOULD_BE_BAY",
                 Description = "Auxiliary equipments should reference an equipment container of type Bay.",
@@ -44,7 +44,7 @@ internal static class AuxiliaryEquipmentValidation
         {
             return new ValidationError
             {
-                Mrid = a.mRID,
+                TypeReferenceMrid = a.mRID,
                 TypeName = a.GetType().Name,
                 Code = "AUXILIARY_EQUIPMENT_TERMINAL_REFERENCE_DOES_NOT_EXIST",
                 Description = "Auxiliary equipment reference to terminal '{a.Terminal?.@ref}' do not exist.",

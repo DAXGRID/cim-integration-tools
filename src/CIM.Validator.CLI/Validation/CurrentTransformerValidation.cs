@@ -10,7 +10,7 @@ internal static class CurrentTransformerValidation
         {
             return new ValidationError
             {
-                Mrid = c.mRID,
+                TypeReferenceMrid = c.mRID,
                 TypeName = typeof(CurrentTransformer).Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"Cannot validate equipment container type because the reference is missing.",
@@ -22,7 +22,7 @@ internal static class CurrentTransformerValidation
         {
             return new ValidationError
             {
-                Mrid = c.mRID,
+                TypeReferenceMrid = c.mRID,
                 TypeName = typeof(CurrentTransformer).Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"The equipment container for the current transformer should be of type: '{typeof(Bay).Name}'. Current type is '{equipmentContainer.GetType().Name}'.",
@@ -45,7 +45,7 @@ internal static class CurrentTransformerValidation
         {
             return new ValidationError
             {
-                Mrid = c.mRID,
+                TypeReferenceMrid = c.mRID,
                 TypeName = c.GetType().Name,
                 Code = "CURRENT_TRANSFORMER_EXT_REQUIRES_MAXIMUM_CURRENT",
                 Description = $"Maximum current is required on current transformer extension.",
