@@ -9,7 +9,7 @@ internal sealed record ValidationError
 
     public required string TypeName { get; init; }
 
-    public required Guid Mrid { get; init; }
+    public required string Mrid { get; init; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public required Severity Severity { get; init; }

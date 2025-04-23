@@ -10,7 +10,7 @@ internal static class LocationValidation
         {
             return new ValidationError
             {
-                Mrid = Guid.Parse(l.mRID),
+                Mrid = l.mRID,
                 TypeName = l.GetType().Name,
                 Code = "LOCATION_MISSING_COORDINATE_SYSTEM_REFERENCE",
                 Description = "Location is missing coordinate system reference.",

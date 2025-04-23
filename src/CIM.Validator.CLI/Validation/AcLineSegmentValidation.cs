@@ -18,7 +18,7 @@ internal static class AcLineSegmentValidation
         {
             return new ValidationError
             {
-                Mrid = Guid.Parse(a.mRID),
+                Mrid = a.mRID,
                 TypeName = a.GetType().Name,
                 Code = "LOCATION_REQUIRED_AC_LINE_SEGMENT_IN_GROUND",
                 Description = "AC Line Segment without equipment container reference requires location.",
@@ -31,7 +31,7 @@ internal static class AcLineSegmentValidation
         {
             return new ValidationError
             {
-                Mrid = Guid.Parse(a.mRID),
+                Mrid = a.mRID,
                 TypeName = a.GetType().Name,
                 Code = "AC_LINE_SEGMENT_REFERENCED_LOCATION_DOES_NOT_EXIST",
                 Description = $"AC Line Segment has a reference to a location ({a.Location.@ref}) that does not exist.",
@@ -44,7 +44,7 @@ internal static class AcLineSegmentValidation
         {
             return new ValidationError
             {
-                Mrid = Guid.Parse(a.mRID),
+                Mrid = a.mRID,
                 TypeName = a.GetType().Name,
                 Code = "AC_LINE_SEGMENT_REFERENCED_LOCATION_IS_NOT_A_LINE",
                 Description = $"AC Line Segment has a reference to a location ({a.Location.@ref}) is not a line.",

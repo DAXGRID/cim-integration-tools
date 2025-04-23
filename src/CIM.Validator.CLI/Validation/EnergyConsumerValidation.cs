@@ -10,7 +10,7 @@ internal static class EnergyConsumerValidation
         {
             return new ValidationError
             {
-                Mrid = Guid.Parse(e.mRID),
+                Mrid = e.mRID,
                 TypeName = e.GetType().Name,
                 Code = "ENERGY_CONSUMER_MISSING_LOCATION_REFERENCE",
                 Description = "The energy consumer is missing the required location reference.",
@@ -23,7 +23,7 @@ internal static class EnergyConsumerValidation
         {
             return new ValidationError
             {
-                Mrid = Guid.Parse(e.mRID),
+                Mrid = e.mRID,
                 TypeName = e.GetType().Name,
                 Code = "ENERGY_CONSUMER_REFERENCED_LOCATION_DOES_NOT_EXIST",
                 Description = $"Energy consumer has a reference to a location ({e.Location.@ref}) that does not exist.",
@@ -36,7 +36,7 @@ internal static class EnergyConsumerValidation
         {
             return new ValidationError
             {
-                Mrid = Guid.Parse(e.mRID),
+                Mrid = e.mRID,
                 TypeName = e.GetType().Name,
                 Code = "ENERGY_CONSUMER_REFERENCED_LOCATION_IS_NOT_A_POINT",
                 Description = $"Energy consumer has a reference to a location ({e.Location.@ref}) that is not a point.",
