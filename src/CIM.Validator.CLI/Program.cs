@@ -16,13 +16,13 @@ internal static class Program
         var rootCommand = new RootCommand("CIM Validator CLI.");
 
         var inputFilePathOption = new Option<string>(
-            name: "--input-file-path",
+            name: "--input-file",
             description: "The path to the input file, example: /home/user/my_file.jsonl."
         )
         { IsRequired = true };
 
         var outputFilePathOption = new Option<string>(
-            name: "--output-file-path",
+            name: "--output-file",
             description: "The path to the output file, example: /home/user/my_file.jsonl."
         )
         { IsRequired = true };
