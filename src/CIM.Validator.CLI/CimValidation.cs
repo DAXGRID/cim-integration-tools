@@ -206,7 +206,8 @@ internal static class CimValidation
         {
             var validations = new List<Func<ValidationError?>>
             {
-                () => UsagePointValidation.EquipmentReference(usagePoint)
+                () => UsagePointValidation.EquipmentReference(usagePoint),
+                () => UsagePointValidation.NameRequired(usagePoint)
             };
 
             return validations.Select(validate => validate()).Where(x => x is not null);

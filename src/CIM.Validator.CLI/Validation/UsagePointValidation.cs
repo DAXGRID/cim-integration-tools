@@ -20,4 +20,21 @@ internal static class UsagePointValidation
 
         return null;
     }
+
+    public static ValidationError? NameRequired(UsagePoint u)
+    {
+        if (string.IsNullOrWhiteSpace(u.name))
+        {
+            return new ValidationError
+            {
+                TypeReferenceMrid = u.mRID,
+                TypeName = u.GetType().Name,
+                Code = "USAGE_POINT_NAME_IS_REQUIRED",
+                Description = "Usage point always requires the 'name' attribute to be filled.",
+                Severity = Severity.Warning
+            };
+        }
+
+        return null;
+    }
 }
