@@ -21,8 +21,9 @@ internal static class UsagePointValidation
         return null;
     }
 
-    public static ValidationError? NameRequired(UsagePoint u)
+    public static ValidationError? VerifyName(UsagePoint u, Dictionary<string, List<string>> usagePointNameToMrid)
     {
+        // Validate that the usage point has a name.
         if (string.IsNullOrWhiteSpace(u.name))
         {
             return new ValidationError
@@ -31,6 +32,20 @@ internal static class UsagePointValidation
                 TypeName = u.GetType().Name,
                 Code = "USAGE_POINT_NAME_IS_REQUIRED",
                 Description = "Usage point always requires the 'name' attribute to be filled.",
+                Severity = Severity.Warning
+            };
+        }
+
+        // Validate that usage point names are unique.
+        if (usagePointNameToMrid[u.name].Count > 1)
+        {
+            var usagePointSharedIds = string.Join(", ", usagePointNameToMrid[u.name].Where(x => x != u.mRID));
+            return new ValidationError
+            {
+                TypeReferenceMrid = u.mRID,
+                TypeName = u.GetType().Name,
+                Code = "USAGE_POINT_NAME_IS_REQUIRED",
+                Description = $"Usage point name should be unique, it is shared with the following usage points: '{usagePointSharedIds}'.",
                 Severity = Severity.Warning
             };
         }

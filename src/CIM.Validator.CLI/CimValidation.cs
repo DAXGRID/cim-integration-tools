@@ -202,12 +202,13 @@ internal static class CimValidation
         });
 
         // Validate usage points
+        var usagePointMridByName = usagePoints.GroupBy(x => x.name, x => x.mRID).ToDictionary(x => x.Key, x => x.ToList());
         var usagePointValidations = usagePoints.AsParallel().SelectMany((usagePoint) =>
         {
             var validations = new List<Func<ValidationError?>>
             {
                 () => UsagePointValidation.EquipmentReference(usagePoint),
-                () => UsagePointValidation.NameRequired(usagePoint)
+                () => UsagePointValidation.VerifyName(usagePoint, usagePointMridByName)
             };
 
             return validations.Select(validate => validate()).Where(x => x is not null);
