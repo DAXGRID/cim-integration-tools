@@ -11,7 +11,7 @@ internal static class FaultIndicatorValidation
             return new ValidationError
             {
                 TypeReferenceMrid = f.mRID,
-                TypeName = typeof(FaultIndicator).Name,
+                TypeName = f.GetType().Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"Cannot validate equipment container type because the reference is missing.",
                 Severity = Severity.Warning
@@ -23,7 +23,7 @@ internal static class FaultIndicatorValidation
             return new ValidationError
             {
                 TypeReferenceMrid = f.mRID,
-                TypeName = typeof(FaultIndicator).Name,
+                TypeName = f.GetType().Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"The equipment container for the current transformer should be of type: '{typeof(Bay).Name}'. Current type is '{equipmentContainer.GetType().Name}'.",
                 Severity = Severity.Warning
@@ -45,7 +45,7 @@ internal static class FaultIndicatorValidation
             return new ValidationError
             {
                 TypeReferenceMrid = f.mRID,
-                TypeName = typeof(FaultIndicator).Name,
+                TypeName = f.GetType().Name,
                 Code = "FAULT_INDICATOR_RESET_KIND_REQUIRED",
                 Description = "The reset kind has not been specified on the fault indicator.",
                 Severity = Severity.Error
