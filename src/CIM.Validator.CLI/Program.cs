@@ -11,15 +11,38 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        const string inputFile = "./mapper_output.jsonl";
-        const string outputFile = "./warnings.jsonl";
+        var logger = LoggerFactory.Create(nameof(CIM.Validator.CLI));
 
         var rootCommand = new RootCommand("CIM Validator CLI.");
 
-        var logger = LoggerFactory.Create(nameof(CIM.Validator.CLI));
+        var inputFilePathOption = new Option<string>(
+            name: "--input-file-path",
+            description: "The path to the input file, example: /home/user/my_file.jsonl."
+        )
+        { IsRequired = true };
 
-        logger.LogInformation("Starting CIM Validator.");
+        var outputFilePathOption = new Option<string>(
+            name: "--output-file-path",
+            description: "The path to the output file, example: /home/user/my_file.jsonl."
+        )
+        { IsRequired = true };
 
+        rootCommand.Add(inputFilePathOption);
+        rootCommand.Add(outputFilePathOption);
+
+        rootCommand.SetHandler(
+            async (inputFilePath, outputFilePath) =>
+            {
+                logger.LogInformation("Starting CIM Validator.");
+                await ExecuteAsync(inputFilePath, outputFilePath).ConfigureAwait(false);
+                logger.LogInformation("Finished CIM Validator.");
+            }, inputFilePathOption, outputFilePathOption);
+
+        return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
+    }
+
+    private static async Task ExecuteAsync(string inputFilePath, string outputFilePath)
+    {
         var (conductingEquipments,
              terminals,
              powerTransformerEnds,
@@ -29,7 +52,7 @@ internal static class Program
              auxiliaryEquipments,
              locations,
              usagePoints
-        ) = await LoadCimFromFile(inputFile).ConfigureAwait(false);
+        ) = await LoadCimFromFile(inputFilePath).ConfigureAwait(false);
 
         var validationErrors = CimValidation
             .Validate(
@@ -46,9 +69,7 @@ internal static class Program
             .ToList()
             .AsReadOnly();
 
-        await WriteValidationErrorsToFile(outputFile, validationErrors).ConfigureAwait(false);
-
-        return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
+        await WriteValidationErrorsToFile(outputFilePath, validationErrors).ConfigureAwait(false);
     }
 
     private static async Task WriteValidationErrorsToFile(string outputFile, IReadOnlyList<ValidationError?> validationErrors)
