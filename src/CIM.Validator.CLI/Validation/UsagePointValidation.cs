@@ -44,7 +44,7 @@ internal static class UsagePointValidation
             {
                 TypeReferenceMrid = u.mRID,
                 TypeName = u.GetType().Name,
-                Code = "USAGE_POINT_NAME_IS_REQUIRED",
+                Code = "USAGE_POINT_NAME_IS_NOT_UNIQUE",
                 Description = $"Usage point name should be unique, it is shared with the following usage points: '{usagePointSharedIds}'.",
                 Severity = Severity.Warning
             };
