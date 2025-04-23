@@ -77,6 +77,7 @@ internal static class CimValidation
                 }
 
                 validations.Add(() => AcLineSegmentValidation.ValidateLocation(acLineSegment, location));
+                validations.Add(() => AcLineSegmentValidation.InsideEquipmentContainerLengthGreaterThanZero(acLineSegment));
             }
             else if (conductingEquipment is EnergyConsumer)
             {
