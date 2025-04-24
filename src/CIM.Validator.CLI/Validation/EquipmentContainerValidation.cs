@@ -10,8 +10,8 @@ internal static class EquipmentContainerValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = v.mRID,
-                TypeName = v.GetType().Name,
+                IdentifiedObjectId = v.mRID,
+                IdentifiedObjectClass = v.GetType().Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"Cannot validate equipment container type because the reference is missing.",
                 Severity = Severity.Warning
@@ -22,8 +22,8 @@ internal static class EquipmentContainerValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = v.mRID,
-                TypeName = v.GetType().Name,
+                IdentifiedObjectId = v.mRID,
+                IdentifiedObjectClass = v.GetType().Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"The equipment container for the current transformer should be of type: '{typeof(Substation).Name}'. Current type is '{equipmentContainer.GetType().Name}'.",
                 Severity = Severity.Warning
@@ -40,8 +40,8 @@ internal static class EquipmentContainerValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = b.mRID,
-                TypeName = b.GetType().Name,
+                IdentifiedObjectId = b.mRID,
+                IdentifiedObjectClass = b.GetType().Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"Cannot validate equipment container type because the reference is missing.",
                 Severity = Severity.Warning
@@ -52,8 +52,8 @@ internal static class EquipmentContainerValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = b.mRID,
-                TypeName = b.GetType().Name,
+                IdentifiedObjectId = b.mRID,
+                IdentifiedObjectClass = b.GetType().Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"The equipment container for the current transformer should be of type: '{typeof(VoltageLevel).Name}'. Current type is '{equipmentContainer.GetType().Name}'.",
                 Severity = Severity.Warning

@@ -18,8 +18,8 @@ internal static class AcLineSegmentValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = a.mRID,
-                TypeName = a.GetType().Name,
+                IdentifiedObjectId = a.mRID,
+                IdentifiedObjectClass = a.GetType().Name,
                 Code = "LOCATION_REQUIRED_AC_LINE_SEGMENT_IN_GROUND",
                 Description = "AC Line Segment without equipment container reference requires location.",
                 Severity = Severity.Error
@@ -31,8 +31,8 @@ internal static class AcLineSegmentValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = a.mRID,
-                TypeName = a.GetType().Name,
+                IdentifiedObjectId = a.mRID,
+                IdentifiedObjectClass = a.GetType().Name,
                 Code = "AC_LINE_SEGMENT_REFERENCED_LOCATION_DOES_NOT_EXIST",
                 Description = $"AC Line Segment has a reference to a location ({a.Location.@ref}) that does not exist.",
                 Severity = Severity.Error
@@ -44,8 +44,8 @@ internal static class AcLineSegmentValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = a.mRID,
-                TypeName = a.GetType().Name,
+                IdentifiedObjectId = a.mRID,
+                IdentifiedObjectClass = a.GetType().Name,
                 Code = "AC_LINE_SEGMENT_REFERENCED_LOCATION_IS_NOT_A_LINE",
                 Description = $"AC Line Segment has a reference to a location ({a.Location.@ref}) is not a line.",
                 Severity = Severity.Error
@@ -75,8 +75,8 @@ internal static class AcLineSegmentValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = a.mRID,
-                TypeName = a.GetType().Name,
+                IdentifiedObjectId = a.mRID,
+                IdentifiedObjectClass = a.GetType().Name,
                 Code = "AC_LINE_SEGMENT_NO_EQUIPMENT_CONTAINER_SHOULD_HAVE_LENGTH_GREATER_THAN_ZERO",
                 Description = $"AC line segment without an equipment container should have a length and the value should be greater than zero.",
                 Severity = Severity.Warning

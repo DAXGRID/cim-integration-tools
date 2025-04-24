@@ -19,8 +19,8 @@ internal static class ConductingEquipmentValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = c.mRID,
-                TypeName = c.GetType().Name,
+                IdentifiedObjectId = c.mRID,
+                IdentifiedObjectClass = c.GetType().Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"Cannot validate equipment container type because the reference is missing.",
                 Severity = Severity.Warning
@@ -40,8 +40,8 @@ internal static class ConductingEquipmentValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = c.mRID,
-                TypeName = c.GetType().Name,
+                IdentifiedObjectId = c.mRID,
+                IdentifiedObjectClass = c.GetType().Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"The referenced equipment container for the conducting equipment should be of type: '{typeMatch.Name}'. Current type is '{equipmentContainer.GetType().Name}'.",
                 Severity = Severity.Warning
@@ -58,8 +58,8 @@ internal static class ConductingEquipmentValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = c.mRID,
-                TypeName = c.GetType().Name,
+                IdentifiedObjectId = c.mRID,
+                IdentifiedObjectClass = c.GetType().Name,
                 Code = "REQUIRED_EQUIPMENT_CONTAINER_REFERENCE",
                 Description = "Conducting equipment should have a reference to an equipment container.",
                 Severity = Severity.Warning
@@ -75,8 +75,8 @@ internal static class ConductingEquipmentValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = c.mRID,
-                TypeName = c.GetType().Name,
+                IdentifiedObjectId = c.mRID,
+                IdentifiedObjectClass = c.GetType().Name,
                 Code = "BASE_VOLTAGE_LESS_OR_EQUAL_TO_ZERO",
                 Description = "Conducting equipment should have base voltage greater than 0.",
                 Severity = Severity.Warning
@@ -100,8 +100,8 @@ internal static class ConductingEquipmentValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = c.mRID,
-                TypeName = c.GetType().Name,
+                IdentifiedObjectId = c.mRID,
+                IdentifiedObjectClass = c.GetType().Name,
                 Code = "WRONG_NUMBER_OF_TERMINALS",
                 Description = $"Wrong number of terminals ({terminals.Count}) on conducting equipment.",
                 Severity = Severity.Warning
@@ -117,8 +117,8 @@ internal static class ConductingEquipmentValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = c.mRID,
-                TypeName = c.GetType().Name,
+                IdentifiedObjectId = c.mRID,
+                IdentifiedObjectClass = c.GetType().Name,
                 Code = "MANDATORY_SINGLE_CONNECTIVY_NODE",
                 Description = "Mandatory so have at least one terminal pointing to a conducting equipment point to a connectivity node.",
                 Severity = Severity.Warning
@@ -138,8 +138,8 @@ internal static class ConductingEquipmentValidation
             {
                 return new ValidationError
                 {
-                    TypeReferenceMrid = c.mRID,
-                    TypeName = c.GetType().Name,
+                    IdentifiedObjectId = c.mRID,
+                    IdentifiedObjectClass = c.GetType().Name,
                     Code = "TERMINAL_NUMBERING_IS_INVALID",
                     Description = "Terminal numbering is invalid, should always be a valid sequence.",
                     Severity = Severity.Warning

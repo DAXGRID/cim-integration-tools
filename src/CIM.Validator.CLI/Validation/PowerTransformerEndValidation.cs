@@ -10,8 +10,8 @@ internal static class PowerTransformerEndValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = p.mRID,
-                TypeName = p.GetType().Name,
+                IdentifiedObjectId = p.mRID,
+                IdentifiedObjectClass = p.GetType().Name,
                 Code = "POWER_TRANSFORMER_END_REQUIRES_BASEVOLTAGE_GREATER_THAN_ZERO",
                 Description = "Power transformer end requires a base voltage greater than zero.",
                 Severity = Severity.Error
@@ -27,8 +27,8 @@ internal static class PowerTransformerEndValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = p.mRID,
-                TypeName = p.GetType().Name,
+                IdentifiedObjectId = p.mRID,
+                IdentifiedObjectClass = p.GetType().Name,
                 Code = "POWER_TRANSFORMER_END_REQUIRES_POWER_TRANSFORMER",
                 Description = "Power transformer end requires a reference to a power transformer.",
                 Severity = Severity.Error
@@ -44,8 +44,8 @@ internal static class PowerTransformerEndValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = p.mRID,
-                TypeName = p.GetType().Name,
+                IdentifiedObjectId = p.mRID,
+                IdentifiedObjectClass = p.GetType().Name,
                 Code = "POWER_TRANSFORMER_END_REQUIRES_TERMINAL",
                 Description = "Power transformer end requires a reference to a terminal.",
                 Severity = Severity.Error

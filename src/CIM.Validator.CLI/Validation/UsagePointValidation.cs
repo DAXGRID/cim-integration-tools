@@ -10,8 +10,8 @@ internal static class UsagePointValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = u.mRID,
-                TypeName = u.GetType().Name,
+                IdentifiedObjectId = u.mRID,
+                IdentifiedObjectClass = u.GetType().Name,
                 Code = "USAGE_POINT_EQUIPMENT_REFERENCE_REQUIRED",
                 Description = "Usage point always requires an equipment reference.",
                 Severity = Severity.Error
@@ -28,8 +28,8 @@ internal static class UsagePointValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = u.mRID,
-                TypeName = u.GetType().Name,
+                IdentifiedObjectId = u.mRID,
+                IdentifiedObjectClass = u.GetType().Name,
                 Code = "USAGE_POINT_NAME_IS_REQUIRED",
                 Description = "Usage point always requires the 'name' attribute to be filled.",
                 Severity = Severity.Warning
@@ -42,8 +42,8 @@ internal static class UsagePointValidation
             var usagePointSharedIds = string.Join(", ", usagePointNameToMrid[u.name].Where(x => x != u.mRID));
             return new ValidationError
             {
-                TypeReferenceMrid = u.mRID,
-                TypeName = u.GetType().Name,
+                IdentifiedObjectId = u.mRID,
+                IdentifiedObjectClass = u.GetType().Name,
                 Code = "USAGE_POINT_NAME_IS_NOT_UNIQUE",
                 Description = $"Usage point name should be unique, it is shared with the following usage points: '{usagePointSharedIds}'.",
                 Severity = Severity.Warning

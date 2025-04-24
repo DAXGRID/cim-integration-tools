@@ -10,8 +10,8 @@ internal static class PowerTransformerValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = powerTransformer.mRID,
-                TypeName = powerTransformer.GetType().Name,
+                IdentifiedObjectId = powerTransformer.mRID,
+                IdentifiedObjectClass = powerTransformer.GetType().Name,
                 Code = "ONE_POWER_TRANSFORMER_END_PER_TERMINAL",
                 Description = "One power transformer end per terminal is required.",
                 Severity = Severity.Error
@@ -27,8 +27,8 @@ internal static class PowerTransformerValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = powerTransformer.mRID,
-                TypeName = powerTransformer.GetType().Name,
+                IdentifiedObjectId = powerTransformer.mRID,
+                IdentifiedObjectClass = powerTransformer.GetType().Name,
                 Code = "POWER_TRANSFORMER_END_NUMBER_MATCHES_TERMINAL_NUMBER",
                 Description = "All the powertransformer end numbers need to match the sequence number of the terminal it is pointing to.",
                 Severity = Severity.Warning

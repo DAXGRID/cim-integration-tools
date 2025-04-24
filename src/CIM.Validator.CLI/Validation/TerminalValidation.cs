@@ -11,8 +11,8 @@ internal static class TerminalValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = t.mRID,
-                TypeName = t.GetType().Name,
+                IdentifiedObjectId = t.mRID,
+                IdentifiedObjectClass = t.GetType().Name,
                 Code = "TERMINAL_IS_MISSING_MANDATORY_CONDUCTING_EQUIPMENT_REFERENCE",
                 Description = "The terminal is missing a reference to a conducting equipment.",
                 Severity = Severity.Warning
@@ -28,8 +28,8 @@ internal static class TerminalValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = t.mRID,
-                TypeName = t.GetType().Name,
+                IdentifiedObjectId = t.mRID,
+                IdentifiedObjectClass = t.GetType().Name,
                 Code = "TERMINAL_CONDUCTING_EQUIPMENT_REFERENCE_DOES_NOT_EXIST",
                 Description = "The terminal reference a conducting equipment that does not exist.",
                 Severity = Severity.Warning
@@ -45,8 +45,8 @@ internal static class TerminalValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = t.mRID,
-                TypeName = t.GetType().Name,
+                IdentifiedObjectId = t.mRID,
+                IdentifiedObjectClass = t.GetType().Name,
                 Code = "TERMINAL_IS_MISSING_MANDATORY_NUMBER_ATTRIBUTE",
                 Description = "All terminals require a sequence number.",
                 Severity = Severity.Warning
@@ -62,8 +62,8 @@ internal static class TerminalValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = t.mRID,
-                TypeName = t.GetType().Name,
+                IdentifiedObjectId = t.mRID,
+                IdentifiedObjectClass = t.GetType().Name,
                 Code = "TERMINAL_NUMBER_ATTRIBUTE_HAS_INVALID_VALUE ",
                 Description = "Sequence number should always be a whole number and be greater or equal to 1.",
                 Severity = Severity.Warning
@@ -79,8 +79,8 @@ internal static class TerminalValidation
         {
             return new ValidationError
             {
-                TypeReferenceMrid = t.mRID,
-                TypeName = t.GetType().Name,
+                IdentifiedObjectId = t.mRID,
+                IdentifiedObjectClass = t.GetType().Name,
                 Code = "TERMINAL_IS_MISSING_MANDATORY_FASE_ATTRIBUTE",
                 Description = "Terminal 'phases' is required.",
                 Severity = Severity.Warning

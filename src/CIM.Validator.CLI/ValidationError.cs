@@ -9,9 +9,9 @@ internal sealed record ValidationError
     [JsonPropertyName("$type")]
     public string Type { get; private init; } = "ValidationError";
 
-    public required string TypeName { get; init; }
+    public required string IdentifiedObjectClass { get; init; }
 
-    public required string TypeReferenceMrid { get; init; }
+    public required string IdentifiedObjectId { get; init; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public required Severity Severity { get; init; }
