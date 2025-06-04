@@ -414,7 +414,7 @@ namespace CIM.PowerFactoryExporter.PreProcessors
 
                             relay.name = st.name + " " + bay.name;
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             Logger.Log(LogLevel.Warning, "Cannot find switch: " + relay.ProtectedSwitches[0].@ref + " connected to replay: " + inputCimObject.mRID);
                         }
