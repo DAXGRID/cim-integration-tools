@@ -21,8 +21,6 @@ namespace CIM.PowerFactoryExporter
     /// </summary>
     public class ACLSMerger : IPreProcessor
     {
-        int _guidOffset = 1000;
-
         MappingContext _mappingContext;
 
         public ACLSMerger(MappingContext mappingContext)
