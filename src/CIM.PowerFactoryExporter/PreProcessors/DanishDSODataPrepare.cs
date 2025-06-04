@@ -12,8 +12,6 @@ namespace CIM.PowerFactoryExporter.PreProcessors
     /// </summary>
     public class DanishDSODataPrepare : IPreProcessor
     {
-        int _guidOffset = 1000;
-
         MappingContext _mappingContext;
 
         public DanishDSODataPrepare(MappingContext mappingContext)
