@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace CIM.PowerFactoryExporter
 {
-
     /// <summary>
     /// CGMES geographical layout (GL) profil RDF/XML builder
     /// Ugly - just MVP / for quick prototyping purpose. Should be refactored to use RDF library.
@@ -17,8 +16,6 @@ namespace CIM.PowerFactoryExporter
     {
         string _fileName = null;
         StreamWriter _writer = null;
-
-        string _coordSystemId = "_e4c22cb0-c8fc-11e1-bd6b-b8f6b1180b6d";
 
         string _startContent = @"<?xml version='1.0' encoding='UTF-8'?>
  <rdf:RDF xmlns:entsoe='http://entsoe.eu/CIM/SchemaExtension/3/1#' xmlns:cim='http://iec.ch/TC57/2013/CIM-schema-cim16#' xmlns:md='http://iec.ch/TC57/61970-552/ModelDescription/1#' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
