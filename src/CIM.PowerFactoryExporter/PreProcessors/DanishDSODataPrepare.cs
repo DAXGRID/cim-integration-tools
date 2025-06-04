@@ -240,9 +240,6 @@ namespace CIM.PowerFactoryExporter.PreProcessors
                 if (inputCimObject is CurrentTransformer && !((CurrentTransformer)inputCimObject).PSRType.ToLower().Contains("kundemaaling"))
                 {
                     var ct = inputCimObject as CurrentTransformer;
-
-                    bool ctIsDropped = false;
-
                  
                     if (context.Exists(ct.Terminal.@ref))
                     {
@@ -253,18 +250,14 @@ namespace CIM.PowerFactoryExporter.PreProcessors
                         if (ctEq.BaseVoltage < 60000)
                         {
                             dropList.Add(ct);
-                            ctIsDropped = true;
                         }
                     }
                     else
                     {
                         dropList.Add(ct);
-                        ctIsDropped = true;
                     }
                   
-
                     // Move CT to line end, transformer end
-
                     var st = ct.GetSubstation(context);
 
                     foreach (var eq in st.GetEquipments(context))
