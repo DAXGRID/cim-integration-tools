@@ -14,8 +14,6 @@ namespace CIM.PowerFactoryExporter
         private readonly CoordinateTransformationFactory _ctfac;
         private readonly ICoordinateTransformation _trans;
 
-        private static readonly double _boundingBoxExtraMarginPercent = 5;
-
         public UTM32WGS84Converter()
         {
             // ETRS 89 UTM 32
