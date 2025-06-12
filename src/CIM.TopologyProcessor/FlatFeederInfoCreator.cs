@@ -48,14 +48,18 @@ namespace CIM.TopologyProcessor
                     // If no hsp feeders just add msp feeder info only
                     if (!hspFeedersFound)
                     {
-                        FlatFeederInfo feederInfo = CreateBasicFeederInfo(seqNo, conductingEquipmentFeeders, feederContext);
-                        seqNo++;
-
-                        AddMspFeederInfo(mspFeeder, feederInfo);
-
-                        feederInfo.NodeHopCount = GetHopCount(feederContext, conductingEquipmentFeeders.Key);
-
-                        feederInfosToAdd.Add(feederInfo);
+                        // Only add feeder info if power transformer found; this to support open switch point inside substations
+                        if (mspFeeder.ConnectionPoint.PowerTransformer != null)
+                        {
+                            FlatFeederInfo feederInfo = CreateBasicFeederInfo(seqNo, conductingEquipmentFeeders, feederContext);
+                            seqNo++;
+    
+                            AddMspFeederInfo(mspFeeder, feederInfo);
+    
+                            feederInfo.NodeHopCount = GetHopCount(feederContext, conductingEquipmentFeeders.Key);
+    
+                            feederInfosToAdd.Add(feederInfo);
+                        }
                     }
                 }
 
@@ -63,13 +67,17 @@ namespace CIM.TopologyProcessor
                 // HV feeders
                 foreach (var hspFeeder in conductingEquipmentFeeders.Value.Where(f => f.FeederType == FeederType.PrimarySubstation))
                 {
-                    FlatFeederInfo feederInfo = CreateBasicFeederInfo(seqNo, conductingEquipmentFeeders, feederContext);
-                    seqNo++;
-
-                    feederInfo.NodeHopCount = GetHopCount(feederContext, conductingEquipmentFeeders.Key);
-
-                    AddHspFeederInfo(hspFeeder, feederInfo);
-                    feederInfosToAdd.Add(feederInfo);
+                    // Only add feeder info if power transformer found; this to support open switch point inside substations
+                    if (hspFeeder.ConnectionPoint.PowerTransformer != null)
+                    {
+                        FlatFeederInfo feederInfo = CreateBasicFeederInfo(seqNo, conductingEquipmentFeeders, feederContext);
+                        seqNo++;
+    
+                        feederInfo.NodeHopCount = GetHopCount(feederContext, conductingEquipmentFeeders.Key);
+    
+                        AddHspFeederInfo(hspFeeder, feederInfo);
+                        feederInfosToAdd.Add(feederInfo);
+                   }
                 }
               
 
