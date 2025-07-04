@@ -355,11 +355,19 @@ namespace CIM.PhysicalNetworkModel.FeederInfo
                         }
                         else if (feeder.FeederType == FeederType.PrimarySubstation)
                         {
+                            // Don't trace a line feeder, unless transformer feeds the connection point
+                            if (feeder.ConnectionPoint.PowerTransformer == null)
+                                break;
+
                             nodeTypesToPass.Add("SecondarySubstation");
                             nodeTypesToPass.Add("Tower");
                         }
                         else if (feeder.FeederType == FeederType.SecondarySubstation)
                         {
+                            // Don't trace a line feeder, unless transformer feeds the connection point
+                            if (feeder.ConnectionPoint.PowerTransformer == null)
+                                break;
+
                             nodeTypesToPass.Add("CableBox");
                             nodeTypesToPass.Add("Tower");
                             nodeTypesToPass.Add("T-Junction");
