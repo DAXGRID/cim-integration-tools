@@ -36,6 +36,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.PowerFactoryExporter.CLI", "src\CIM.PowerFactoryExporter.CLI\CIM.PowerFactoryExporter.CLI.csproj", "{E768389A-5B3A-475C-A676-2800B84045DB}"
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.Validator.CLI", "src\CIM.Validator.CLI\CIM.Validator.CLI.csproj", "{273B656E-96D2-43DE-843E-3CD5FE8B99B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIM.PreValidator.CLI", "src\CIM.PreValidator.CLI\CIM.PreValidator.CLI.csproj", "{7CC2E6F5-8A84-4C52-8AE7-295EEDFB95F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -106,6 +108,10 @@ Global
 		{273B656E-96D2-43DE-843E-3CD5FE8B99B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{273B656E-96D2-43DE-843E-3CD5FE8B99B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{273B656E-96D2-43DE-843E-3CD5FE8B99B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CC2E6F5-8A84-4C52-8AE7-295EEDFB95F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CC2E6F5-8A84-4C52-8AE7-295EEDFB95F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CC2E6F5-8A84-4C52-8AE7-295EEDFB95F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CC2E6F5-8A84-4C52-8AE7-295EEDFB95F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +133,7 @@ Global
 		{A4D3A59B-F779-48C8-93A5-1D6F11DB92B1} = {08FEBC24-E58F-4B22-8D17-C6EF1BBC5E44}
 		{E768389A-5B3A-475C-A676-2800B84045DB} = {08FEBC24-E58F-4B22-8D17-C6EF1BBC5E44}
 		{273B656E-96D2-43DE-843E-3CD5FE8B99B7} = {08FEBC24-E58F-4B22-8D17-C6EF1BBC5E44}
+		{7CC2E6F5-8A84-4C52-8AE7-295EEDFB95F7} = {08FEBC24-E58F-4B22-8D17-C6EF1BBC5E44}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AC1D4EDB-5346-43E9-8720-2CA4FA5D5421}
