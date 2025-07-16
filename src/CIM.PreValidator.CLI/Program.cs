@@ -15,7 +15,7 @@ internal static class Program
 
         var inputFilePathOption = new Option<string>(
             name: "--input-file",
-            description: "The path to the input file, example: /home/user/my_file.jsonl."
+            description: "The path to the input file, example: /home/user/my_file.xml."
         )
         { IsRequired = true };
 
