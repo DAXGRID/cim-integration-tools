@@ -75,6 +75,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     yield return identifiedObject;
                 }
             }
+
         }
 
         private IEnumerable<IdentifiedObject> ProcessRootObject(CIMIdentifiedObject cimObj)
@@ -119,16 +120,295 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                     if (_includeEquipment)
                         yield return xmlObj;
+                 }
+            }
+            else if (cimObj.ClassType == CIMClassEnum.PowerTransformer)
+            {
+                CheckIfProcessed(cimObj);
 
-                    foreach (var identifiedObject in MapSubstation(substation, xmlObj))
-                        yield return identifiedObject;
+                var xmlObj = new PowerTransformer();
+
+                // create asset info
+                var assetInfo = new PowerTransformerInfoExt { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
+
+                if (cimObj.ContainsPropertyValue("ext.thermalrateds"))
+                    assetInfo.thermalRatedS = new ApparentPower { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.thermalrateds"), _cultureInfo) * 1000000, multiplier = UnitMultiplier.c, unit = UnitSymbol.VA };
+
+                if (cimObj.ContainsPropertyValue("ext.lowerbound"))
+                    assetInfo.lowerBound = new PU() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.lowerbound"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
+
+                if (cimObj.ContainsPropertyValue("ext.upperbound"))
+                    assetInfo.upperBound = new PU() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.upperbound"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
+
+                assetInfo.hasInternalDeltaWinding = false;
+
+                if (cimObj.ContainsPropertyValue("ext.hasInternalDeltaWinding"))
+                {
+                    if (cimObj.GetPropertyValueAsString("ext.hasInternalDeltaWinding") == "1")
+                        assetInfo.hasInternalDeltaWinding = true;
                 }
+
+                // Add product model reference if exists
+                if (cimObj.ContainsPropertyValue("cim.ref.productassetmodel"))
+                {
+                    var assetModelId = cimObj.GetPropertyValueAsString("cim.ref.productassetmodel").ToLower();
+                    assetInfo.AssetModel = new AssetInfoAssetModel() { @ref = assetModelId };
+                }
+
+                cimObj.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
+
+                yield return assetInfo;
+
+
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                if (asset != null)
+                    yield return asset;
+
+                MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
+                MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
+
+                if (_includeEquipment)
+                {
+                    yield return xmlObj;
+
+                    // Create terminal and winding for each neighbor
+                    bool firstEndFound = false;
+
+                    PowerTransformerEndExt firstEnd = null;
+
+                    var ptTerminals = ((CIMConductingEquipment)cimObj).Terminals.ToList();
+
+                    foreach (var cimTerminal in ptTerminals)
+                    {
+                        ConnectivityNode xmlCn = null;
+
+                        if (cimTerminal.ConnectivityNode != null)
+                        {
+                            // Create xml connectivity node
+                            foreach (var identifiedObject in CreateAndYieldConnectivityNodeIfNotExists(cimTerminal.ConnectivityNode.mRID, (CIMConductingEquipment)cimObj))
+                                yield return identifiedObject;
+
+                            xmlCn = GetConnectivityNode(cimTerminal.ConnectivityNode.mRID, (CIMConductingEquipment)cimObj);
+                        }
+
+                        // Create xml terminal
+                        foreach (var identifiedObject in CreateTerminal(cimTerminal, (ConductingEquipment)xmlObj, xmlCn, cimTerminal.EndNumber))
+                            yield return identifiedObject;
+
+                        // Create xml power transformer end
+                        PowerTransformerEndExt xmlTe = new PowerTransformerEndExt()
+                        {
+                            mRID = GetMrid(cimObj, $"v{cimTerminal.EndNumber}.mrid").ToString(),
+                            PowerTransformer = new PowerTransformerEndPowerTransformer() { @ref = xmlObj.mRID },
+                            endNumber = "" + cimTerminal.EndNumber,
+                            Terminal = new TransformerEndTerminal() { @ref = cimTerminal.mRID.ToString() },
+                            BaseVoltage = Convert.ToSingle(cimObj.GetPropertyValueAsString($"cim.v{cimTerminal.EndNumber}.nominalvoltage"), _cultureInfo)
+                        };
+
+                        CheckIfProcessed(xmlTe.mRID, xmlTe);
+
+                        if (!firstEndFound)
+                        {
+                            firstEnd = xmlTe;
+                            firstEndFound = true;
+                        }
+
+
+                        ////////////
+                        // Transfer all electric parameters
+
+                        // Fælles for begge viklinger
+                        if (cimObj.ContainsPropertyValue("cim.v1.rateds"))
+                            xmlTe.ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.v1.rateds"), _cultureInfo) };
+
+                        if (cimObj.ContainsPropertyValue("ext.loss"))
+                            xmlTe.loss = new KiloActivePower { unit = UnitSymbol.W, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.loss"), _cultureInfo) };
+
+                        if (cimObj.ContainsPropertyValue("ext.losszero"))
+                            xmlTe.lossZero = new KiloActivePower { unit = UnitSymbol.W, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.losszero"), _cultureInfo) };
+
+                        if (cimObj.ContainsPropertyValue("ext.ratingFactor"))
+                            xmlTe.ratingFactor = new PerCent() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.ratingFactor"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
+
+
+                        // Vinkling 1
+                        if (cimTerminal.EndNumber == 1)
+                        {
+                            if (cimObj.ContainsPropertyValue("cim.v1.nominalvoltage"))
+                                xmlTe.nominalVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.v1.nominalvoltage"), _cultureInfo) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.phaseangleclock"))
+                                xmlTe.phaseAngleClock = cimObj.GetPropertyValueAsString("cim.v1.phaseangleclock");
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.connectionkind"))
+                                xmlTe.connectionKind = cimObj.GetPropertyValueAsString("cim.v1.connectionkind");
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.grounded"))
+                                xmlTe.grounded = ParseBoolString(cimObj.GetPropertyValueAsString("cim.v1.grounded"));
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.ratedu"))
+                                xmlTe.ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.v1.ratedu"), _cultureInfo) };
+
+                            if (cimObj.ContainsPropertyValue("ext.v1.uk"))
+                                xmlTe.uk = new PerCent() { Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("ext.v1.uk"), _cultureInfo) };
+
+                            if (cimObj.ContainsPropertyValue("ext.v1.excitingcurrentzero"))
+                                xmlTe.excitingCurrentZero = new PerCent { Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("ext.v1.excitingcurrentzero"), _cultureInfo) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.r"))
+                                xmlTe.r = new Resistance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = ConvertToDouble(cimObj.GetPropertyValueAsString("cim.v1.r")) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.x"))
+                                xmlTe.x = new Reactance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = ConvertToDouble(cimObj.GetPropertyValueAsString("cim.v1.x")) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.g"))
+                                xmlTe.g = new Conductance { multiplier = UnitMultiplier.micro, Value = ConvertToDouble(cimObj.GetPropertyValueAsString("cim.v1.g")) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.b"))
+                                xmlTe.b = new Susceptance { multiplier = UnitMultiplier.micro, Value = ConvertToDouble(cimObj.GetPropertyValueAsString("cim.v1.b")) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.r0"))
+                                xmlTe.r0 = new Resistance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = ConvertToDouble(cimObj.GetPropertyValueAsString("cim.v1.r0")) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.x0"))
+                                xmlTe.x0 = new Reactance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = ConvertToDouble(cimObj.GetPropertyValueAsString("cim.v1.x0")) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.g"))
+                                xmlTe.g = new Conductance { multiplier = UnitMultiplier.micro, Value = ConvertToDouble(cimObj.GetPropertyValueAsString("cim.v1.g")) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v1.b"))
+                                xmlTe.b = new Susceptance { multiplier = UnitMultiplier.micro, Value = ConvertToDouble(cimObj.GetPropertyValueAsString("cim.v1.b")) };
+
+                        }
+
+                        // Vinkling 2
+                        if (cimTerminal.EndNumber == 2)
+                        {
+                            if (cimObj.ContainsPropertyValue("cim.v2.nominalvoltage"))
+                                xmlTe.nominalVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.v2.nominalvoltage"), _cultureInfo) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v2.phaseangleclock"))
+                                xmlTe.phaseAngleClock = cimObj.GetPropertyValueAsString("cim.v2.phaseangleclock");
+
+                            if (cimObj.ContainsPropertyValue("cim.v2.connectionkind"))
+                                xmlTe.connectionKind = cimObj.GetPropertyValueAsString("cim.v2.connectionkind");
+
+                            if (cimObj.ContainsPropertyValue("cim.v2.grounded"))
+                                xmlTe.grounded = ParseBoolString(cimObj.GetPropertyValueAsString("cim.v2.grounded"));
+
+                            if (cimObj.ContainsPropertyValue("cim.v2.ratedu"))
+                                xmlTe.ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.v2.ratedu"), _cultureInfo) };
+
+                            if (cimObj.ContainsPropertyValue("ext.v2.uk"))
+                                xmlTe.uk = new PerCent() { Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("ext.v2.uk"), _cultureInfo) };
+
+                            if (cimObj.ContainsPropertyValue("ext.v2.excitingcurrentzero"))
+                                xmlTe.excitingCurrentZero = new PerCent { Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("ext.v2.excitingcurrentzero"), _cultureInfo) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v2.r"))
+                                xmlTe.r = new Resistance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.v2.r"), _cultureInfo) };
+
+                            if (cimObj.ContainsPropertyValue("cim.v2.x"))
+                                xmlTe.x = new Reactance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.v2.x"), _cultureInfo) };
+                        }
+
+
+                        if (_includeEquipment)
+                            yield return xmlTe;
+                    }
+
+                    if (firstEnd != null)
+                    {
+                        // Trin kobler
+                        RatioTapChanger tap = new RatioTapChanger() { TransformerEnd = new RatioTapChangerTransformerEnd() { @ref = firstEnd.mRID } };
+
+                        tap.mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 100).ToString();
+                        CheckIfProcessed(tap.mRID, tap);
+
+                        if (cimObj.ContainsPropertyValue("tap.lowstep"))
+                            tap.lowStep = cimObj.GetPropertyValueAsString("tap.lowstep");
+
+                        if (cimObj.ContainsPropertyValue("tap.highstep"))
+                            tap.highStep = cimObj.GetPropertyValueAsString("tap.highstep");
+
+                        if (cimObj.ContainsPropertyValue("tap.ltcflag"))
+                        {
+                            string val = cimObj.GetPropertyValueAsString("tap.ltcflag").ToLower();
+
+                            tap.ltcFlag = false;
+
+                            if (val != null && (val == "1" || val == "true" || val == "yes"))
+                                tap.ltcFlag = true;
+                        }
+
+                        if (cimObj.ContainsPropertyValue("tap.neutralstep"))
+                            tap.neutralStep = cimObj.GetPropertyValueAsString("tap.neutralstep");
+
+
+                        if (cimObj.ContainsPropertyValue("tap.normalstep"))
+                            tap.normalStep = cimObj.GetPropertyValueAsString("tap.normalstep");
+
+                        if (cimObj.ContainsPropertyValue("tap.stepvoltageincrement"))
+                        {
+                            tap.stepVoltageIncrement = new PerCent() { Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("tap.stepvoltageincrement"), _cultureInfo) };
+                        }
+
+                        if (cimObj.ContainsPropertyValue("tap.neutralu"))
+                            tap.neutralU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("tap.neutralu"), _cultureInfo) };
+
+                        if (_includeEquipment)
+                            yield return tap;
+                    }
+                }
+            }
+            else if (cimObj.ClassType == CIMClassEnum.VoltageLevel)
+            {
+                if (!CheckIfProcessed(cimObj, false))
+                {
+                    var voltageLevel = cimObj as CIMEquipmentContainer;
+                    VoltageLevel xmlObj = new VoltageLevel();
+
+                    MapIdentifiedObjectFields(voltageLevel, xmlObj);
+
+                    // Voltage level
+                    if (cimObj.VoltageLevel > 0)
+                    {
+                        xmlObj.BaseVoltage = cimObj.VoltageLevel;
+                    }
+
+                    // Equipment container
+                    if (cimObj.EquipmentContainerRef != null)
+                    {
+                        xmlObj.EquipmentContainer1 = new VoltageLevelEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
+                    }
+
+                    if (_includeEquipment)
+                        yield return xmlObj;
+                }
+            }
+            else if (cimObj.ClassType == CIMClassEnum.Bay)
+            {
+                CIMEquipmentContainer bay = cimObj as CIMEquipmentContainer;
+
+                var xmlBay = new BayExt();
+
+                MapIdentifiedObjectFields(bay, xmlBay);
+
+                xmlBay.order = bay.GetPropertyValueAsString("cim.order");
+
+                // Equipment container
+                if (cimObj.EquipmentContainerRef != null)
+                {
+                    xmlBay.VoltageLevel = new BayVoltageLevel() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
+                }
+
+                if (_includeEquipment)
+                    yield return xmlBay;
             }
             else if (cimObj.ClassType == CIMClassEnum.Enclosure)
             {
                 if (!CheckIfProcessed(cimObj, false))
                 {
-
                     var enclosure = cimObj as CIMEquipmentContainer;
                     Substation xmlObj = new Substation();
 
@@ -144,16 +424,10 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     if (assetInfo != null)
                         yield return assetInfo;
 
-
                     MapIdentifiedObjectFields(enclosure, xmlObj);
 
                     if (_includeEquipment)
                         yield return xmlObj;
-
-                    foreach (var identifiedObject in MapEnclosure(enclosure, xmlObj))
-                        yield return identifiedObject;
-
-
                 }
             }
             else if (cimObj.ClassType == CIMClassEnum.EnergyConsumer)
@@ -174,7 +448,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                     xmlConsumer.mRID = cimObj.mRID.ToString();
                     MapIdentifiedObjectFields(cimObj, xmlConsumer);
-                    MapConductingEquipmentFields(consumer, xmlConsumer);
+                    MapVoltageAndEquipmentContainerFields(consumer, xmlConsumer);
 
                     if (_includeEquipment)
                         yield return xmlConsumer;
@@ -207,8 +481,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     yield return xmlUsagePoint;
 
             }
-            // Cables outside substation
-            else if (cimObj.ClassType == CIMClassEnum.ACLineSegment && cimObj.EquipmentContainerRef == null)
+            else if (cimObj.ClassType == CIMClassEnum.ACLineSegment)
             {
                 var neighboors = cimObj.GetNeighbours();
 
@@ -230,7 +503,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                         yield return identifiedObject;
 
                     MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
+                    MapVoltageAndEquipmentContainerFields(ce, (ConductingEquipment)xmlObj);
                     MapACLineSegmentFields(ce, (ACLineSegmentExt)xmlObj);
 
                     if (_includeEquipment)
@@ -239,7 +512,6 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
                 }
             }
-            // Indfødninger 
             else if (cimObj.ClassType == CIMClassEnum.ExternalNetworkInjection)
             {
                 if (!CheckIfProcessed(cimObj, false))
@@ -255,7 +527,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                         yield return identifiedObject;
 
                     MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
+                    MapVoltageAndEquipmentContainerFields(ce, (ConductingEquipment)xmlObj);
                     MapExternalNetworkInjectionFields(ce, (ExternalNetworkInjection)xmlObj);
 
                     if (_includeEquipment)
@@ -652,6 +924,635 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     }
                 }
             }
+            else if (cimObj.ClassType == CIMClassEnum.BusbarSection)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new BusbarSectionExt();
+
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                if (asset != null)
+                    yield return asset;
+
+                var assetInfo = MapDummyAssetInfo(cimObj, (PowerSystemResource)xmlObj);
+
+                if (assetInfo != null)
+                    yield return assetInfo;
+
+
+                MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
+                MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
+           
+                if (cimObj.ContainsPropertyValue("cim.ipmax"))
+                    ((BusbarSectionExt)xmlObj).ipMax = new CurrentFlow() { unit = UnitSymbol.A, Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.ipmax"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.powerfactormin"))
+                {
+                    ((BusbarSectionExt)xmlObj).powerFactorMin = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.powerfactormin"), _cultureInfo);
+                    ((BusbarSectionExt)xmlObj).powerFactorMinSpecified = true;
+                }
+
+                if (cimObj.ContainsPropertyValue("cim.powerfactormax"))
+                {
+                    ((BusbarSectionExt)xmlObj).powerFactorMax = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.powerfactormax"), _cultureInfo);
+                    ((BusbarSectionExt)xmlObj).powerFactorMaxSpecified = true;
+                }
+
+                if (cimObj.ContainsPropertyValue("cim.sspmin"))
+                    ((BusbarSectionExt)xmlObj).sspMin = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.m, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.sspmin"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.sspmax"))
+                    ((BusbarSectionExt)xmlObj).sspMax = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.m, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.sspmax"), _cultureInfo) };
+
+                foreach (var identifiedObject in MapTerminals((CIMConductingEquipment)cimObj, (ConductingEquipment)xmlObj)) yield return identifiedObject;
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+            }
+            else if (cimObj.ClassType == CIMClassEnum.PetersenCoil)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new PetersenCoil();
+
+                // create asset info
+                var assetInfo = new PetersenCoilInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
+
+                if (cimObj.ContainsPropertyValue("cim.assetinfo.minimumcurrent"))
+                    assetInfo.minimumCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.minimumcurrent")), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
+
+                if (cimObj.ContainsPropertyValue("cim.assetinfo.maximumcurrent"))
+                    assetInfo.maximumCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.maximumcurrent")), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
+
+                if (cimObj.ContainsPropertyValue("cim.assetinfo.actualcurrent"))
+                    assetInfo.actualCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.actualcurrent")), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
+
+                cimObj.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
+
+                // create asset
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj, true);
+
+                MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
+                MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
+
+
+                if (cimObj.ContainsPropertyValue("cim.nominalu"))
+                    ((PetersenCoil)xmlObj).nominalU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.nominalu"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.offsetcurrent"))
+                    ((PetersenCoil)xmlObj).offsetCurrent = new CurrentFlow() { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.offsetcurrent"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.positioncurrent"))
+                    ((PetersenCoil)xmlObj).positionCurrent = new CurrentFlow() { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.positioncurrent"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.xgroundmin"))
+                    ((PetersenCoil)xmlObj).xGroundMin = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.xgroundmin"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.xgroundmax"))
+                    ((PetersenCoil)xmlObj).xGroundMax = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.xgroundmax"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.xgroundnominal"))
+                    ((PetersenCoil)xmlObj).xGroundNominal = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.xgroundnominal"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.r"))
+                    ((PetersenCoil)xmlObj).r = new Resistance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.r"), _cultureInfo) };
+
+                ((PetersenCoil)xmlObj).mode = PetersenCoilModeKind.automaticPositioning;
+
+                if (cimObj.ContainsPropertyValue("cim.mode"))
+                {
+                    string mode = cimObj.GetPropertyValueAsString("cim.mode").ToLower();
+                    if (mode.Contains("manual") || mode.Contains("manuel"))
+                        ((PetersenCoil)xmlObj).mode = PetersenCoilModeKind.manual;
+                    else if (mode.Contains("automatic"))
+                        ((PetersenCoil)xmlObj).mode = PetersenCoilModeKind.automaticPositioning;
+                    else if (mode.Contains("fixed"))
+                        ((PetersenCoil)xmlObj).mode = PetersenCoilModeKind.@fixed;
+                }
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+
+                foreach (var identifiedObject in MapTerminals((CIMConductingEquipment)cimObj, (ConductingEquipment)xmlObj)) yield return identifiedObject;
+
+                if (_includeAsset)
+                {
+                    if (asset != null)
+                        yield return asset;
+
+                    if (assetInfo != null)
+                        yield return assetInfo;
+                }
+            }
+            else if (cimObj.ClassType == CIMClassEnum.SynchronousMachine)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new SynchronousMachine();
+
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                if (asset != null)
+                    yield return asset;
+
+                MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
+                MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
+
+                if (cimObj.ContainsPropertyValue("cim.ratedu"))
+                    ((SynchronousMachine)xmlObj).ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.ratedu"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.rateds"))
+                    ((SynchronousMachine)xmlObj).ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.rateds"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.ratedpowerfactor"))
+                {
+                    ((SynchronousMachine)xmlObj).ratedPowerFactor = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.ratedpowerfactor"), _cultureInfo);
+                    ((SynchronousMachine)xmlObj).ratedPowerFactorSpecified = true;
+                }
+
+                if (cimObj.ContainsPropertyValue("cim.maxq"))
+                    ((SynchronousMachine)xmlObj).maxQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.maxq"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.minq"))
+                    ((SynchronousMachine)xmlObj).minQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.minq"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.qpercent"))
+                    ((SynchronousMachine)xmlObj).qPercent = new PerCent { Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.qpercent"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.referencepriority"))
+                    ((SynchronousMachine)xmlObj).referencePriority = cimObj.GetPropertyValueAsString("cim.referencepriority");
+
+                if (cimObj.ContainsPropertyValue("cim.ikk"))
+                    ((SynchronousMachine)xmlObj).ikk = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.ikk"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.mu"))
+                {
+                    ((SynchronousMachine)xmlObj).mu = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.mu"), _cultureInfo);
+                    ((SynchronousMachine)xmlObj).muSpecified = true;
+                }
+
+                if (cimObj.ContainsPropertyValue("cim.r"))
+                    ((SynchronousMachine)xmlObj).r = new Resistance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.r"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.r0"))
+                    ((SynchronousMachine)xmlObj).r0 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.r0"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.r2"))
+                    ((SynchronousMachine)xmlObj).r2 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.r2"), _cultureInfo) };
+
+
+                if (cimObj.ContainsPropertyValue("cim.shortcircuitrotortype"))
+                {
+                    string type = cimObj.GetPropertyValueAsString("cim.shortcircuitrotortype").ToLower();
+
+                    if (type.Contains("salientpole1"))
+                        ((SynchronousMachine)xmlObj).shortCircuitRotorType = ShortCircuitRotorKind.salientPole1;
+                    else if (type.Contains("salientpole2"))
+                        ((SynchronousMachine)xmlObj).shortCircuitRotorType = ShortCircuitRotorKind.salientPole2;
+                    else if (type.Contains("turboseries1"))
+                        ((SynchronousMachine)xmlObj).shortCircuitRotorType = ShortCircuitRotorKind.turboSeries1;
+                    else if (type.Contains("turboseries2"))
+                        ((SynchronousMachine)xmlObj).shortCircuitRotorType = ShortCircuitRotorKind.turboSeries2;
+                }
+
+                if (cimObj.ContainsPropertyValue("cim.voltageregulationrange"))
+                    ((SynchronousMachine)xmlObj).voltageRegulationRange = new PerCent { Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.voltageregulationrange"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.x0"))
+                    ((SynchronousMachine)xmlObj).x0 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.x0"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.x2"))
+                    ((SynchronousMachine)xmlObj).x2 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.x2"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.satdirectsubtransx"))
+                    ((SynchronousMachine)xmlObj).satDirectSubtransX = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.satdirectsubtransx"), _cultureInfo) };
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+
+                foreach (var identifiedObject in MapTerminals((CIMConductingEquipment)cimObj, (ConductingEquipment)xmlObj)) yield return identifiedObject;
+            }
+            else if (cimObj.ClassType == CIMClassEnum.AsynchronousMachine)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new AsynchronousMachine();
+
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                if (asset != null)
+                    yield return asset;
+
+
+                MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
+                MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
+
+                if (cimObj.ContainsPropertyValue("cim.ratedu"))
+                    ((AsynchronousMachine)xmlObj).ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.ratedu"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.rateds"))
+                    ((AsynchronousMachine)xmlObj).ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.rateds"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.ratedpowerfactor"))
+                {
+                    ((AsynchronousMachine)xmlObj).ratedPowerFactor = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.ratedpowerfactor"), _cultureInfo);
+                    ((AsynchronousMachine)xmlObj).ratedPowerFactorSpecified = true;
+                }
+
+                if (cimObj.ContainsPropertyValue("cim.nominalfrequency"))
+                    ((AsynchronousMachine)xmlObj).nominalFrequency = new Frequency() { unit = UnitSymbol.Hz, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.nominalfrequency"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.nominelspeed"))
+                    ((AsynchronousMachine)xmlObj).nominalSpeed = new RotationSpeed() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.nominelspeed"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.converterfeddrive"))
+                {
+                    string boolStr = cimObj.GetPropertyValueAsString("cim.converterfeddrive");
+
+                    if (boolStr == "1")
+                        ((AsynchronousMachine)xmlObj).converterFedDrive = true;
+                    else
+                        ((AsynchronousMachine)xmlObj).converterFedDrive = false;
+                }
+
+                if (cimObj.ContainsPropertyValue("cim.efficiency"))
+                    ((AsynchronousMachine)xmlObj).efficiency = new PerCent { Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.efficiency"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.iairratio"))
+                    ((AsynchronousMachine)xmlObj).iaIrRatio = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.iairratio"), _cultureInfo);
+
+                if (cimObj.ContainsPropertyValue("cim.polepairnumber"))
+                    ((AsynchronousMachine)xmlObj).polePairNumber = cimObj.GetPropertyValueAsString("cim.polepairnumber");
+
+                if (cimObj.ContainsPropertyValue("cim.reversible"))
+                {
+                    string boolStr = cimObj.GetPropertyValueAsString("cim.reversible");
+
+                    if (boolStr == "1")
+                        ((AsynchronousMachine)xmlObj).reversible = true;
+                    else
+                        ((AsynchronousMachine)xmlObj).reversible = false;
+                }
+
+                if (cimObj.ContainsPropertyValue("cim.rxlockedrotorratio"))
+                    ((AsynchronousMachine)xmlObj).rxLockedRotorRatio = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.rxlockedrotorratio"), _cultureInfo);
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+
+                foreach (var identifiedObject in MapTerminals((CIMConductingEquipment)cimObj, (ConductingEquipment)xmlObj)) yield return identifiedObject;
+            }
+            else if (cimObj.ClassType == CIMClassEnum.LinearShuntCompensator)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new LinearShuntCompensator();
+
+                // create asset info
+                var assetInfo = new LinearShuntCompensatorInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
+
+                if (cimObj.ContainsPropertyValue("cim.ratedvoltage"))
+                    assetInfo.ratedVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.ratedvoltage"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.assetinfo.minimumreactivepower"))
+                    assetInfo.minimumReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.minimumreactivepower"), _cultureInfo), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
+
+                if (cimObj.ContainsPropertyValue("cim.assetinfo.maximumreactivepower"))
+                    assetInfo.maximumReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.maximumreactivepower"), _cultureInfo), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
+
+                if (cimObj.ContainsPropertyValue("cim.assetinfo.actualreactivepower"))
+                    assetInfo.actualReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.actualreactivepower"), _cultureInfo), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
+
+                if (cimObj.ContainsPropertyValue("cim.assetinfo.loss"))
+                    assetInfo.loss = new ActivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.loss"), _cultureInfo), multiplier = UnitMultiplier.none, unit = UnitSymbol.W };
+
+                if (cimObj.ContainsPropertyValue("cim.assetinfo.qualityfactory"))
+                    assetInfo.qualityFactory = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.assetinfo.qualityfactory"), _cultureInfo);
+
+                if (cimObj.ContainsPropertyValue("cim.assetinfo.technology"))
+                    assetInfo.technology = cimObj.GetPropertyValueAsString("cim.assetinfo.technology");
+
+
+                cimObj.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
+
+                // create asset
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                if (asset != null)
+                    yield return asset;
+
+                MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
+                MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
+
+                if (cimObj.ContainsPropertyValue("cim.nomu"))
+                    ((LinearShuntCompensator)xmlObj).nomU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.nomu"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.normalsections"))
+                    ((LinearShuntCompensator)xmlObj).normalSections = cimObj.GetPropertyValueAsString("cim.normalsections");
+
+                if (cimObj.ContainsPropertyValue("cim.maximumsections"))
+                    ((LinearShuntCompensator)xmlObj).maximumSections = cimObj.GetPropertyValueAsString("cim.maximumsections");
+
+                if (cimObj.ContainsPropertyValue("cim.bpersection"))
+                    ((LinearShuntCompensator)xmlObj).bPerSection = new Susceptance() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.bpersection"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.gpersection"))
+                    ((LinearShuntCompensator)xmlObj).gPerSection = new Conductance() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.gpersection"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.b0persection"))
+                    ((LinearShuntCompensator)xmlObj).b0PerSection = new Susceptance() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.b0persection"), _cultureInfo) };
+
+                if (cimObj.ContainsPropertyValue("cim.g0persection"))
+                    ((LinearShuntCompensator)xmlObj).g0PerSection = new Conductance() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.g0persection"), _cultureInfo) };
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+
+                foreach (var identifiedObject in MapTerminals((CIMConductingEquipment)cimObj, (ConductingEquipment)xmlObj)) yield return identifiedObject;
+
+                if (_includeAsset)
+                {
+                    if (asset != null)
+                        yield return asset;
+
+                    if (assetInfo != null)
+                        yield return assetInfo;
+                }
+            }
+            else if (cimObj.ClassType == CIMClassEnum.LoadBreakSwitch)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new LoadBreakSwitch();
+
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                if (asset != null)
+                    yield return asset;
+
+                var assetInfo = MapDummyAssetInfo(cimObj, (PowerSystemResource)xmlObj);
+
+                if (assetInfo != null)
+                    yield return assetInfo;
+
+
+                MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
+                MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
+                MapSwitchEquipmentFields(cimObj, (Switch)xmlObj);
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+
+                foreach (var identifiedObject in MapTerminals((CIMConductingEquipment)cimObj, (ConductingEquipment)xmlObj)) yield return identifiedObject;
+            }
+            else if (cimObj.ClassType == CIMClassEnum.Breaker)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new Breaker();
+
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                if (asset != null)
+                    yield return asset;
+
+                var assetInfo = MapDummyAssetInfo(cimObj, (PowerSystemResource)xmlObj);
+
+                if (assetInfo != null)
+                    yield return assetInfo;
+
+                MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
+                MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
+                MapSwitchEquipmentFields(cimObj, (Switch)xmlObj);
+
+                // breaking capacity
+                if (cimObj.ContainsPropertyValue("cim.breakingcapacity"))
+                {
+                    string valueStr = cimObj.GetPropertyValue("cim.breakingcapacity").ToString();
+                    int valueInt;
+
+                    if (Int32.TryParse(valueStr, out valueInt))
+                    {
+                        ((Breaker)xmlObj).breakingCapacity = new CurrentFlow() { unit = UnitSymbol.A, Value = valueInt };
+                    }
+                }
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+
+                foreach (var identifiedObject in MapTerminals((CIMConductingEquipment)cimObj, (ConductingEquipment)xmlObj)) yield return identifiedObject;
+            }
+            else if (cimObj.ClassType == CIMClassEnum.Fuse)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new Fuse();
+
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                if (asset != null)
+                    yield return asset;
+
+                var assetInfo = MapDummyAssetInfo(cimObj, (PowerSystemResource)xmlObj);
+
+                if (assetInfo != null)
+                    yield return assetInfo;
+
+
+
+                MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
+                MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
+                MapSwitchEquipmentFields(cimObj, (Switch)xmlObj);
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+
+                foreach (var identifiedObject in MapTerminals((CIMConductingEquipment)cimObj, (ConductingEquipment)xmlObj)) yield return identifiedObject;
+            }
+            else if (cimObj.ClassType == CIMClassEnum.Disconnector)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new Disconnector();
+
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                if (asset != null)
+                    yield return asset;
+
+                var assetInfo = MapDummyAssetInfo(cimObj, (PowerSystemResource)xmlObj);
+
+                if (assetInfo != null)
+                    yield return assetInfo;
+
+                MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
+                MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
+                MapSwitchEquipmentFields(cimObj, (Switch)xmlObj);
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+
+                foreach (var identifiedObject in MapTerminals((CIMConductingEquipment)cimObj, (ConductingEquipment)xmlObj)) yield return identifiedObject;
+
+            }
+            else if (cimObj.ClassType == CIMClassEnum.FaultIndicatorExt)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new FaultIndicatorExt();
+
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                if (asset != null)
+                    yield return asset;
+
+                var assetInfo = MapDummyAssetInfo(cimObj, (PowerSystemResource)xmlObj);
+
+                if (assetInfo != null)
+                    yield return assetInfo;
+
+
+                var faultIndicator = (FaultIndicatorExt)xmlObj;
+                MapIdentifiedObjectFields(cimObj, (PowerSystemResource)xmlObj);
+
+                // Equipment container
+                if (cimObj.EquipmentContainerRef != null)
+                {
+                    faultIndicator.EquipmentContainer = new EquipmentEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
+                }
+
+                // Connect to termianl
+                if (cimObj.ContainsPropertyValue("cim.terminal"))
+                {
+                    faultIndicator.Terminal = new AuxiliaryEquipmentTerminal() { @ref = cimObj.GetPropertyValueAsString("cim.terminal") };
+                }
+
+                // Reset kind
+                if (cimObj.ContainsPropertyValue("cim.resetkind"))
+                {
+                    var val = cimObj.GetPropertyValueAsString("cim.resetkind").ToLower().Trim();
+
+                    FaultIndicatorResetKind resetKind = FaultIndicatorResetKind.manual;
+
+                    if (val == "automatisk" || val == "automatic")
+                        resetKind = FaultIndicatorResetKind.automatic;
+
+                    faultIndicator.resetKind = resetKind;
+                    faultIndicator.resetKindSpecified = true;
+                }
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+            }
+            else if (cimObj.ClassType == CIMClassEnum.CurrentTransformer)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new CurrentTransformerExt();
+
+
+                // create asset info
+                var assetInfo = new CurrentTransformerInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
+
+                if (cimObj.ContainsPropertyValue("cim.primarycurrent"))
+                    assetInfo.primaryCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.primarycurrent"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
+
+                if (cimObj.ContainsPropertyValue("cim.secondarycurrent"))
+                    assetInfo.secondaryCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.secondarycurrent"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
+
+                cimObj.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
+
+                // create asset
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj, true);
+
+
+
+                var currentTransformer = (CurrentTransformerExt)xmlObj;
+                MapIdentifiedObjectFields(cimObj, (PowerSystemResource)xmlObj);
+
+                // Equipment container
+                if (cimObj.EquipmentContainerRef != null)
+                {
+                    currentTransformer.EquipmentContainer = new EquipmentEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
+                }
+
+                // Connect to termianl
+                if (cimObj.ContainsPropertyValue("cim.terminal"))
+                {
+                    currentTransformer.Terminal = new AuxiliaryEquipmentTerminal() { @ref = cimObj.GetPropertyValueAsString("cim.terminal") };
+                }
+
+                // maximumcurrent
+                if (cimObj.ContainsPropertyValue("cim.maximumcurrent"))
+                    currentTransformer.maximumCurrent = new CurrentFlow() { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.maximumcurrent"), _cultureInfo) };
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+
+                if (_includeAsset)
+                {
+                    if (asset != null)
+                        yield return asset;
+
+                    if (assetInfo != null)
+                        yield return assetInfo;
+                }
+            }
+            else if (cimObj.ClassType == CIMClassEnum.PotentialTransformer)
+            {
+                CheckIfProcessed(cimObj);
+
+                var xmlObj = new PotentialTransformer();
+
+
+                // create asset info
+                var assetInfo = new PotentialTransformerInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
+
+                if (cimObj.ContainsPropertyValue("cim.primaryvoltage"))
+                    assetInfo.primaryVoltage = new Voltage() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.primaryvoltage"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.V };
+
+                if (cimObj.ContainsPropertyValue("cim.secondaryvoltage"))
+                    assetInfo.secondaryVoltage = new Voltage() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.secondaryvoltage"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.V };
+
+                cimObj.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
+
+                // create asset
+                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj, true);
+
+                var potentialTransformer = (PotentialTransformer)xmlObj;
+                MapIdentifiedObjectFields(cimObj, (PotentialTransformer)xmlObj);
+
+                // Equipment container
+                if (cimObj.EquipmentContainerRef != null)
+                {
+                    potentialTransformer.EquipmentContainer = new EquipmentEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
+                }
+
+                // Connect to termianl
+                if (cimObj.ContainsPropertyValue("cim.terminal"))
+                {
+                    potentialTransformer.Terminal = new AuxiliaryEquipmentTerminal() { @ref = cimObj.GetPropertyValueAsString("cim.terminal") };
+                }
+
+
+                if (_includeEquipment)
+                    yield return xmlObj;
+
+                if (_includeAsset)
+                {
+                    if (asset != null)
+                        yield return asset;
+
+                    if (assetInfo != null)
+                        yield return assetInfo;
+                }
+            }
+        }
+
+        private Guid GetMrid(CIMIdentifiedObject cimObj, string attrName)
+        {
+            if (cimObj.ContainsPropertyValue(attrName))
+            {
+                var mridStr = cimObj.GetPropertyValueAsString(attrName);
+
+                if (Guid.TryParse(mridStr, out Guid result))
+                    return result;
+
+            }
+
+            return Guid.Empty;
         }
 
         private void MapWireInfoFields(CIMIdentifiedObject ce, WireInfoExt xmlObj)
@@ -705,904 +1606,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
             if (ce.ContainsPropertyValue("cim.ratedwithstandcurrent1sec"))
                 ((WireInfoExt)xmlObj).ratedWithstandCurrent1sec = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ratedwithstandcurrent1sec"), _cultureInfo) };
         }
-
-        private IEnumerable<IdentifiedObject> ProcessLeafObject(CIMIdentifiedObject cimObj, EquipmentContainer equipmentContainer, int equipmentContainerVoltageLevel, Dictionary<int, VoltageLevel> substationVoltageLevels)
-        {
-            IdentifiedObject xmlObj = null;
-
-            if (cimObj is CIMConductingEquipment)
-            {
-                var ce = cimObj as CIMConductingEquipment;
-
-                if (ce.ClassType == CIMClassEnum.ACLineSegment)
-                {
-                    var neighboors = cimObj.GetNeighbours();
-
-                    if (!CheckIfProcessed(cimObj, false))
-                    {
-                        xmlObj = new ACLineSegmentExt();
-
-                        var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                        if (asset != null)
-                            yield return asset;
-
-                        MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                        MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-                        MapACLineSegmentFields(ce, (ACLineSegmentExt)xmlObj);
-
-                        if (_includeEquipment)
-                            yield return xmlObj;
-
-                        foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
-                    }
-                }
-                else if (ce.ClassType == CIMClassEnum.LoadBreakSwitch)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new LoadBreakSwitch();
-
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                    if (asset != null)
-                        yield return asset;
-
-                    var assetInfo = MapDummyAssetInfo(ce, (PowerSystemResource)xmlObj);
-
-                    if (assetInfo != null)
-                        yield return assetInfo;
-
-
-                    MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-                    MapSwitchEquipmentFields(ce, (Switch)xmlObj);
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-
-                    foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
-                }
-                else if (ce.ClassType == CIMClassEnum.Breaker)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new Breaker();
-
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                    if (asset != null)
-                        yield return asset;
-
-                    var assetInfo = MapDummyAssetInfo(ce, (PowerSystemResource)xmlObj);
-
-                    if (assetInfo != null)
-                        yield return assetInfo;
-
-                    MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-                    MapSwitchEquipmentFields(ce, (Switch)xmlObj);
-
-                    // breaking capacity
-                    if (cimObj.ContainsPropertyValue("cim.breakingcapacity"))
-                    {
-                        string valueStr = cimObj.GetPropertyValue("cim.breakingcapacity").ToString();
-                        int valueInt;
-
-                        if (Int32.TryParse(valueStr, out valueInt))
-                        {
-                            ((Breaker)xmlObj).breakingCapacity = new CurrentFlow() { unit = UnitSymbol.A, Value = valueInt };
-                        }
-                    }
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-
-                    foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
-                }
-                else if (ce.ClassType == CIMClassEnum.Fuse)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new Fuse();
-
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                    if (asset != null)
-                        yield return asset;
-
-                    var assetInfo = MapDummyAssetInfo(ce, (PowerSystemResource)xmlObj);
-
-                    if (assetInfo != null)
-                        yield return assetInfo;
-
-
-
-                    MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-                    MapSwitchEquipmentFields(ce, (Switch)xmlObj);
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-
-                    foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
-                }
-                else if (ce.ClassType == CIMClassEnum.Disconnector)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new Disconnector();
-
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                    if (asset != null)
-                        yield return asset;
-
-                    var assetInfo = MapDummyAssetInfo(ce, (PowerSystemResource)xmlObj);
-
-                    if (assetInfo != null)
-                        yield return assetInfo;
-
-                    MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-                    MapSwitchEquipmentFields(ce, (Switch)xmlObj);
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-
-                    foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
-
-                }
-                else if (ce.ClassType == CIMClassEnum.FaultIndicatorExt)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new FaultIndicatorExt();
-
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                    if (asset != null)
-                        yield return asset;
-
-                    var assetInfo = MapDummyAssetInfo(ce, (PowerSystemResource)xmlObj);
-
-                    if (assetInfo != null)
-                        yield return assetInfo;
-
-
-                    var faultIndicator = (FaultIndicatorExt)xmlObj;
-                    MapIdentifiedObjectFields(ce, (PowerSystemResource)xmlObj);
-
-                    // Equipment container
-                    if (cimObj.EquipmentContainerRef != null)
-                    {
-                        faultIndicator.EquipmentContainer = new EquipmentEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
-                    }
-
-                    // Connect to termianl
-                    if (ce.ContainsPropertyValue("cim.terminal"))
-                    {
-                        faultIndicator.Terminal = new AuxiliaryEquipmentTerminal() { @ref = ce.GetPropertyValueAsString("cim.terminal") };
-                    }
-
-                    // Reset kind
-                    if (ce.ContainsPropertyValue("cim.resetkind"))
-                    {
-                        var val = ce.GetPropertyValueAsString("cim.resetkind").ToLower().Trim();
-
-                        FaultIndicatorResetKind resetKind = FaultIndicatorResetKind.manual;
-
-                        if (val == "automatisk" || val == "automatic")
-                            resetKind = FaultIndicatorResetKind.automatic;
-
-                        faultIndicator.resetKind = resetKind;
-                        faultIndicator.resetKindSpecified = true;
-                    }
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-                }
-                else if (ce.ClassType == CIMClassEnum.CurrentTransformer)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new CurrentTransformerExt();
-
-
-                    // create asset info
-                    var assetInfo = new CurrentTransformerInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
-
-                    if (cimObj.ContainsPropertyValue("cim.primarycurrent"))
-                        assetInfo.primaryCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.primarycurrent"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
-
-                    if (cimObj.ContainsPropertyValue("cim.secondarycurrent"))
-                        assetInfo.secondaryCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.secondarycurrent"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
-
-                    ce.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
-
-                    // create asset
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj, true);
-
-
-
-                    var currentTransformer = (CurrentTransformerExt)xmlObj;
-                    MapIdentifiedObjectFields(ce, (PowerSystemResource)xmlObj);
-
-                    // Equipment container
-                    if (cimObj.EquipmentContainerRef != null)
-                    {
-                        currentTransformer.EquipmentContainer = new EquipmentEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
-                    }
-
-                    // Connect to termianl
-                    if (ce.ContainsPropertyValue("cim.terminal"))
-                    {
-                        currentTransformer.Terminal = new AuxiliaryEquipmentTerminal() { @ref = ce.GetPropertyValueAsString("cim.terminal") };
-                    }
-
-                    // maximumcurrent
-                    if (ce.ContainsPropertyValue("cim.maximumcurrent"))
-                        currentTransformer.maximumCurrent = new CurrentFlow() { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.maximumcurrent"), _cultureInfo) };
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-
-                    if (_includeAsset)
-                    {
-                        if (asset != null)
-                            yield return asset;
-
-                        if (assetInfo != null)
-                            yield return assetInfo;
-                    }
-                }
-                else if (ce.ClassType == CIMClassEnum.PotentialTransformer)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new PotentialTransformer();
-
-
-                    // create asset info
-                    var assetInfo = new PotentialTransformerInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
-
-                    if (cimObj.ContainsPropertyValue("cim.primaryvoltage"))
-                        assetInfo.primaryVoltage = new Voltage() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.primaryvoltage"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.V };
-
-                    if (cimObj.ContainsPropertyValue("cim.secondaryvoltage"))
-                        assetInfo.secondaryVoltage = new Voltage() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.secondaryvoltage"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.V };
-
-                    ce.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
-
-                    // create asset
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj, true);
-
-                    var potentialTransformer = (PotentialTransformer)xmlObj;
-                    MapIdentifiedObjectFields(ce, (PotentialTransformer)xmlObj);
-
-                    // Equipment container
-                    if (cimObj.EquipmentContainerRef != null)
-                    {
-                        potentialTransformer.EquipmentContainer = new EquipmentEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
-                    }
-
-                    // Connect to termianl
-                    if (ce.ContainsPropertyValue("cim.terminal"))
-                    {
-                        potentialTransformer.Terminal = new AuxiliaryEquipmentTerminal() { @ref = ce.GetPropertyValueAsString("cim.terminal") };
-                    }
-
-                   
-                    if (_includeEquipment)
-                        yield return xmlObj;
-
-                    if (_includeAsset)
-                    {
-                        if (asset != null)
-                            yield return asset;
-
-                        if (assetInfo != null)
-                            yield return assetInfo;
-                    }
-                }
-
-                else if (ce.ClassType == CIMClassEnum.PowerTransformer)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new PowerTransformer();
-
-                    // create asset info
-                    var assetInfo = new PowerTransformerInfoExt { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
-
-                    if (cimObj.ContainsPropertyValue("ext.thermalrateds"))
-                        assetInfo.thermalRatedS = new ApparentPower { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.thermalrateds"), _cultureInfo) * 1000000, multiplier = UnitMultiplier.c, unit = UnitSymbol.VA };
-
-                    if (cimObj.ContainsPropertyValue("ext.lowerbound"))
-                        assetInfo.lowerBound = new PU() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.lowerbound"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
-
-                    if (cimObj.ContainsPropertyValue("ext.upperbound"))
-                        assetInfo.upperBound = new PU() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.upperbound"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
-
-                    assetInfo.hasInternalDeltaWinding = false;
-
-                    if (cimObj.ContainsPropertyValue("ext.hasInternalDeltaWinding"))
-                    {
-                        if (cimObj.GetPropertyValueAsString("ext.hasInternalDeltaWinding") == "1")
-                            assetInfo.hasInternalDeltaWinding = true;
-                    }
-
-                    // Add product model reference if exists
-                    if (cimObj.ContainsPropertyValue("cim.ref.productassetmodel"))
-                    {
-                        var assetModelId = cimObj.GetPropertyValueAsString("cim.ref.productassetmodel").ToLower();
-                        assetInfo.AssetModel = new AssetInfoAssetModel() { @ref = assetModelId };
-                    }
-
-                    ce.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
-
-                    yield return assetInfo;
-
-
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                    if (asset != null)
-                        yield return asset;
-
-                    MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-
-                    if (_includeEquipment)
-                    {
-                        yield return xmlObj;
-
-                        // Create terminal and winding for each neighbor
-                        bool firstEndFound = false;
-
-                        PowerTransformerEndExt firstEnd = null;
-
-                        var ptTerminals = ((CIMConductingEquipment)cimObj).Terminals.ToList();
-
-                        foreach (var cimTerminal in ptTerminals)
-                        {
-                            ConnectivityNode xmlCn = null;
-
-                            if (cimTerminal.ConnectivityNode != null)
-                            {
-                                // Create xml connectivity node
-                                foreach (var identifiedObject in CreateAndYieldConnectivityNodeIfNotExists(cimTerminal.ConnectivityNode.mRID, (CIMConductingEquipment)cimObj))
-                                    yield return identifiedObject;
-
-                                xmlCn = GetConnectivityNode(cimTerminal.ConnectivityNode.mRID, (CIMConductingEquipment)cimObj);
-                            }
-
-                            // Create xml terminal
-                            foreach (var identifiedObject in CreateTerminal(cimTerminal, (ConductingEquipment)xmlObj, xmlCn, cimTerminal.EndNumber))
-                                yield return identifiedObject;
-
-                            // Create xml power transformer end
-                            PowerTransformerEndExt xmlTe = new PowerTransformerEndExt()
-                            {
-                                mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, cimTerminal.EndNumber + 10).ToString(),
-                                PowerTransformer = new PowerTransformerEndPowerTransformer() { @ref = xmlObj.mRID },
-                                endNumber = "" + cimTerminal.EndNumber,
-                                Terminal = new TransformerEndTerminal() { @ref = cimTerminal.mRID.ToString() },
-                                BaseVoltage = Convert.ToSingle(ce.GetPropertyValueAsString($"cim.v{cimTerminal.EndNumber}.nominalvoltage"), _cultureInfo)
-                            };
-
-                            CheckIfProcessed(xmlTe.mRID, xmlTe);
-
-                            if (!firstEndFound)
-                            {
-                                firstEnd = xmlTe;
-                                firstEndFound = true;
-                            }
-
-
-                            ////////////
-                            // Transfer all electric parameters
-
-                            // Fælles for begge viklinger
-                            if (ce.ContainsPropertyValue("cim.v1.rateds"))
-                                xmlTe.ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v1.rateds"), _cultureInfo) };
-
-                            if (ce.ContainsPropertyValue("ext.loss"))
-                                xmlTe.loss = new KiloActivePower { unit = UnitSymbol.W, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("ext.loss"), _cultureInfo) };
-
-                            if (ce.ContainsPropertyValue("ext.losszero"))
-                                xmlTe.lossZero = new KiloActivePower { unit = UnitSymbol.W, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("ext.losszero"), _cultureInfo) };
-
-                            if (ce.ContainsPropertyValue("ext.ratingFactor"))
-                                xmlTe.ratingFactor = new PerCent() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("ext.ratingFactor"), _cultureInfo), multiplier = UnitMultiplier.c, unit = UnitSymbol.none };
-
-
-                            // Vinkling 1
-                            if (cimTerminal.EndNumber == 1)
-                            {
-                                if (ce.ContainsPropertyValue("cim.v1.nominalvoltage"))
-                                    xmlTe.nominalVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v1.nominalvoltage"), _cultureInfo) };
-
-                                if (ce.ContainsPropertyValue("cim.v1.phaseangleclock"))
-                                    xmlTe.phaseAngleClock = ce.GetPropertyValueAsString("cim.v1.phaseangleclock");
-
-                                if (ce.ContainsPropertyValue("cim.v1.connectionkind"))
-                                    xmlTe.connectionKind = ce.GetPropertyValueAsString("cim.v1.connectionkind");
-
-                                if (ce.ContainsPropertyValue("cim.v1.grounded"))
-                                    xmlTe.grounded = ParseBoolString(ce.GetPropertyValueAsString("cim.v1.grounded"));
-
-                                if (ce.ContainsPropertyValue("cim.v1.ratedu"))
-                                    xmlTe.ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v1.ratedu"), _cultureInfo) };
-
-                                if (ce.ContainsPropertyValue("ext.v1.uk"))
-                                    xmlTe.uk = new PerCent() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v1.uk"), _cultureInfo) };
-
-                                if (ce.ContainsPropertyValue("ext.v1.excitingcurrentzero"))
-                                    xmlTe.excitingCurrentZero = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v1.excitingcurrentzero"), _cultureInfo) };
-
-                                if (ce.ContainsPropertyValue("cim.v1.r"))
-                                    xmlTe.r = new Resistance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = ConvertToDouble(ce.GetPropertyValueAsString("cim.v1.r")) };
-
-                                if (ce.ContainsPropertyValue("cim.v1.x"))
-                                    xmlTe.x = new Reactance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = ConvertToDouble(ce.GetPropertyValueAsString("cim.v1.x")) };
-
-                                if (ce.ContainsPropertyValue("cim.v1.g"))
-                                    xmlTe.g = new Conductance { multiplier = UnitMultiplier.micro, Value = ConvertToDouble(ce.GetPropertyValueAsString("cim.v1.g")) };
-
-                                if (ce.ContainsPropertyValue("cim.v1.b"))
-                                    xmlTe.b = new Susceptance { multiplier = UnitMultiplier.micro, Value = ConvertToDouble(ce.GetPropertyValueAsString("cim.v1.b")) };
-
-                                if (ce.ContainsPropertyValue("cim.v1.r0"))
-                                    xmlTe.r0 = new Resistance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = ConvertToDouble(ce.GetPropertyValueAsString("cim.v1.r0")) };
-
-                                if (ce.ContainsPropertyValue("cim.v1.x0"))
-                                    xmlTe.x0 = new Reactance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = ConvertToDouble(ce.GetPropertyValueAsString("cim.v1.x0")) };
-
-                                if (ce.ContainsPropertyValue("cim.v1.g"))
-                                    xmlTe.g = new Conductance { multiplier = UnitMultiplier.micro, Value = ConvertToDouble(ce.GetPropertyValueAsString("cim.v1.g")) };
-
-                                if (ce.ContainsPropertyValue("cim.v1.b"))
-                                    xmlTe.b = new Susceptance { multiplier = UnitMultiplier.micro, Value = ConvertToDouble(ce.GetPropertyValueAsString("cim.v1.b")) };
-
-                            }
-
-                            // Vinkling 2
-                            if (cimTerminal.EndNumber == 2)
-                            {
-                                if (ce.ContainsPropertyValue("cim.v2.nominalvoltage"))
-                                    xmlTe.nominalVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v2.nominalvoltage"), _cultureInfo) };
-
-                                if (ce.ContainsPropertyValue("cim.v2.phaseangleclock"))
-                                    xmlTe.phaseAngleClock = ce.GetPropertyValueAsString("cim.v2.phaseangleclock");
-
-                                if (ce.ContainsPropertyValue("cim.v2.connectionkind"))
-                                    xmlTe.connectionKind = ce.GetPropertyValueAsString("cim.v2.connectionkind");
-
-                                if (ce.ContainsPropertyValue("cim.v2.grounded"))
-                                    xmlTe.grounded = ParseBoolString(ce.GetPropertyValueAsString("cim.v2.grounded"));
-
-                                if (ce.ContainsPropertyValue("cim.v2.ratedu"))
-                                    xmlTe.ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.v2.ratedu"), _cultureInfo) };
-
-                                if (ce.ContainsPropertyValue("ext.v2.uk"))
-                                    xmlTe.uk = new PerCent() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v2.uk"), _cultureInfo) };
-
-                                if (ce.ContainsPropertyValue("ext.v2.excitingcurrentzero"))
-                                    xmlTe.excitingCurrentZero = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("ext.v2.excitingcurrentzero"), _cultureInfo) };
-
-                                if (ce.ContainsPropertyValue("cim.v2.r"))
-                                    xmlTe.r = new Resistance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.v2.r"), _cultureInfo) };
-
-                                if (ce.ContainsPropertyValue("cim.v2.x"))
-                                    xmlTe.x = new Reactance() { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.v2.x"), _cultureInfo) };
-                            }
-
-
-                            if (_includeEquipment)
-                                yield return xmlTe;
-                        }
-
-                        if (firstEnd != null)
-                        {
-                            // Trin kobler
-                            RatioTapChanger tap = new RatioTapChanger() { TransformerEnd = new RatioTapChangerTransformerEnd() { @ref = firstEnd.mRID } };
-
-                            tap.mRID = GUIDHelper.CreateDerivedGuid(ce.mRID, 100).ToString();
-                            CheckIfProcessed(tap.mRID, tap);
-
-                            if (ce.ContainsPropertyValue("tap.lowstep"))
-                                tap.lowStep = ce.GetPropertyValueAsString("tap.lowstep");
-
-                            if (ce.ContainsPropertyValue("tap.highstep"))
-                                tap.highStep = ce.GetPropertyValueAsString("tap.highstep");
-
-                            if (ce.ContainsPropertyValue("tap.ltcflag"))
-                            {
-                                string val = ce.GetPropertyValueAsString("tap.ltcflag").ToLower();
-
-                                tap.ltcFlag = false;
-
-                                if (val != null && (val == "1" || val == "true" || val == "yes"))
-                                    tap.ltcFlag = true;
-                            }
-
-                            if (ce.ContainsPropertyValue("tap.neutralstep"))
-                                tap.neutralStep = ce.GetPropertyValueAsString("tap.neutralstep");
-
-
-                            if (ce.ContainsPropertyValue("tap.normalstep"))
-                                tap.normalStep = ce.GetPropertyValueAsString("tap.normalstep");
-
-                            if (ce.ContainsPropertyValue("tap.stepvoltageincrement"))
-                            {
-                                tap.stepVoltageIncrement = new PerCent() { Value = Convert.ToSingle(ce.GetPropertyValueAsString("tap.stepvoltageincrement"), _cultureInfo) };
-                            }
-
-                            if (ce.ContainsPropertyValue("tap.neutralu"))
-                                tap.neutralU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("tap.neutralu"), _cultureInfo) };
-
-                            if (_includeEquipment)
-                                yield return tap;
-                        }
-                    }
-                }
-                else if (ce.ClassType == CIMClassEnum.BusbarSection)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new BusbarSectionExt();
-
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                    if (asset != null)
-                        yield return asset;
-
-                    var assetInfo = MapDummyAssetInfo(ce, (PowerSystemResource)xmlObj);
-
-                    if (assetInfo != null)
-                        yield return assetInfo;
-
-
-                    MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-
-                    if (substationVoltageLevels.ContainsKey(cimObj.VoltageLevel))
-                        ((BusbarSectionExt)xmlObj).EquipmentContainer = new EquipmentEquipmentContainer() { @ref = substationVoltageLevels[cimObj.VoltageLevel].mRID };
-               
-                    if (ce.ContainsPropertyValue("cim.ipmax"))
-                        ((BusbarSectionExt)xmlObj).ipMax = new CurrentFlow() { unit = UnitSymbol.A, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ipmax"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.powerfactormin"))
-                    {
-                        ((BusbarSectionExt)xmlObj).powerFactorMin = Convert.ToSingle(ce.GetPropertyValueAsString("cim.powerfactormin"), _cultureInfo);
-                        ((BusbarSectionExt)xmlObj).powerFactorMinSpecified = true;
-                    }
-
-                    if (ce.ContainsPropertyValue("cim.powerfactormax"))
-                    {
-                        ((BusbarSectionExt)xmlObj).powerFactorMax = Convert.ToSingle(ce.GetPropertyValueAsString("cim.powerfactormax"), _cultureInfo);
-                        ((BusbarSectionExt)xmlObj).powerFactorMaxSpecified = true;
-                    }
-
-                    if (ce.ContainsPropertyValue("cim.sspmin"))
-                        ((BusbarSectionExt)xmlObj).sspMin = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.m, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.sspmin"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.sspmax"))
-                        ((BusbarSectionExt)xmlObj).sspMax = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.m, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.sspmax"), _cultureInfo) };
-
-                    foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-                }
-                else if (ce.ClassType == CIMClassEnum.PetersenCoil)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new PetersenCoil();
-
-                    // create asset info
-                    var assetInfo = new PetersenCoilInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
-
-                    if (cimObj.ContainsPropertyValue("cim.assetinfo.minimumcurrent"))
-                        assetInfo.minimumCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.minimumcurrent")), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
-
-                    if (cimObj.ContainsPropertyValue("cim.assetinfo.maximumcurrent"))
-                        assetInfo.maximumCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.maximumcurrent")), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
-
-                    if (cimObj.ContainsPropertyValue("cim.assetinfo.actualcurrent"))
-                        assetInfo.actualCurrent = new CurrentFlow() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.actualcurrent")), multiplier = UnitMultiplier.c, unit = UnitSymbol.A };
-
-                    ce.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
-
-                    // create asset
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj, true);
-
-                    MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-
-                    if (substationVoltageLevels.ContainsKey(cimObj.VoltageLevel))
-                        ((PetersenCoil)xmlObj).EquipmentContainer = new EquipmentEquipmentContainer() { @ref = substationVoltageLevels[cimObj.VoltageLevel].mRID };
-
-
-                    if (ce.ContainsPropertyValue("cim.nominalu"))
-                        ((PetersenCoil)xmlObj).nominalU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nominalu"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.offsetcurrent"))
-                        ((PetersenCoil)xmlObj).offsetCurrent = new CurrentFlow() { unit = UnitSymbol.A,  multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.offsetcurrent"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.positioncurrent"))
-                        ((PetersenCoil)xmlObj).positionCurrent = new CurrentFlow() { unit = UnitSymbol.A,  multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.positioncurrent"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.xgroundmin"))
-                        ((PetersenCoil)xmlObj).xGroundMin = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.xgroundmin"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.xgroundmax"))
-                        ((PetersenCoil)xmlObj).xGroundMax = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.xgroundmax"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.xgroundnominal"))
-                        ((PetersenCoil)xmlObj).xGroundNominal = new Reactance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.xgroundnominal"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.r"))
-                        ((PetersenCoil)xmlObj).r = new Resistance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r"), _cultureInfo) };
-
-                    ((PetersenCoil)xmlObj).mode = PetersenCoilModeKind.automaticPositioning;
-
-                    if (ce.ContainsPropertyValue("cim.mode"))
-                    {
-                        string mode = ce.GetPropertyValueAsString("cim.mode").ToLower();
-                        if (mode.Contains("manual") || mode.Contains("manuel"))
-                            ((PetersenCoil)xmlObj).mode = PetersenCoilModeKind.manual;
-                        else if (mode.Contains("automatic"))
-                            ((PetersenCoil)xmlObj).mode = PetersenCoilModeKind.automaticPositioning;
-                        else if (mode.Contains("fixed"))
-                            ((PetersenCoil)xmlObj).mode = PetersenCoilModeKind.@fixed;
-                    }
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-
-                    foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
-
-                    if (_includeAsset)
-                    {
-                        if (asset != null)
-                            yield return asset;
-
-                        if (assetInfo != null)
-                            yield return assetInfo;
-                    }
-                }
-                else if (ce.ClassType == CIMClassEnum.SynchronousMachine)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new SynchronousMachine();
-
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                    if (asset != null)
-                        yield return asset;
-
-                    MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-                    
-                    if (ce.ContainsPropertyValue("cim.ratedu"))
-                        ((SynchronousMachine)xmlObj).ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedu"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.rateds"))
-                        ((SynchronousMachine)xmlObj).ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.rateds"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.ratedpowerfactor"))
-                    {
-                        ((SynchronousMachine)xmlObj).ratedPowerFactor = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedpowerfactor"), _cultureInfo);
-                        ((SynchronousMachine)xmlObj).ratedPowerFactorSpecified = true;
-                    }
-
-                    if (ce.ContainsPropertyValue("cim.maxq"))
-                        ((SynchronousMachine)xmlObj).maxQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.maxq"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.minq"))
-                        ((SynchronousMachine)xmlObj).minQ = new ReactivePower { unit = UnitSymbol.VAr, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.minq"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.qpercent"))
-                        ((SynchronousMachine)xmlObj).qPercent = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.qpercent"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.referencepriority"))
-                        ((SynchronousMachine)xmlObj).referencePriority = ce.GetPropertyValueAsString("cim.referencepriority");
-
-                    if (ce.ContainsPropertyValue("cim.ikk"))
-                        ((SynchronousMachine)xmlObj).ikk = new CurrentFlow { unit = UnitSymbol.A, multiplier = UnitMultiplier.none, Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.ikk"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.mu"))
-                    {
-                        ((SynchronousMachine)xmlObj).mu = Convert.ToSingle(ce.GetPropertyValueAsString("cim.mu"), _cultureInfo);
-                        ((SynchronousMachine)xmlObj).muSpecified = true;
-                    }
-
-                    if (ce.ContainsPropertyValue("cim.r"))
-                        ((SynchronousMachine)xmlObj).r = new Resistance { unit = UnitSymbol.ohm, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.r0"))
-                        ((SynchronousMachine)xmlObj).r0 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r0"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.r2"))
-                        ((SynchronousMachine)xmlObj).r2 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.r2"), _cultureInfo) };
-
-
-                    if (ce.ContainsPropertyValue("cim.shortcircuitrotortype"))
-                    {
-                        string type = ce.GetPropertyValueAsString("cim.shortcircuitrotortype").ToLower();
-
-                        if (type.Contains("salientpole1"))
-                            ((SynchronousMachine)xmlObj).shortCircuitRotorType = ShortCircuitRotorKind.salientPole1;
-                        else if (type.Contains("salientpole2"))
-                            ((SynchronousMachine)xmlObj).shortCircuitRotorType = ShortCircuitRotorKind.salientPole2;
-                        else if (type.Contains("turboseries1"))
-                            ((SynchronousMachine)xmlObj).shortCircuitRotorType = ShortCircuitRotorKind.turboSeries1;
-                        else if (type.Contains("turboseries2"))
-                            ((SynchronousMachine)xmlObj).shortCircuitRotorType = ShortCircuitRotorKind.turboSeries2;
-                    }
-
-                    if (ce.ContainsPropertyValue("cim.voltageregulationrange"))
-                        ((SynchronousMachine)xmlObj).voltageRegulationRange = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.voltageregulationrange"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.x0"))
-                        ((SynchronousMachine)xmlObj).x0 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.x0"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.x2"))
-                        ((SynchronousMachine)xmlObj).x2 = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.x2"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.satdirectsubtransx"))
-                        ((SynchronousMachine)xmlObj).satDirectSubtransX = new PU() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.satdirectsubtransx"), _cultureInfo) };
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-
-                    foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
-                }
-                else if (ce.ClassType == CIMClassEnum.AsynchronousMachine)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new AsynchronousMachine();
-
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                    if (asset != null)
-                        yield return asset;
-
-
-                    MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-                    
-                    if (ce.ContainsPropertyValue("cim.ratedu"))
-                        ((AsynchronousMachine)xmlObj).ratedU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedu"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.rateds"))
-                        ((AsynchronousMachine)xmlObj).ratedS = new ApparentPower() { unit = UnitSymbol.VA, multiplier = UnitMultiplier.k, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.rateds"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.ratedpowerfactor"))
-                    {
-                        ((AsynchronousMachine)xmlObj).ratedPowerFactor = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedpowerfactor"), _cultureInfo);
-                        ((AsynchronousMachine)xmlObj).ratedPowerFactorSpecified = true;
-                    }
-
-                    if (ce.ContainsPropertyValue("cim.nominalfrequency"))
-                        ((AsynchronousMachine)xmlObj).nominalFrequency = new Frequency() { unit = UnitSymbol.Hz, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nominalfrequency"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.nominelspeed"))
-                        ((AsynchronousMachine)xmlObj).nominalSpeed = new RotationSpeed() { multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nominelspeed"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.converterfeddrive"))
-                    {
-                        string boolStr = ce.GetPropertyValueAsString("cim.converterfeddrive");
-
-                        if (boolStr == "1")
-                            ((AsynchronousMachine)xmlObj).converterFedDrive = true;
-                        else
-                            ((AsynchronousMachine)xmlObj).converterFedDrive = false;
-                    }
-
-                    if (ce.ContainsPropertyValue("cim.efficiency"))
-                        ((AsynchronousMachine)xmlObj).efficiency = new PerCent { Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.efficiency"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.iairratio"))
-                        ((AsynchronousMachine)xmlObj).iaIrRatio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.iairratio"), _cultureInfo);
-
-                    if (ce.ContainsPropertyValue("cim.polepairnumber"))
-                        ((AsynchronousMachine)xmlObj).polePairNumber = ce.GetPropertyValueAsString("cim.polepairnumber");
-
-                    if (ce.ContainsPropertyValue("cim.reversible"))
-                    {
-                        string boolStr = ce.GetPropertyValueAsString("cim.reversible");
-
-                        if (boolStr == "1")
-                            ((AsynchronousMachine)xmlObj).reversible = true;
-                        else
-                            ((AsynchronousMachine)xmlObj).reversible = false;
-                    }
-
-                    if (ce.ContainsPropertyValue("cim.rxlockedrotorratio"))
-                        ((AsynchronousMachine)xmlObj).rxLockedRotorRatio = Convert.ToSingle(ce.GetPropertyValueAsString("cim.rxlockedrotorratio"), _cultureInfo);
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-
-                    foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
-                }
-                else if (ce.ClassType == CIMClassEnum.LinearShuntCompensator)
-                {
-                    CheckIfProcessed(cimObj);
-
-                    xmlObj = new LinearShuntCompensator();
-
-                    // create asset info
-                    var assetInfo = new LinearShuntCompensatorInfoExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200).ToString() };
-
-                    if (cimObj.ContainsPropertyValue("cim.ratedvoltage"))
-                        assetInfo.ratedVoltage = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.ratedvoltage"), _cultureInfo) };
-
-                    if (cimObj.ContainsPropertyValue("cim.assetinfo.minimumreactivepower"))
-                        assetInfo.minimumReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.minimumreactivepower"), _cultureInfo), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
-
-                    if (cimObj.ContainsPropertyValue("cim.assetinfo.maximumreactivepower"))
-                        assetInfo.maximumReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.maximumreactivepower"), _cultureInfo), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
-
-                    if (cimObj.ContainsPropertyValue("cim.assetinfo.actualreactivepower"))
-                        assetInfo.actualReactivePower = new ReactivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.actualreactivepower"), _cultureInfo), multiplier = UnitMultiplier.M, unit = UnitSymbol.VAr };
-
-                    if (cimObj.ContainsPropertyValue("cim.assetinfo.loss"))
-                        assetInfo.loss = new ActivePower() { Value = Convert.ToDouble(cimObj.GetPropertyValueAsString("cim.assetinfo.loss"), _cultureInfo), multiplier = UnitMultiplier.none, unit = UnitSymbol.W };
-
-                    if (cimObj.ContainsPropertyValue("cim.assetinfo.qualityfactory"))
-                        assetInfo.qualityFactory = Convert.ToSingle(cimObj.GetPropertyValueAsString("cim.assetinfo.qualityfactory"), _cultureInfo);
-
-                    if (cimObj.ContainsPropertyValue("cim.assetinfo.technology"))
-                        assetInfo.technology = cimObj.GetPropertyValueAsString("cim.assetinfo.technology");
-
-
-                    ce.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
-
-                    // create asset
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
-                    if (asset != null)
-                        yield return asset;
-                    
-                    MapIdentifiedObjectFields(ce, (ConductingEquipment)xmlObj);
-                    MapConductingEquipmentFields(ce, (ConductingEquipment)xmlObj);
-                    
-                    if (ce.ContainsPropertyValue("cim.nomu"))
-                        ((LinearShuntCompensator)xmlObj).nomU = new Voltage() { unit = UnitSymbol.V, multiplier = UnitMultiplier.none, Value = Convert.ToSingle(ce.GetPropertyValueAsString("cim.nomu"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.normalsections"))
-                        ((LinearShuntCompensator)xmlObj).normalSections = ce.GetPropertyValueAsString("cim.normalsections");
-
-                    if (ce.ContainsPropertyValue("cim.maximumsections"))
-                        ((LinearShuntCompensator)xmlObj).maximumSections = ce.GetPropertyValueAsString("cim.maximumsections");
-
-                    if (ce.ContainsPropertyValue("cim.bpersection"))
-                        ((LinearShuntCompensator)xmlObj).bPerSection = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.bpersection"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.gpersection"))
-                        ((LinearShuntCompensator)xmlObj).gPerSection = new Conductance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.gpersection"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.b0persection"))
-                        ((LinearShuntCompensator)xmlObj).b0PerSection = new Susceptance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.b0persection"), _cultureInfo) };
-
-                    if (ce.ContainsPropertyValue("cim.g0persection"))
-                        ((LinearShuntCompensator)xmlObj).g0PerSection = new Conductance() { Value = Convert.ToDouble(ce.GetPropertyValueAsString("cim.g0persection"), _cultureInfo) };
-
-                    if (_includeEquipment)
-                        yield return xmlObj;
-
-                    foreach (var identifiedObject in MapTerminals(ce, (ConductingEquipment)xmlObj)) yield return identifiedObject;
-
-                    if (_includeAsset)
-                    {
-                        if (asset != null)
-                            yield return asset;
-
-                        if (assetInfo != null)
-                            yield return assetInfo;
-                    }
-                }
-
-                // Set equipment container
-                if (xmlObj is ConductingEquipment && xmlObj != null && equipmentContainer != null && ((ConductingEquipment)xmlObj).EquipmentContainer == null)
-                    ((ConductingEquipment)xmlObj).EquipmentContainer = new EquipmentEquipmentContainer() { @ref = equipmentContainer.mRID };
-            }
-        }
+      
 
         private bool CheckIfProcessed(CIMObject cimObj, bool throwErrorIfAlreadyProcessed = true)
         {
@@ -1677,7 +1681,6 @@ namespace DAX.IO.CIM.Serialization.CIM100
             if (cimObj.Description != null)
                 xmlObj.description = cimObj.Description;
         }
-
 
         private IEnumerable<IdentifiedObject> MapLocation(CIMIdentifiedObject cimObj, PowerSystemResource xmlObj)
         {
@@ -1850,8 +1853,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
             return null;
         }
 
-
-        private void MapConductingEquipmentFields(CIMIdentifiedObject cimObj, ConductingEquipment xmlObj)
+        private void MapVoltageAndEquipmentContainerFields(CIMIdentifiedObject cimObj, ConductingEquipment xmlObj)
         {
             CIMConductingEquipment cimCe = cimObj as CIMConductingEquipment;
 
@@ -1865,26 +1867,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
             // Equipment container
             if (cimObj.EquipmentContainerRef != null)
             {
-                
-                if ((cimObj.ClassType == CIMClassEnum.Disconnector ||
-                    cimObj.ClassType == CIMClassEnum.Fuse ||
-                    cimObj.ClassType == CIMClassEnum.LoadBreakSwitch ||
-                    cimObj.ClassType == CIMClassEnum.Breaker ||
-                    cimObj.ClassType == CIMClassEnum.BusbarSection ||
-                    cimObj.ClassType == CIMClassEnum.EnergyConsumer) &&
-                    _substationVoltageLevelsByMrid.ContainsKey(cimObj.EquipmentContainerRef.mRID))
-                {
-                    var subVoltageLevels = _substationVoltageLevelsByMrid[cimObj.EquipmentContainerRef.mRID];
-
-                    if (subVoltageLevels.ContainsKey(cimObj.VoltageLevel))
-                    {
-                        xmlObj.EquipmentContainer = new EquipmentEquipmentContainer() { @ref = subVoltageLevels[cimObj.VoltageLevel].mRID.ToString() };
-                    }
-                    else
-                        xmlObj.EquipmentContainer = new EquipmentEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
-                }
-                else
-                    xmlObj.EquipmentContainer = new EquipmentEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
+                xmlObj.EquipmentContainer = new EquipmentEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
             }
         }
 
@@ -2030,6 +2013,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
             }
         }
 
+        /*
         private IEnumerable<IdentifiedObject> MapSubstation(CIMEquipmentContainer cimObj, Substation xmlObj)
         {
             Dictionary<int, VoltageLevel> substationVoltageLevels = new Dictionary<int, VoltageLevel>();
@@ -2186,6 +2170,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 }
             }
         }
+        */
 
         private IEnumerable<IdentifiedObject> MapTerminals(CIMConductingEquipment cimObj, ConductingEquipment xmlObj)
         {

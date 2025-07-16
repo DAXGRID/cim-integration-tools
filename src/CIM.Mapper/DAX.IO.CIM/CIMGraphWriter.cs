@@ -223,7 +223,7 @@ namespace DAX.IO.Writers
                 _async_gens.Add(feature);
             else if (className == "externalnetworkinjection")
                 _extNetworkInjections.Add(feature);
-            else if (className == "substation" || className == "bay" || className == "enclosure" || className == "equipmentcontainer")
+            else if (className == "substation" || className == "voltagelevel" || className == "bay" || className == "enclosure" || className == "equipmentcontainer")
                 _equipmentContainers.Add(feature);
             else if (className == "buildsimplejunction")
                 _buildSimpleJunctions.Add(feature);
@@ -453,6 +453,7 @@ namespace DAX.IO.Writers
 
                 _g.ObjectManager.Clear();
 
+
                 ////////////////////////////////////////////////////////
                 // Substations and enclousures
 
@@ -460,6 +461,7 @@ namespace DAX.IO.Writers
                 int nSubstations = 0;
                 int nEnclosures = 0;
                 int nBay = 0;
+                int nVoltageLevels = 0;
 
                 foreach (var feature in _equipmentContainers)
                 {
@@ -501,6 +503,27 @@ namespace DAX.IO.Writers
                     }
                 }
 
+
+                ////////////////////////////////////////////////////////
+                // Voltage levels
+
+                foreach (var feature in _equipmentContainers)
+                {
+                    if (feature.ClassName == "voltagelevel")
+                    {
+                        var ec = new CIMEquipmentContainer(_g.ObjectManager);
+
+                        ec.SetClass(feature.ClassName);
+
+                        MapCommonFields(feature, ec);
+                        CopyAttributes(feature, ec);
+
+                        _g.AddCIMObjectToVertex(ec);
+
+                        nVoltageLevels++;
+                    }
+                }
+
                 ////////////////////////////////////////////////////////
                 // Bays
 
@@ -515,20 +538,17 @@ namespace DAX.IO.Writers
                         MapCommonFields(feature, ec);
                         CopyAttributes(feature, ec);
 
-                        if (ec.mRID == Guid.Parse("ed2144ac-0370-4b3d-b1b8-56d3edd6d804"))
-                        {
-
-                        };
-
                         _g.AddCIMObjectToVertex(ec);
                                       
                         nBay++;
                     }
                 }
+                              
 
                 Logger.Log(LogLevel.Info, "" + nEquipmentContainers + " equipment containers imported.");
                 Logger.Log(LogLevel.Info, "" + nSubstations + " substations (EquipmentContainer) imported.");
                 Logger.Log(LogLevel.Info, "" + nEnclosures + " enclosures (EquipmentContainer) imported.");
+                Logger.Log(LogLevel.Info, "" + nVoltageLevels + " voltage levels (EquipmentContainer) imported.");
                 Logger.Log(LogLevel.Info, "" + nBay + " bays (EquipmentContainer) imported.");
 
                 _equipmentContainers = null;

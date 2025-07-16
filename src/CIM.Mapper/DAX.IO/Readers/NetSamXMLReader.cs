@@ -39,6 +39,7 @@ namespace DAX.IO.Readers
         private HashSet<string> _secondParseElementsToInclude = new()
         {
             "substation",
+            "voltagelevel",
             "bay",
             "aclinesegmentext",
             "busbarsection",
@@ -444,17 +445,8 @@ namespace DAX.IO.Readers
             {
                 var voltageLevelRef = Guid.Parse(feature.GetAttributeAsString("voltagelevel"));
 
-                if (_voltageLevelByMrid.ContainsKey(voltageLevelRef))
-                {
-                    var vl = _voltageLevelByMrid[voltageLevelRef];
-
-                    feature.Add("dax.parent.equipmentcontainermrid", vl.EquipmentContainer);
-                    feature.Add("dax.parent.equipmentcontainertype", "Substation");
-                }
-                else
-                {
-                    throw new DAXReaderException("Invalid VoltageLevel reference: " + voltageLevelRef + " in " + feature.ClassName + " with mRID: " + mrid);
-                }
+                feature.Add("dax.parent.equipmentcontainermrid", voltageLevelRef);
+                feature.Add("dax.parent.equipmentcontainertype", "VoltageLevel");
             }
             else if (feature.ContainsKey("equipmentcontainer"))
             {
@@ -551,6 +543,7 @@ namespace DAX.IO.Readers
                 else if (reader.Depth == 2 && reader.NodeType == XmlNodeType.Element)
                 {
                     attributeName = reader.Name;
+                    attributeValue = null;
 
                     if (reader.HasAttributes)
                     {
@@ -684,6 +677,12 @@ namespace DAX.IO.Readers
             if (keyValuePairs.ContainsKey("mrid"))
             {
                 Guid mrid = Guid.Parse(keyValuePairs["mrid"]);
+
+                if (mrid == Guid.Parse("2eba44fe-1ab3-4560-94d2-14c897860bdd"))
+                {
+
+                }
+
                 keyValuePairs.Remove("mrid");
 
                 Guid? powerTransformerId = TryParseGuidElement("RatioTapChanger", "transformerend", keyValuePairs, lineNumber);

@@ -79,7 +79,7 @@ namespace CIM.Mapper.Tests.EngumPower.NetSam1_3
 
                 var stopWatch = Stopwatch.StartNew();
 
-                var result = ((CIM100Serializer)serializer).GetIdentifiedObjects(CIMMetaDataManager.Repository, graph.CIMObjects, false, true, false).ToList();
+                var result = ((CIM100Serializer)serializer).GetIdentifiedObjects(CIMMetaDataManager.Repository, graph.CIMObjects, true, true, true).ToList();
 
                 var cson = new CsonSerializer();
 

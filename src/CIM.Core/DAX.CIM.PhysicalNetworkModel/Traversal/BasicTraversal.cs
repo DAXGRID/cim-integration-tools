@@ -241,7 +241,9 @@ namespace CIM.PhysicalNetworkModel.Traversal
         public int stationHop = 0;
         public override string ToString()
         {
-            return "Hop: " + stationHop + " - " + IdentifiedObject.ToString();
+            var info = "Hop: " + stationHop + " - " + IdentifiedObject.GetType().Name + "::" + IdentifiedObject.mRID.ToString();
+
+            return info;
         }
 
     }
