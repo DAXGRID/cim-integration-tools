@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.CommandLine;
-using System.Xml;
 using System.Text.Json;
+using System.Xml;
 
 namespace CIM.PreValidator.CLI;
 
