@@ -17,6 +17,8 @@ internal static class CimValidation
      FrozenSet<Location> locations,
      FrozenSet<UsagePoint> usagePoints)
     {
+        // This is done to handle cases where some conducting equipment
+        // does not have any terminals.
         var terminalsByConductingEquipment = conductingEquipments
             .ToDictionary(x => x.mRID, x => Array.Empty<Terminal>());
 
@@ -25,6 +27,8 @@ internal static class CimValidation
             terminalsByConductingEquipment[x.Key] = x.ToArray();
         }
 
+        // This is done to handle cases where some conducting equipment
+        // does not have any power transformer ends.
         var powerTransformerEndsByConductingEquipment = conductingEquipments
             .ToDictionary(x => x.mRID, x => Array.Empty<PowerTransformerEnd>());
 
