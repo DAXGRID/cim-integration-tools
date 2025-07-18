@@ -475,8 +475,17 @@ namespace DAX.IO.Readers
 
                 foreach (TerminalInfo terminal in terminals)
                 {
-                    feature.Add($"terminal.{terminal.SequenceNumber}.id", terminal.TerminalId.ToString());
-                    feature.Add($"terminal.{terminal.SequenceNumber}.cn", terminal.ConnectivityNodeId.ToString());
+                    var terminalAttrKey = $"terminal.{terminal.SequenceNumber}.id";
+
+                    if (!feature.ContainsKey(terminalAttrKey))
+                    {
+                        feature.Add(terminalAttrKey, terminal.TerminalId.ToString());
+                        feature.Add($"terminal.{terminal.SequenceNumber}.cn", terminal.ConnectivityNodeId.ToString());
+                    }
+                    else
+                    {
+                        Logger.Log(LogLevel.Error, $"Invalid Terminal element with id: {terminal.TerminalId} A terminal with seq: {terminal.SequenceNumber} already added to conducting equipment with id: {mrid}");
+                    }
                 }
             }
         }
@@ -678,11 +687,6 @@ namespace DAX.IO.Readers
             {
                 Guid mrid = Guid.Parse(keyValuePairs["mrid"]);
 
-                if (mrid == Guid.Parse("2eba44fe-1ab3-4560-94d2-14c897860bdd"))
-                {
-
-                }
-
                 keyValuePairs.Remove("mrid");
 
                 Guid? powerTransformerId = TryParseGuidElement("RatioTapChanger", "transformerend", keyValuePairs, lineNumber);
@@ -775,11 +779,6 @@ namespace DAX.IO.Readers
                 else
                 {
                     nominalVoltage = Int32.Parse(keyValuePairs["nominalvoltage"].Trim());
-                }
-
-                if (nominalVoltage == 0)
-                {
-
                 }
 
                 _baseVoltageByMrid[mrid] = nominalVoltage;
