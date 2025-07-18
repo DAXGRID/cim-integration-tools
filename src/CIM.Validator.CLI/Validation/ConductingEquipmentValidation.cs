@@ -120,7 +120,7 @@ internal static class ConductingEquipmentValidation
                 IdentifiedObjectId = c.mRID,
                 IdentifiedObjectClass = c.GetType().Name,
                 Code = "MANDATORY_SINGLE_CONNECTIVY_NODE",
-                Description = "Mandatory so have at least one terminal pointing to a conducting equipment point to a connectivity node.",
+                Description = "Mandatory to have at least one terminal pointing to a conducting equipment point to a connectivity node.",
                 Severity = Severity.Warning
             };
         }
