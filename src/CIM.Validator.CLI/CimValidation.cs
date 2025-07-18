@@ -17,13 +17,21 @@ internal static class CimValidation
      FrozenSet<Location> locations,
      FrozenSet<UsagePoint> usagePoints)
     {
-        var terminalsByConductingEquipment = terminals
-            .GroupBy(x => x.ConductingEquipment.@ref)
-            .ToFrozenDictionary(x => x.Key, x => x.ToArray());
+        var terminalsByConductingEquipment = conductingEquipments
+            .ToDictionary(x => x.mRID, x => Array.Empty<Terminal>());
 
-        var powerTransformerEndsByConductingEquipment = powerTransformerEnds
-            .GroupBy(x => x.PowerTransformer.@ref)
-            .ToFrozenDictionary(x => x.Key, x => x.ToArray());
+        foreach (var x in terminals.GroupBy(x => x.ConductingEquipment.@ref))
+        {
+            terminalsByConductingEquipment[x.Key] = x.ToArray();
+        }
+
+        var powerTransformerEndsByConductingEquipment = conductingEquipments
+            .ToDictionary(x => x.mRID, x => Array.Empty<PowerTransformerEnd>());
+
+        foreach (var x in powerTransformerEnds.GroupBy(x => x.PowerTransformer.@ref))
+        {
+            powerTransformerEndsByConductingEquipment[x.Key] = x.ToArray();
+        }
 
         var equipmentContainersByMrid = equipmentContainers.ToFrozenDictionary(x => Guid.Parse(x.mRID), x => x);
         var terminalsByMrid = terminals.ToFrozenDictionary(x => Guid.Parse(x.mRID), x => x);
