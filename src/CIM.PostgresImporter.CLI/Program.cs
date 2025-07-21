@@ -58,6 +58,12 @@ internal static class Program
         )
         { IsRequired = false };
 
+        var ignoreTableCreationIfExistsOption = new Option<bool?>(
+            name: "--ignore-table-creation-if-exists",
+            description: "Ignore table creation if the table already exists."
+        )
+        { IsRequired = false };
+
         rootCommand.Add(inputFilePathOption);
         rootCommand.Add(postgresConnectionStringOption);
         rootCommand.Add(sridOption);
@@ -65,9 +71,10 @@ internal static class Program
         rootCommand.Add(postImportSqlScriptPathOption);
         rootCommand.Add(schemaNameOption);
         rootCommand.Add(createSchemaIfNotExistsOption);
+        rootCommand.Add(ignoreTableCreationIfExistsOption);
 
         rootCommand.SetHandler(
-            async (inputFilePath, postgresConnectionString, srid, postImportScriptPath, schemaName, createSchemaIfNotExists, preImportScriptPath) =>
+            async (inputFilePath, postgresConnectionString, srid, postImportScriptPath, schemaName, createSchemaIfNotExists, preImportScriptPath, ignoreTableCreationIfExists) =>
             {
                 schemaName = schemaName ?? "public";
 
@@ -96,6 +103,7 @@ internal static class Program
                     inputFilePath,
                     postgresConnectionString,
                     schemaName ?? "public",
+                    ignoreTableCreationIfExists ?? false,
                     logger).ConfigureAwait(false);
 
                 if (postImportScriptPath is not null)
@@ -116,13 +124,14 @@ internal static class Program
             postImportSqlScriptPathOption,
             schemaNameOption,
             createSchemaIfNotExistsOption,
-            preImportSqlScriptPathOption
+            preImportSqlScriptPathOption,
+            ignoreTableCreationIfExistsOption
         );
 
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
 
-    private static async Task ImportFileAsync(int srid, int bulkInsertCount, string dataFilePath, string connectionString, string schemaName, ILogger logger)
+    private static async Task ImportFileAsync(int srid, int bulkInsertCount, string dataFilePath, string connectionString, string schemaName, bool ignoreTableCreationIfExists, ILogger logger)
     {
         logger.LogInformation("Starting detection of schema.");
         var schemaReader = new StreamReader(dataFilePath);
@@ -132,9 +141,9 @@ internal static class Program
 
         schemaReader.Dispose();
 
-        logger.LogInformation("Creating schema.");
+        logger.LogInformation("Creating tables in schema.");
         await PostgresImport
-            .CreateImportSchemaAsync(connectionString, schema, schemaName)
+            .CreateImportSchemaAsync(connectionString, schema, schemaName, ignoreTableCreationIfExists)
             .ConfigureAwait(false);
 
         var schemaTypeLookup = schema.Types.ToDictionary(x => x.Name, x => x.Properties.ToDictionary(y => y.Name, y => y));

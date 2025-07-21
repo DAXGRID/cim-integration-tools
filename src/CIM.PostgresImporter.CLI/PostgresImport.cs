@@ -8,9 +8,9 @@ namespace CIM.PostgresImporter.CLI;
 
 internal static class PostgresImport
 {
-    public static async Task CreateImportSchemaAsync(string connectionString, Schema schema, string schemaName)
+    public static async Task CreateImportSchemaAsync(string connectionString, Schema schema, string schemaName, bool addIfNotExists)
     {
-        var createTablesScript = PostgresSqlBuilder.Build(schema, schemaName);
+        var createTablesScript = PostgresSqlBuilder.Build(schema, schemaName, addIfNotExists);
         await ExecuteScriptAsync(connectionString, createTablesScript).ConfigureAwait(false);
     }
 

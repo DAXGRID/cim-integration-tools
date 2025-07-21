@@ -5,16 +5,17 @@ namespace CIM.PostgresImporter.CLI;
 
 internal static class PostgresSqlBuilder
 {
-    public static string Build(Schema schema, string schemaName)
+    public static string Build(Schema schema, string schemaName, bool addIfNotExists)
     {
-        return string.Join("\n", schema.Types.Select(x => Build(x, schemaName)));
+        return string.Join("\n", schema.Types.Select(x => Build(x, schemaName, addIfNotExists)));
     }
 
-    private static string Build(SchemaType schemaType, string schemaName)
+    private static string Build(SchemaType schemaType, string schemaName, bool addIfNotExists)
     {
+        var ifExists = addIfNotExists ? "IF NOT EXISTS" : "";
         var columns = string.Join(",\n  ", schemaType.Properties.Select(x => $"\"{CustomTableAndColumnNameConverter(x.Name)}\" {ConvertInternalTypeToPostgresqlType(x.Type)}"));
         return @$"
-CREATE TABLE ""{schemaName}"".""{CustomTableAndColumnNameConverter(schemaType.Name)}"" (
+CREATE TABLE {ifExists} ""{schemaName}"".""{CustomTableAndColumnNameConverter(schemaType.Name)}"" (
   {columns},
   PRIMARY KEY (""mrid"")
 );";
