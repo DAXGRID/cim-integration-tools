@@ -79,7 +79,7 @@ internal static class ConductingEquipmentValidation
                 IdentifiedObjectClass = c.GetType().Name,
                 Code = "BASE_VOLTAGE_LESS_OR_EQUAL_TO_ZERO",
                 Description = "Conducting equipment should have base voltage greater than 0.",
-                Severity = Severity.Warning
+                Severity = Severity.Error
             };
         }
 
