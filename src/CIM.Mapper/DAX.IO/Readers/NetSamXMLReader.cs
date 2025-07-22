@@ -221,6 +221,11 @@ namespace DAX.IO.Readers
                         // Give up if no mrid found
                         if (mrid == null)
                             break;
+
+                        if (mrid == Guid.Parse("ffe541e8-56d7-44ec-b7b6-9710e53a84d2"))
+                        {
+
+                        }
                                              
                         AddEquipmentContainerRef(feature, mrid.Value);
                         AddBaseVoltage(feature, mrid.Value);
@@ -458,6 +463,11 @@ namespace DAX.IO.Readers
 
                     feature.Add("dax.parent.equipmentcontainermrid", equipmentContainerRef);
                     feature.Add("dax.parent.equipmentcontainertype", "Bay");
+                }
+                else if (_voltageLevelByMrid.ContainsKey(equipmentContainerRef))
+                {
+                    feature.Add("dax.parent.equipmentcontainermrid", equipmentContainerRef);
+                    feature.Add("dax.parent.equipmentcontainertype", "VoltageLevel");
                 }
                 else
                 {
