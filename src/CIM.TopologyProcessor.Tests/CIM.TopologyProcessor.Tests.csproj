@@ -23,9 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CIM.Core\CIM.Core.csproj" />
-    <ProjectReference Include="..\CIM.Cson\CIM.Cson.csproj" />
-    <ProjectReference Include="..\CIM.TopologyProcessor\CIM.TopologyProcessor.csproj" />
+    <ProjectReference Include="..\CIM.TopologyProcessor.CLI\CIM.TopologyProcessor.CLI.csproj" />
+    <ProjectReference Include="..\CIM.PowerFactoryExporter.CLI\CIM.PowerFactoryExporter.CLI.csproj" />
+    <ProjectReference Include="..\CIM.Mapper.CLI\CIM.Mapper.CLI.csproj" />
+    <ProjectReference Include="..\CIM.Filter.CLI\CIM.Filter.CLI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
