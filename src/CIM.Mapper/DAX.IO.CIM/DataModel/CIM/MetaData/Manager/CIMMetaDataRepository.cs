@@ -17,6 +17,8 @@ namespace DAX.IO.CIM
         private Dictionary<string, CIMPSRType> _psrTypeByName = new Dictionary<string, CIMPSRType>();
         private Dictionary<int, CIMPSRType> _psrTypeById = new Dictionary<int, CIMPSRType>();
 
+        private readonly Mutex _mutex = new();
+
         public CIMClassDef CreateClassDef()
         {
             var classDef = new CIMClassDef() { Id = _nextClassDefId };
@@ -35,6 +37,8 @@ namespace DAX.IO.CIM
 
         public CIMPSRType CreateCIMPSRType(string name)
         {
+            _mutex.WaitOne();
+
             if (_psrTypeByName.ContainsKey(name))
                 return _psrTypeByName[name];
 
@@ -43,6 +47,9 @@ namespace DAX.IO.CIM
             _psrTypeByName.Add(psrType.Name, psrType);
             _psrTypeById.Add(psrType.Id, psrType);
             _nextPsrTypeId++;
+
+            _mutex.ReleaseMutex();
+
             return psrType;
         }
 
