@@ -8,11 +8,24 @@ internal static class DynamicAttributeValidation
         var properties = x.GetType().GetProperties();
         var objectType = x.GetType();
 
+        var ignorePropertiesLookup = new HashSet<string>
+        {
+            "aliasName",
+            "description",
+            "PSRType",
+            "length",
+            "Names",
+            "phone1",
+            "phone2",
+            "order",
+            "mainAddress"
+        };
+
         foreach (var propertyInfo in objectType.GetProperties())
         {
             var propertyValue = propertyInfo.GetValue(x);
             var propertyName = propertyInfo.Name;
-            if (propertyName == "description" || propertyName == "PSRType" || propertyName == "length" || propertyName == "Names")
+            if (ignorePropertiesLookup.Contains(propertyName))
             {
                 continue;
             }
