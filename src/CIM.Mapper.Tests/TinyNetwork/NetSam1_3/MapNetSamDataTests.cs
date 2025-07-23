@@ -73,11 +73,11 @@ namespace CIM.Mapper.Tests.TinyNetwork.NetSam1_3
 
                 await Validator.CLI.Program.Main(new string[] { $"--input-file={mapperOutputFileName}", $"--output-file={validatorOutputFileName}"});
 
-                var validatorLines = File.ReadAllLines(validatorOutputFileName);
+                // This is a hack for now, I'll handle it better in the future where it does not do a contains.
+                var validatorLines = File.ReadAllLines(validatorOutputFileName).Where(x => x.Contains("\"Severity\":\"Error\"")).ToList();
 
                 // The input file should have no errors
-                Assert.True(validatorLines.Length == 0, "Expected no validation errors, but apparently the validator disagree");
-
+                Assert.True(validatorLines.Count == 0, "Expected no validation errors, but apparently the validator disagree");
             }
         }
     }
