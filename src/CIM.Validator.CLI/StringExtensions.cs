@@ -10,7 +10,7 @@ public static class StringExtensions
 
         if (text.Length < 2)
         {
-            return text.ToLowerInvariant();
+            return text.ToUpperInvariant();
         }
 
         var sb = new StringBuilder();
