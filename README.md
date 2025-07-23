@@ -52,5 +52,5 @@ Example of how to use the CIM.PostgresImporter.CLI.
 ```sh
 ./CIM.PreValidator.CLI \
     --input-file=./mapper_output.jsonl \
-    --output=./filter_output.json
+    --output-file=./filter_output.json
 ```
