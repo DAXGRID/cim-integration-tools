@@ -46,3 +46,11 @@ Example of how to use the CIM.PostgresImporter.CLI.
     --base-voltage-lower-bound=400 \
     --base-voltage-upper-bound=9999
 ```
+
+## CIM Pre-validator
+
+```sh
+./CIM.PreValidator.CLI \
+    --input-file=./mapper_output.jsonl \
+    --output=./filter_output.json \
+```
