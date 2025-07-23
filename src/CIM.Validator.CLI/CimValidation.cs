@@ -106,7 +106,9 @@ internal static class CimValidation
                 validations.Add(() => EnergyConsumerValidation.ValidateLocation(energyConsumer, location));
             }
 
-            return validations.Select(validate => validate()).Where(x => x is not null);
+            return validations
+                .Select(validate => validate()).Where(x => x is not null)
+                .Concat(DynamicAttributeValidation.ValidateNotNull(conductingEquipment));
         });
 
         var conductingEquipmentLookup = conductingEquipments.Select(x => Guid.Parse(x.mRID)).ToFrozenSet();
@@ -123,7 +125,9 @@ internal static class CimValidation
                 () => TerminalValidation.PhaseRequired(terminal),
             };
 
-            return validations.Select(validate => validate()).Where(x => x is not null);
+            return validations
+                .Select(validate => validate()).Where(x => x is not null)
+                .Concat(DynamicAttributeValidation.ValidateNotNull(terminal));
         });
 
         // Validate equipment containers.
@@ -158,7 +162,9 @@ internal static class CimValidation
                 validations.Add(() => SubstationValidation.LocationRequired(substation, substationLocation));
             }
 
-            return validations.Select(validate => validate()).Where(x => x is not null);
+            return validations
+                .Select(validate => validate()).Where(x => x is not null)
+                .Concat(DynamicAttributeValidation.ValidateNotNull(equipmentContainer));
         });
 
         // Validate current transformers.
@@ -174,7 +180,9 @@ internal static class CimValidation
                 () => CurrentTransformerValidation.MaximumCurrentRequired(currentTransformer)
             };
 
-            return validations.Select(validate => validate()).Where(x => x is not null);
+            return validations
+                .Select(validate => validate()).Where(x => x is not null)
+                .Concat(DynamicAttributeValidation.ValidateNotNull(currentTransformer));
         });
 
         // Validate fault indicators.
@@ -190,7 +198,9 @@ internal static class CimValidation
                         out var equipmentContainer) ? equipmentContainer : null)
             };
 
-            return validations.Select(validate => validate()).Where(x => x is not null);
+            return validations
+                .Select(validate => validate()).Where(x => x is not null)
+                .Concat(DynamicAttributeValidation.ValidateNotNull(faultIndicator));
         });
 
         // Validate auxiliary equipment indicators.
@@ -211,7 +221,9 @@ internal static class CimValidation
                         out var equipmentContainer) ? equipmentContainer : null)
             };
 
-            return validations.Select(validate => validate()).Where(x => x is not null);
+            return validations
+                .Select(validate => validate()).Where(x => x is not null)
+                .Concat(DynamicAttributeValidation.ValidateNotNull(auxiliaryEquipment));
         });
 
         // Validate usage points
@@ -224,7 +236,9 @@ internal static class CimValidation
                 () => UsagePointValidation.VerifyName(usagePoint, usagePointMridByName)
             };
 
-            return validations.Select(validate => validate()).Where(x => x is not null);
+            return validations
+                .Select(validate => validate()).Where(x => x is not null)
+                .Concat(DynamicAttributeValidation.ValidateNotNull(usagePoint));
         });
 
         // Validate location
@@ -235,10 +249,12 @@ internal static class CimValidation
                 () => LocationValidation.CoordinateSystem(location)
             };
 
-            return validations.Select(validate => validate()).Where(x => x is not null);
+            return validations
+                .Select(validate => validate()).Where(x => x is not null)
+                .Concat(DynamicAttributeValidation.ValidateNotNull(location));
         });
 
-        // Validate location
+        // Validate power transformer end
         var powerTransformerEndValidations = powerTransformerEnds.AsParallel().SelectMany((powerTransformerEnd) =>
         {
             var validations = new List<Func<ValidationError?>>
@@ -248,7 +264,9 @@ internal static class CimValidation
                 () => PowerTransformerEndValidation.TerminalRequired(powerTransformerEnd)
             };
 
-            return validations.Select(validate => validate()).Where(x => x is not null);
+            return validations
+                .Select(validate => validate()).Where(x => x is not null)
+                .Concat(DynamicAttributeValidation.ValidateNotNull(powerTransformerEnd));
         });
 
         return [
