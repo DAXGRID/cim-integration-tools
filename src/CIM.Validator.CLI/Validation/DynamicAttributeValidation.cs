@@ -2,26 +2,14 @@ namespace CIM.Validator.CLI;
 
 internal static class DynamicAttributeValidation
 {
-    public static IEnumerable<ValidationError> ValidateNotNull(object x)
+    public static IEnumerable<ValidationError> ValidateNotNull(object x, HashSet<string> excludedPropertyNames)
     {
         var validationErrors = new List<ValidationError>();
+
         var properties = x.GetType().GetProperties();
         var objectType = x.GetType();
 
-        var ignorePropertiesLookup = new HashSet<string>
-        {
-            "aliasName",
-            "description",
-            "PSRType",
-            "length",
-            "Names",
-            "phone1",
-            "phone2",
-            "order",
-            "mainAddress"
-        };
-
-        foreach (var propertyInfo in objectType.GetProperties().Where(x => !ignorePropertiesLookup.Contains(x.Name)))
+        foreach (var propertyInfo in properties.Where(x => !excludedPropertyNames.Contains(x.Name)))
         {
             var propertyName = propertyInfo.Name;
             var propertyValue = propertyInfo.GetValue(x);

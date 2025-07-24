@@ -17,6 +17,19 @@ internal static class CimValidation
      FrozenSet<Location> locations,
      FrozenSet<UsagePoint> usagePoints)
     {
+        var ignoredPropertiesInDynamicPropertyValidation = new HashSet<string>
+        {
+            "aliasName",
+            "description",
+            "PSRType",
+            "length",
+            "Names",
+            "phone1",
+            "phone2",
+            "order",
+            "mainAddress"
+        };
+
         // This is done to handle cases where some conducting equipment
         // does not have any terminals.
         var terminalsByConductingEquipment = conductingEquipments
@@ -108,7 +121,7 @@ internal static class CimValidation
 
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(conductingEquipment));
+                .Concat(DynamicAttributeValidation.ValidateNotNull(conductingEquipment, ignoredPropertiesInDynamicPropertyValidation));
         });
 
         var conductingEquipmentLookup = conductingEquipments.Select(x => Guid.Parse(x.mRID)).ToFrozenSet();
@@ -127,7 +140,7 @@ internal static class CimValidation
 
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(terminal));
+                .Concat(DynamicAttributeValidation.ValidateNotNull(terminal, ignoredPropertiesInDynamicPropertyValidation));
         });
 
         // Validate equipment containers.
@@ -164,7 +177,7 @@ internal static class CimValidation
 
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(equipmentContainer));
+                .Concat(DynamicAttributeValidation.ValidateNotNull(equipmentContainer, ignoredPropertiesInDynamicPropertyValidation));
         });
 
         // Validate current transformers.
@@ -182,7 +195,7 @@ internal static class CimValidation
 
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(currentTransformer));
+                .Concat(DynamicAttributeValidation.ValidateNotNull(currentTransformer, ignoredPropertiesInDynamicPropertyValidation));
         });
 
         // Validate fault indicators.
@@ -200,7 +213,7 @@ internal static class CimValidation
 
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(faultIndicator));
+                .Concat(DynamicAttributeValidation.ValidateNotNull(faultIndicator, ignoredPropertiesInDynamicPropertyValidation));
         });
 
         // Validate auxiliary equipment indicators.
@@ -223,7 +236,7 @@ internal static class CimValidation
 
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(auxiliaryEquipment));
+                .Concat(DynamicAttributeValidation.ValidateNotNull(auxiliaryEquipment, ignoredPropertiesInDynamicPropertyValidation));
         });
 
         // Validate usage points
@@ -238,7 +251,7 @@ internal static class CimValidation
 
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(usagePoint));
+                .Concat(DynamicAttributeValidation.ValidateNotNull(usagePoint, ignoredPropertiesInDynamicPropertyValidation));
         });
 
         // Validate location
@@ -251,7 +264,7 @@ internal static class CimValidation
 
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(location));
+                .Concat(DynamicAttributeValidation.ValidateNotNull(location, ignoredPropertiesInDynamicPropertyValidation));
         });
 
         // Validate power transformer end
@@ -266,7 +279,7 @@ internal static class CimValidation
 
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(powerTransformerEnd));
+                .Concat(DynamicAttributeValidation.ValidateNotNull(powerTransformerEnd, ignoredPropertiesInDynamicPropertyValidation));
         });
 
         return [
