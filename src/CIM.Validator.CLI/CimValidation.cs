@@ -1,6 +1,8 @@
 using CIM.PhysicalNetworkModel;
 using CIM.Validator.CLI.Validation;
+using System.Collections.Concurrent;
 using System.Collections.Frozen;
+using System.Reflection;
 
 namespace CIM.Validator.CLI;
 
@@ -17,6 +19,8 @@ internal static class CimValidation
      FrozenSet<Location> locations,
      FrozenSet<UsagePoint> usagePoints)
     {
+        var dynamicAttributeSchemaLookup = new ConcurrentDictionary<string, IReadOnlyCollection<PropertyInfo>>();
+
         var ignoredPropertiesInDynamicPropertyValidation = new HashSet<string>
         {
             "aliasName",
@@ -119,9 +123,11 @@ internal static class CimValidation
                 validations.Add(() => EnergyConsumerValidation.ValidateLocation(energyConsumer, location));
             }
 
+            var propertyInfoSchema = NewMethod(conductingEquipment, dynamicAttributeSchemaLookup, ignoredPropertiesInDynamicPropertyValidation);
+
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(conductingEquipment, ignoredPropertiesInDynamicPropertyValidation));
+                .Concat(DynamicAttributeValidation.ValidateNotNullOrEmptyString(conductingEquipment, propertyInfoSchema));
         });
 
         var conductingEquipmentLookup = conductingEquipments.Select(x => Guid.Parse(x.mRID)).ToFrozenSet();
@@ -138,9 +144,11 @@ internal static class CimValidation
                 () => TerminalValidation.PhaseRequired(terminal),
             };
 
+            var propertyInfoSchema = NewMethod(terminal, dynamicAttributeSchemaLookup, ignoredPropertiesInDynamicPropertyValidation);
+
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(terminal, ignoredPropertiesInDynamicPropertyValidation));
+                .Concat(DynamicAttributeValidation.ValidateNotNullOrEmptyString(terminal, propertyInfoSchema));
         });
 
         // Validate equipment containers.
@@ -175,9 +183,11 @@ internal static class CimValidation
                 validations.Add(() => SubstationValidation.LocationRequired(substation, substationLocation));
             }
 
+            var propertyInfoSchema = NewMethod(equipmentContainer, dynamicAttributeSchemaLookup, ignoredPropertiesInDynamicPropertyValidation);
+
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(equipmentContainer, ignoredPropertiesInDynamicPropertyValidation));
+                .Concat(DynamicAttributeValidation.ValidateNotNullOrEmptyString(equipmentContainer, propertyInfoSchema));
         });
 
         // Validate current transformers.
@@ -193,9 +203,11 @@ internal static class CimValidation
                 () => CurrentTransformerValidation.MaximumCurrentRequired(currentTransformer)
             };
 
+            var propertyInfoSchema = NewMethod(currentTransformer, dynamicAttributeSchemaLookup, ignoredPropertiesInDynamicPropertyValidation);
+
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(currentTransformer, ignoredPropertiesInDynamicPropertyValidation));
+                .Concat(DynamicAttributeValidation.ValidateNotNullOrEmptyString(currentTransformer, propertyInfoSchema));
         });
 
         // Validate fault indicators.
@@ -211,9 +223,11 @@ internal static class CimValidation
                         out var equipmentContainer) ? equipmentContainer : null)
             };
 
+            var propertyInfoSchema = NewMethod(faultIndicator, dynamicAttributeSchemaLookup, ignoredPropertiesInDynamicPropertyValidation);
+
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(faultIndicator, ignoredPropertiesInDynamicPropertyValidation));
+                .Concat(DynamicAttributeValidation.ValidateNotNullOrEmptyString(faultIndicator, propertyInfoSchema));
         });
 
         // Validate auxiliary equipment indicators.
@@ -234,13 +248,15 @@ internal static class CimValidation
                         out var equipmentContainer) ? equipmentContainer : null)
             };
 
+            var propertyInfoSchema = NewMethod(auxiliaryEquipment, dynamicAttributeSchemaLookup, ignoredPropertiesInDynamicPropertyValidation);
+
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(auxiliaryEquipment, ignoredPropertiesInDynamicPropertyValidation));
+                .Concat(DynamicAttributeValidation.ValidateNotNullOrEmptyString(auxiliaryEquipment, propertyInfoSchema));
         });
 
         // Validate usage points
-        var usagePointMridByName = usagePoints.GroupBy(x => x.name, x => x.mRID).ToDictionary(x => x.Key, x => x.ToList());
+        var usagePointMridByName = usagePoints.Where(x => x.name != null).GroupBy(x => x.name, x => x.mRID).ToDictionary(x => x.Key, x => x.ToList());
         var usagePointValidations = usagePoints.AsParallel().SelectMany((usagePoint) =>
         {
             var validations = new List<Func<ValidationError?>>
@@ -249,9 +265,11 @@ internal static class CimValidation
                 () => UsagePointValidation.VerifyName(usagePoint, usagePointMridByName)
             };
 
+            var propertyInfoSchema = NewMethod(usagePoint, dynamicAttributeSchemaLookup, ignoredPropertiesInDynamicPropertyValidation);
+
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(usagePoint, ignoredPropertiesInDynamicPropertyValidation));
+                .Concat(DynamicAttributeValidation.ValidateNotNullOrEmptyString(usagePoint, propertyInfoSchema));
         });
 
         // Validate location
@@ -262,9 +280,11 @@ internal static class CimValidation
                 () => LocationValidation.CoordinateSystem(location)
             };
 
+            var propertyInfoSchema = NewMethod(location, dynamicAttributeSchemaLookup, ignoredPropertiesInDynamicPropertyValidation);
+
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(location, ignoredPropertiesInDynamicPropertyValidation));
+                .Concat(DynamicAttributeValidation.ValidateNotNullOrEmptyString(location, propertyInfoSchema));
         });
 
         // Validate power transformer end
@@ -277,9 +297,11 @@ internal static class CimValidation
                 () => PowerTransformerEndValidation.TerminalRequired(powerTransformerEnd)
             };
 
+            var propertyInfoSchema = NewMethod(powerTransformerEnd, dynamicAttributeSchemaLookup, ignoredPropertiesInDynamicPropertyValidation);
+
             return validations
                 .Select(validate => validate()).Where(x => x is not null)
-                .Concat(DynamicAttributeValidation.ValidateNotNull(powerTransformerEnd, ignoredPropertiesInDynamicPropertyValidation));
+                .Concat(DynamicAttributeValidation.ValidateNotNullOrEmptyString(powerTransformerEnd, propertyInfoSchema));
         });
 
         return [
@@ -293,5 +315,22 @@ internal static class CimValidation
             ..locationValidations,
             ..powerTransformerEndValidations
         ];
+    }
+
+    private static IReadOnlyCollection<PropertyInfo> NewMethod(
+        IdentifiedObject identifiedObject,
+        ConcurrentDictionary<string, IReadOnlyCollection<PropertyInfo>> dynamicAttributeSchemaLookup,
+        HashSet<string> ignoredPropertiesInDynamicPropertyValidation)
+    {
+        IReadOnlyCollection<PropertyInfo> propertyInfoSchema = null;
+        var typeName = identifiedObject.GetType().Name;
+
+        if (!dynamicAttributeSchemaLookup.TryGetValue(identifiedObject.GetType().Name, out propertyInfoSchema))
+        {
+            propertyInfoSchema = DynamicAttributeValidation.BuiltDynamicPropertySchema(identifiedObject, ignoredPropertiesInDynamicPropertyValidation).ToArray().AsReadOnly();
+            dynamicAttributeSchemaLookup.TryAdd(typeName, propertyInfoSchema);
+        }
+
+        return propertyInfoSchema;
     }
 }
