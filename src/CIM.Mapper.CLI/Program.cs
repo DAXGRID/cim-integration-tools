@@ -1,9 +1,9 @@
 ﻿using CIM.Cson;
 using DAX.IO;
 using DAX.IO.CIM;
+using DAX.IO.CIM.Serialization.CIM100;
 using DAX.IO.CIM.DataModel;
 using DAX.IO.CIM.Processing;
-using DAX.IO.CIM.Serialization.CIM100;
 using DAX.IO.Transformers;
 using DAX.IO.Writers;
 using Serilog;
@@ -89,31 +89,13 @@ internal static class Program
                 {
                     var transSpec = config.GetTransformationSpecification(transSpecName.Trim());
                     var transformer = config.InitializeDataTransformer(transSpecName);
-                    var guide = transformer.Simulate();
-
-                    if (debugMode)
-                    {
-                        Console.WriteLine(guide.TextReport());
-                    }
-
-                    if (guide.ProblemsFound > 0)
-                    {
-                        Console.Error.WriteLine(guide.TextReport());
-
-                        if (!force)
-                            Console.Error.WriteLine("Error found in mapping (se log). Transformation {transSpecName} is terminated! Please correct mapping and try again.");
-                        else
-                        {
-                            Console.Error.WriteLine("Error found in mapping (se log). But will attempt to transfer data because of force parameter.");
-                            transformer.TransferData();
-                            await CheckForCIMProcessingAsync(serializerName, outputFilePath, config, transformer).ConfigureAwait(false);
-                        }
-                    }
-                    else
-                    {
-                        transformer.TransferData();
-                        await CheckForCIMProcessingAsync(serializerName, outputFilePath, config, transformer).ConfigureAwait(false);
-                    }
+                    transformer.TransferData();
+                    await CheckForCIMProcessingAsync(
+                        serializerName,
+                        outputFilePath,
+                        config,
+                        transformer)
+                        .ConfigureAwait(false);
                 }
             },
             transformationConfigurationFileOption,
