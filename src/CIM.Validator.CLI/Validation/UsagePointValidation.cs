@@ -27,7 +27,7 @@ internal static class UsagePointValidation
         if (string.IsNullOrWhiteSpace(u.name))
         {
             // We return since not set validation is in another place.
-            return;
+            return null;
         }
 
         // Validate that usage point names are unique.
