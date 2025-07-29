@@ -21,7 +21,7 @@ internal static class DynamicAttributeValidation
 
                 validationErrors.Add(new ValidationError
                 {
-                    Code = $"{propertyName.ToSnakeCaseUpper()}_IS_NULL",
+                    Code = $"{propertyName.ToSnakeCaseUpper()}_IS_NOT_SET",
                     Severity = Severity.Warning,
                     Description = $"{propertyName} value is not set.",
                     IdentifiedObjectId = mrid,
