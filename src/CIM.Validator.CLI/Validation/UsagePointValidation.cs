@@ -26,14 +26,8 @@ internal static class UsagePointValidation
         // Validate that the usage point has a name.
         if (string.IsNullOrWhiteSpace(u.name))
         {
-            return new ValidationError
-            {
-                IdentifiedObjectId = u.mRID,
-                IdentifiedObjectClass = u.GetType().Name,
-                Code = "USAGE_POINT_NAME_IS_REQUIRED",
-                Description = "Usage point always requires the 'name' attribute to be filled.",
-                Severity = Severity.Warning
-            };
+            // We return since not set validation is in another place.
+            return;
         }
 
         // Validate that usage point names are unique.
