@@ -6,8 +6,10 @@ namespace CIM.TopologyProcessor
 {
     public class FlatFeederInfoCreator
     {
-        public IEnumerable<FlatFeederInfo> CreateFeederInfos(CimContext cimContext, FeederInfoContext feederContext)
+        public IEnumerable<FlatFeederInfo> CreateFeederInfos(CimContext cimContext, FeederInfoContext feederContext, char? feederNameGroupSeperator = null)
         {
+            var feederInfos = new List<FlatFeederInfo>();
+
             var feeders = feederContext.GetConductionEquipmentFeeders();
             var alreadyAdded = new HashSet<Guid>();
 
@@ -103,7 +105,7 @@ namespace CIM.TopologyProcessor
                     feederInfo.Multifeed = false;
                     feederInfo.Nofeed = true;
 
-                    yield return feederInfo;
+                    feederInfos.Add(feederInfo);
                 }
 
                 // If seqNo > 2 the components is multi feeded
@@ -142,7 +144,7 @@ namespace CIM.TopologyProcessor
                 }
 
                 foreach (var feederInfo in feederInfosToAdd)
-                    yield return feederInfo;
+                    feederInfos.Add(feederInfo);
             }
 
             // Add components that has no feeder
@@ -165,10 +167,77 @@ namespace CIM.TopologyProcessor
                             Nofeed = true
                         };
 
-                        yield return feederInfo;
+                       feederInfos.Add(feederInfo);
                     }
                 }
             }
+
+            // Run through all feeder infos and mark multifeed allowed where feeder bay group name (the text after the seperator) is the same
+            if (feederNameGroupSeperator != null)
+            {
+                HashSet<Feeder> feederAllowMultiFeed = new HashSet<Feeder>();
+
+                char seperator = '.';
+
+                foreach (var ciFeeders in feeders)
+                {
+                    if (ciFeeders.Value.Where(f => f.FeederType == FeederType.SecondarySubstation).Count() > 1)
+                    {
+                        bool feededFromSameFeederGroup = false;
+                        string feederGroupingName = null;
+
+                        foreach (var feeder in ciFeeders.Value.Where(f => f.FeederType == FeederType.SecondarySubstation))
+                        {
+                            if (feeder.ConnectionPoint != null
+                                && feeder.ConnectionPoint.Bay != null
+                                && feeder.ConnectionPoint.Bay.name != null
+                                && feeder.ConnectionPoint.Bay.name.Contains(seperator))
+                            {
+                                string[] bayNameSplit = feeder.ConnectionPoint.Bay.name.Split(seperator);
+
+                                if (feederGroupingName == null)
+                                {
+                                    feederGroupingName = bayNameSplit.Last();
+                                }
+                                else
+                                {
+                                    if (feederGroupingName == bayNameSplit.Last())
+                                        feededFromSameFeederGroup = true;
+                                    else
+                                    {
+                                        feededFromSameFeederGroup = false;
+                                    }
+                                }
+
+                            }
+                        }
+
+                        if (feededFromSameFeederGroup)
+                        {
+                            foreach (var feeder in ciFeeders.Value.Where(f => f.FeederType == FeederType.SecondarySubstation))
+                            {
+                                feederAllowMultiFeed.Add(feeder);
+                            }
+                        }
+                    }
+                }
+
+
+                foreach (var feederInfo in feederInfos)
+                {
+                    var cimObj = cimContext.GetObject<ConductingEquipment>(feederInfo.EquipmentMRID.ToString().ToLower());
+
+                    var cimObjFeeders = feederContext.GeConductingEquipmentFeeders(cimObj);
+
+                    foreach (var feeder in cimObjFeeders)
+                    {
+                        if (feederAllowMultiFeed.Contains(feeder))
+                            feederInfo.MultifeedAllowed = true;
+                    }
+                }
+            }
+
+            return feederInfos;
         }
 
         static void AddHspFeederInfo(Feeder hspFeeder, FlatFeederInfo feederInfo)

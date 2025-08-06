@@ -54,7 +54,7 @@ internal static class Program
         feederInfoContext.CreateFeederObjects();
         var feederInfoCreator = new FlatFeederInfoCreator();
         var flatFeederObjects = feederInfoCreator
-            .CreateFeederInfos(cimContext, feederInfoContext);
+            .CreateFeederInfos(cimContext, feederInfoContext, '.');
 
         using var destination = File.Open(outputFilePath, FileMode.Create);
         using var source = serializer.SerializeObjects(flatFeederObjects);
