@@ -158,6 +158,35 @@ namespace DAX.IO.CIM
             }
         }
 
+        public void AddCIMObject(CIMIdentifiedObject obj, bool dublicate = false)
+        {
+            if (obj is CIMEquipmentContainer)
+            {
+                IndexObject(obj);
+                AddEquipmentContainer((CIMEquipmentContainer)obj);
+            }
+            else
+            {
+                if (!dublicate)
+                {
+                    if (obj.mRID != Guid.Empty)
+                    {
+                        if (!_cimObjectByMRID.ContainsKey(obj.mRID.ToString()))
+                            _cimObjectByMRID.Add(obj.mRID.ToString(), obj);
+                        else
+                        {
+                            Logger.Log(LogLevel.Warning, "Dublicated mRID: " + obj.ToString());
+                            ObjectManager.Delete(obj);
+                        }
+                    }
+                }
+
+                TryPairWithEquipmentContainer(obj);
+                IndexObject(obj);
+            }
+        }
+
+
         public int AddCIMObjectToExistingVertex(CIMIdentifiedObject obj, int vertexId)
         {
             if (_cimObjByVertexId.ContainsKey(vertexId))

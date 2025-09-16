@@ -16,11 +16,7 @@
 
         private LifecycleDate lifecycleField;
 
-        private string ownerField;
-
-        private string maintainerField;
-
-        private string manufacturerNameField;
+        private AssetOrganisationRole[] organisationRolesField;
 
         private string assetModelNameField;
 
@@ -28,25 +24,7 @@
 
         private AssetModel[] assetModelField;
 
-        public string owner
-        {
-            get { return this.ownerField; }
-            set { ownerField = value; }
-        }
-
-        public string maintainer
-        {
-            get { return maintainerField; }
-            set { maintainerField = value; }
-        }
-
-        public string manufacturerName
-        {
-            get { return this.manufacturerNameField; }
-            set { manufacturerNameField = value; }
-        }
-
-        public string assetModeName
+        public string assetModelName
         {
             get { return assetModelNameField; }
             set { assetModelNameField = value; }
@@ -132,24 +110,63 @@
         }
 
         /// <remarks/>
-        //[System.Xml.Serialization.XmlElementAttribute("OrganisationRoles")]
-        //public AssetOrganisationRoles[] OrganisationRoles
-        //{
-        //    get
-        //    {
-        //        return this.organisationRolesField;
-        //    }
-        //    set
-        //    {
-        //        this.organisationRolesField = value;
-        //    }
-        //}
+        [System.Xml.Serialization.XmlElementAttribute("OrganisationRoles")]
+        public AssetOrganisationRole[] OrganisationRoles
+        {
+            get
+            {
+                return this.organisationRolesField;
+            }
+            set
+            {
+                this.organisationRolesField = value;
+            }
+        }
     }
 
     /// <remarks/>
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://daxgrid.net/PhysicalNetworkModel_0_1")]
     public partial class AssetAssetInfo
+    {
+
+        private string referenceTypeField;
+
+        private string refField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string referenceType
+        {
+            get
+            {
+                return this.referenceTypeField;
+            }
+            set
+            {
+                this.referenceTypeField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string @ref
+        {
+            get
+            {
+                return this.refField;
+            }
+            set
+            {
+                this.refField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://daxgrid.net/PhysicalNetworkModel_0_1")]
+    public partial class AssetOrganisationRole
     {
 
         private string referenceTypeField;

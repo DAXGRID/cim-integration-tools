@@ -87,7 +87,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     var substation = cimObj as CIMEquipmentContainer;
                     Substation xmlObj = new Substation();
 
-                    var asset = MapAsset(substation, xmlObj);
+                    var asset = MapIdentifiedObjectAssetRef(substation, xmlObj);
                     if (asset != null)
                     {
                         // Add maintainance date, if set on substation object
@@ -160,7 +160,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 yield return assetInfo;
 
 
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj);
                 if (asset != null)
                     yield return asset;
 
@@ -412,7 +412,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     var enclosure = cimObj as CIMEquipmentContainer;
                     Substation xmlObj = new Substation();
 
-                    var asset = MapAsset(enclosure, xmlObj);
+                    var asset = MapIdentifiedObjectAssetRef(enclosure, xmlObj);
                     if (asset != null)
                         yield return asset;
 
@@ -438,7 +438,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                     EnergyConsumer xmlConsumer = new EnergyConsumer();
 
-                    var asset = MapAsset(consumer, xmlConsumer);
+                    var asset = MapIdentifiedObjectAssetRef(consumer, xmlConsumer);
                     if (asset != null)
                         yield return asset;
 
@@ -490,7 +490,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     var ce = cimObj as CIMConductingEquipment;
                     ACLineSegmentExt xmlObj = new ACLineSegmentExt();
 
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
+                    var asset = MapIdentifiedObjectAssetRef(ce, (PowerSystemResource)xmlObj);
                     if (asset != null)
                         yield return asset;
 
@@ -519,7 +519,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     var ce = cimObj as CIMConductingEquipment;
                     ExternalNetworkInjection xmlObj = new ExternalNetworkInjection();
 
-                    var asset = MapAsset(ce, (PowerSystemResource)xmlObj);
+                    var asset = MapIdentifiedObjectAssetRef(ce, (PowerSystemResource)xmlObj);
                     if (asset != null)
                         yield return asset;
 
@@ -854,6 +854,43 @@ namespace DAX.IO.CIM.Serialization.CIM100
                         yield return xmlObj;
                 }
             }
+            else if (cimObj.ClassType == CIMClassEnum.Asset)
+            {
+                var asset = new AssetExt();
+
+                MapIdentifiedObjectFields(cimObj, asset);
+
+                MapAsset(cimObj, asset);
+
+                if (_includeAsset)
+                    yield return asset;
+            }
+            else if (cimObj.ClassType == CIMClassEnum.AssetOwner)
+            {
+                if (!CheckIfProcessed(cimObj, false))
+                {
+                    var ci = cimObj as CIMIdentifiedObject;
+
+                    AssetOwner xmlObj = new AssetOwner();
+                    MapIdentifiedObjectFields(ci, (IdentifiedObject)xmlObj);
+
+                    if (_includeAsset)
+                        yield return xmlObj;
+                }
+            }
+            else if (cimObj.ClassType == CIMClassEnum.Maintainer)
+            {
+                if (!CheckIfProcessed(cimObj, false))
+                {
+                    var ci = cimObj as CIMIdentifiedObject;
+
+                    Maintainer xmlObj = new Maintainer();
+                    MapIdentifiedObjectFields(ci, (IdentifiedObject)xmlObj);
+
+                    if (_includeAsset)
+                        yield return xmlObj;
+                }
+            }
             else if (cimObj.ClassType == CIMClassEnum.Manufacturer)
             {
                 if (!CheckIfProcessed(cimObj, false))
@@ -907,7 +944,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                         if (potentialtransformerMrid != null)
                             protectionEq.PotentialTransformers = new ProtectionEquipmentExtPotentialTransformers[] { new ProtectionEquipmentExtPotentialTransformers() { @ref = potentialtransformerMrid } };
 
-                        var asset = MapAsset(ci, protectionEq);
+                        var asset = MapIdentifiedObjectAssetRef(ci, protectionEq);
 
                         if (asset != null)
                             yield return asset;
@@ -930,7 +967,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 var xmlObj = new BusbarSectionExt();
 
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj);
                 if (asset != null)
                     yield return asset;
 
@@ -990,7 +1027,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 cimObj.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
 
                 // create asset
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj, true);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj, true);
 
                 MapIdentifiedObjectFields(cimObj, (ConductingEquipment)xmlObj);
                 MapVoltageAndEquipmentContainerFields(cimObj, (ConductingEquipment)xmlObj);
@@ -1050,7 +1087,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 var xmlObj = new SynchronousMachine();
 
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj);
                 if (asset != null)
                     yield return asset;
 
@@ -1137,7 +1174,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 var xmlObj = new AsynchronousMachine();
 
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj);
                 if (asset != null)
                     yield return asset;
 
@@ -1234,7 +1271,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 cimObj.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
 
                 // create asset
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj);
                 if (asset != null)
                     yield return asset;
 
@@ -1282,7 +1319,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 var xmlObj = new LoadBreakSwitch();
 
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj);
                 if (asset != null)
                     yield return asset;
 
@@ -1307,7 +1344,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 var xmlObj = new Breaker();
 
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj);
                 if (asset != null)
                     yield return asset;
 
@@ -1343,7 +1380,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 var xmlObj = new Fuse();
 
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj);
                 if (asset != null)
                     yield return asset;
 
@@ -1369,7 +1406,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 var xmlObj = new Disconnector();
 
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj);
                 if (asset != null)
                     yield return asset;
 
@@ -1394,7 +1431,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 var xmlObj = new FaultIndicatorExt();
 
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj);
                 if (asset != null)
                     yield return asset;
 
@@ -1455,7 +1492,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 cimObj.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
 
                 // create asset
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj, true);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj, true);
 
 
 
@@ -1509,7 +1546,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 cimObj.SetPropertyValue("cim.ref.assetinfo", assetInfo.mRID);
 
                 // create asset
-                var asset = MapAsset(cimObj, (PowerSystemResource)xmlObj, true);
+                var asset = MapIdentifiedObjectAssetRef(cimObj, (PowerSystemResource)xmlObj, true);
 
                 var potentialTransformer = (PotentialTransformer)xmlObj;
                 MapIdentifiedObjectFields(cimObj, (PotentialTransformer)xmlObj);
@@ -1702,17 +1739,11 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 yield return location;
         }
 
-        private AssetExt MapAsset(CIMIdentifiedObject cimObj, PowerSystemResource xmlObj, bool forceAssetRecord = false)
+        private AssetExt MapAsset(CIMIdentifiedObject cimObj, AssetExt asset, bool forceAssetRecord = false)
         {
-
-            bool containsAssetInfo = false;
-
-            AssetExt asset = new AssetExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 20).ToString() };
-
             if (cimObj.ContainsPropertyValue("cim.ref.assetinfo"))
             {
                 asset.AssetInfo = new AssetAssetInfo() { @ref = cimObj.GetPropertyValueAsString("cim.ref.assetinfo").ToLower() };
-                containsAssetInfo = true;
             }
             else
             {
@@ -1723,79 +1754,69 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     var derivedAssetInfoId = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 200, true).ToString();
 
                     asset.AssetInfo = new AssetAssetInfo() { @ref = derivedAssetInfoId };
-                    containsAssetInfo = true;
                 }
             }
 
 
             if (cimObj.ContainsPropertyValue("cim.asset.name"))
             {
-                containsAssetInfo = true;
                 asset.name = cimObj.GetPropertyValueAsString("cim.asset.name");
             }
 
             if (cimObj.ContainsPropertyValue("cim.asset.description"))
             {
-                containsAssetInfo = true;
                 asset.description = cimObj.GetPropertyValueAsString("cim.asset.description");
             }
 
             if (cimObj.ContainsPropertyValue("cim.asset.type"))
             {
-                containsAssetInfo = true;
                 asset.type = cimObj.GetPropertyValueAsString("cim.asset.type");
             }
 
             if (cimObj.ContainsPropertyValue("cim.asset.lotnumber"))
             {
-                containsAssetInfo = true;
                 asset.lotNumber = cimObj.GetPropertyValueAsString("cim.asset.lotnumber");
             }
 
             if (cimObj.ContainsPropertyValue("cim.asset.serialnumber"))
             {
-                containsAssetInfo = true;
                 asset.serialNumber = cimObj.GetPropertyValueAsString("cim.asset.serialnumber");
             }
 
             if (cimObj.ContainsPropertyValue("cim.asset.installationdate"))
             {
-                containsAssetInfo = true;
                 asset.lifecycle = new LifecycleDate();
                 asset.lifecycle.installationDateSpecified = true;
                 asset.lifecycle.installationDate = Convert.ToDateTime(cimObj.GetPropertyValueAsString("cim.asset.installationdate"));
             }
 
-            if (cimObj.ContainsPropertyValue("cim.asset.owner"))
+            if (cimObj.ContainsPropertyValue("cim.ref.organisationroles"))
             {
-                string name = cimObj.GetPropertyValueAsString("cim.asset.owner");
+                string roleRef = cimObj.GetPropertyValueAsString("cim.ref.organisationroles");
 
-                if (name != null)
+                if (roleRef != null)
                 {
-                    containsAssetInfo = true;
-                    asset.owner = name;
-                }
-            }
+                    string[] roles = roleRef.Split(",");
 
-            if (cimObj.ContainsPropertyValue("cim.asset.maintainer"))
-            {
-                string name = cimObj.GetPropertyValueAsString("cim.asset.maintainer");
+                    List<AssetOrganisationRole> orgRoles = new();
 
-                if (name != null)
-                {
-                    containsAssetInfo = true;
-                    asset.maintainer = name;
-                }
-            }
+                    foreach (var role in roles)
+                    {
+                        string[] refTypeAndRef = role.Split(":");
 
-            if (cimObj.ContainsPropertyValue("cim.asset.manufacturer"))
-            {
-                string name = cimObj.GetPropertyValueAsString("cim.asset.manufacturer");
+                        if (refTypeAndRef.Length == 2)
+                        {
+                            AssetOrganisationRole assetOrganisationRole = new AssetOrganisationRole()
+                            {
+                                referenceType = refTypeAndRef[0],
+                                @ref = refTypeAndRef[1]
+                            };
 
-                if (name != null)
-                {
-                    containsAssetInfo = true;
-                    asset.manufacturerName = name;
+                            orgRoles.Add(assetOrganisationRole);
+                        }
+                    }
+
+                    asset.OrganisationRoles = orgRoles.ToArray();
                 }
             }
 
@@ -1806,22 +1827,17 @@ namespace DAX.IO.CIM.Serialization.CIM100
 
                 if (name != null)
                 {
-                    containsAssetInfo = true;
-                    asset.assetModeName = name;
+                    asset.assetModelName = name;
                 }
             }
 
-            if (containsAssetInfo || forceAssetRecord)
-            {
-                xmlObj.Assets = new PowerSystemResourceAssets() { @ref = asset.mRID };
+            return asset;
+        }
 
-                if (_includeAsset)
-                {
-                   return asset;
-                }
 
-                CheckIfProcessed(asset.mRID, "Asset related to " + cimObj.ToString());
-            }
+        private AssetExt MapIdentifiedObjectAssetRef(CIMIdentifiedObject cimObj, PowerSystemResource xmlObj, bool forceAssetRecord = false)
+        {
+            xmlObj.Assets = new PowerSystemResourceAssets() { @ref = "hest" };
 
             return null;
         }

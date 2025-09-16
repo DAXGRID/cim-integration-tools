@@ -59,6 +59,8 @@ namespace CIM.Mapper.Tests.TinyNetwork.NetSam1_3
                 Assert.True(result.Where(o => o.GetType().Name == "Fuse").Count() == 7);
                 Assert.True(result.Where(o => o.GetType().Name == "EnergyConsumer").Count() == 2);
                 Assert.True(result.Where(o => o.GetType().Name == "UsagePoint").Count() == 3);
+                Assert.True(result.Where(o => o.GetType().Name == "AssetOwner").Count() == 2);
+                Assert.True(result.Where(o => o.GetType().Name == "Maintainer").Count() == 1);
 
                 using (var destination = File.Open(mapperOutputFileName, FileMode.Create))
                 {
@@ -79,6 +81,41 @@ namespace CIM.Mapper.Tests.TinyNetwork.NetSam1_3
                 // The input file should have no errors
                 Assert.True(validatorLines.Count == 0, "Expected no validation errors, but apparently the validator disagree");
             }
+        }
+
+        [Fact]
+        public async Task MapNetSamToCim100()
+        {
+            string rootFolder = @"c:/data/tme";
+
+            var mapperConfigFile = $"{rootFolder}/MapperConfig.xml";
+
+            if (File.Exists(mapperConfigFile))
+            {
+                Log.Logger = new LoggerConfiguration().WriteTo.Debug().CreateLogger();
+                Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
+
+                Logger.WriteToConsole = false;
+
+                var config = new TransformationConfig().LoadFromFile(mapperConfigFile);
+
+                var transformer = config.InitializeDataTransformer("test");
+
+                transformer.TransferData();
+
+                CIMGraphWriter writer = transformer.GetFirstDataWriter() as CIMGraphWriter;
+                CIMGraph graph = writer.GetCIMGraph();
+
+                string mapperOutputFileName = $"{rootFolder}/data/mapper_ouput.jsonl";
+
+                // Serialize to CIM 100 (jsonl file)
+                var serializer = config.InitializeSerializer("CIM100") as IDAXSerializeable;
+
+                var result = ((CIM100Serializer)serializer).GetIdentifiedObjects(CIMMetaDataManager.Repository, graph.CIMObjects, true, true, true).ToList();
+
+                var stopWatch = Stopwatch.StartNew();
+            }
+                      
         }
     }
 }

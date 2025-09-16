@@ -6,7 +6,7 @@ namespace CIM.TopologyProcessor
 {
     public class FlatFeederInfoCreator
     {
-        public IEnumerable<FlatFeederInfo> CreateFeederInfos(CimContext cimContext, FeederInfoContext feederContext, char? feederNameGroupSeperator = null)
+        public IEnumerable<FlatFeederInfo> CreateFeederInfos(CimContext cimContext, FeederInfoContext feederContext, char? bayNameGroupSeperator = null)
         {
             var feederInfos = new List<FlatFeederInfo>();
 
@@ -173,7 +173,7 @@ namespace CIM.TopologyProcessor
             }
 
             // Run through all feeder infos and mark multifeed allowed where feeder bay group name (the text after the seperator) is the same
-            if (feederNameGroupSeperator != null)
+            if (bayNameGroupSeperator != null)
             {
                 HashSet<Feeder> feederAllowMultiFeed = new HashSet<Feeder>();
 

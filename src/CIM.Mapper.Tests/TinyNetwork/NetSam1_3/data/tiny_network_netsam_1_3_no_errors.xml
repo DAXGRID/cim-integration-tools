@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ProfileEnvelop xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://net-sam.dk/EquipmentProfile_1_3">
+  <AssetOwner>
+    <mRID>2f2164c3-c683-4257-ba8e-7213997c545b</mRID>
+    <name>Super Power</name>
+  </AssetOwner>
+  <AssetOwner>
+    <mRID>ef0e19d7-05e3-43b2-a9eb-582d3f361c2d</mRID>
+    <name>Bilka Power</name>
+  </AssetOwner>
+  <Maintainer>
+    <mRID>f2939490-c873-46bf-901b-8423558dd1e6</mRID>
+    <name>Bob The Builder</name>
+  </Maintainer>
   <Asset>
     <mRID>453cafc7-0504-48ee-8b49-15e5ee07e95b</mRID>
     <name>3x240AL</name>
@@ -7,10 +19,13 @@
   <Asset>
     <mRID>b659c146-ce7c-4265-b1b7-a480eff990e5</mRID>
     <name>3x240AL</name>
+    <OrganisationRoles ref="2f2164c3-c683-4257-ba8e-7213997c545b" referenceType="Owner" />
+    <OrganisationRoles ref="f2939490-c873-46bf-901b-8423558dd1e6" referenceType="Maintainer" />
   </Asset>
   <Asset>
     <mRID>dab1f41e-7670-4039-a994-cbb58a556ea1</mRID>
     <name>3x150Al</name>
+    <OrganisationRoles ref="2f2164c3-c683-4257-ba8e-7213997c545b" referenceType="Owner" />
   </Asset>
   <Asset>
     <mRID>f4ae753f-abc0-4103-8750-b1f77c62dbfe</mRID>

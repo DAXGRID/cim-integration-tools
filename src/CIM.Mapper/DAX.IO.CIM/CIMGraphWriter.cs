@@ -42,6 +42,9 @@ namespace DAX.IO.Writers
         private List<DAXFeature> _networkEquipments = new List<DAXFeature>();
         private List<DAXFeature> _locationAddresses = new List<DAXFeature>();
         private List<DAXFeature> _usagePoints = new List<DAXFeature>();
+        private List<DAXFeature> _assets = new List<DAXFeature>();
+        private List<DAXFeature> _assetOwners = new List<DAXFeature>();
+        private List<DAXFeature> _maintainers = new List<DAXFeature>();
         private List<DAXFeature> _assetInfos = new List<DAXFeature>();
         private List<DAXFeature> _manufactures = new List<DAXFeature>();
         private List<DAXFeature> _productAssetModels = new List<DAXFeature>();
@@ -255,6 +258,12 @@ namespace DAX.IO.Writers
                 _manufactures.Add(feature);
             else if (className == "productassetmodel")
                 _productAssetModels.Add(feature);
+            else if (className == "asset")
+                _assets.Add(feature);
+            else if (className == "assetowner")
+                _assetOwners.Add(feature);
+            else if (className == "maintainer")
+                _maintainers.Add(feature);
         }
 
         public void Close()
@@ -554,6 +563,62 @@ namespace DAX.IO.Writers
                 _equipmentContainers = null;
 
                 ////////////////////////////////////////////////////////
+                // Asset 
+
+                foreach (var feature in _assets)
+                {
+                    var ci = new CIMIdentifiedObject(_g.ObjectManager);
+                    ci.SetClass(feature.ClassName);
+
+                    MapCommonFields(feature, ci);
+                    CopyAttributes(feature, ci);
+
+                    _g.AddCIMObject(ci);
+                }
+
+                Logger.Log(LogLevel.Info, "" + _assets.Count + " assets imported.");
+
+                _assets = null;
+
+                ////////////////////////////////////////////////////////
+                // Asset owners
+
+                foreach (var feature in _assetOwners)
+                {
+                    var ci = new CIMIdentifiedObject(_g.ObjectManager);
+                    ci.SetClass(feature.ClassName);
+
+                    MapCommonFields(feature, ci);
+                    CopyAttributes(feature, ci);
+
+                    _g.AddCIMObject(ci);
+                }
+
+                Logger.Log(LogLevel.Info, "" + _assetOwners.Count + " asset owners imported.");
+
+                _assetOwners = null;
+
+
+                ////////////////////////////////////////////////////////
+                // Maintainers
+
+                foreach (var feature in _maintainers)
+                {
+                    var ci = new CIMIdentifiedObject(_g.ObjectManager);
+                    ci.SetClass(feature.ClassName);
+
+                    MapCommonFields(feature, ci);
+                    CopyAttributes(feature, ci);
+
+                    _g.AddCIMObject(ci);
+                }
+
+                Logger.Log(LogLevel.Info, "" + _maintainers.Count + " maintainers imported.");
+
+                _maintainers = null;
+
+
+                ////////////////////////////////////////////////////////
                 // Asset infos
 
                 foreach (var feature in _assetInfos)
@@ -564,7 +629,7 @@ namespace DAX.IO.Writers
                     MapCommonFields(feature, ci);
                     CopyAttributes(feature, ci);
 
-                    _g.CIMObjects.Add(ci);
+                    _g.AddCIMObject(ci);
                 }
 
                 Logger.Log(LogLevel.Info, "" + _assetInfos.Count + " asset infos imported.");
@@ -583,7 +648,7 @@ namespace DAX.IO.Writers
                     MapCommonFields(feature, ci);
                     CopyAttributes(feature, ci);
 
-                    _g.CIMObjects.Add(ci);
+                    _g.AddCIMObject(ci);
                 }
 
                 Logger.Log(LogLevel.Info, "" + _manufactures.Count + " manufactures imported.");
@@ -599,7 +664,7 @@ namespace DAX.IO.Writers
                     MapCommonFields(feature, ci);
                     CopyAttributes(feature, ci);
 
-                    _g.CIMObjects.Add(ci);
+                    _g.AddCIMObject(ci);
                 }
 
                 Logger.Log(LogLevel.Info, "" + _productAssetModels.Count + " product asset models imported.");
@@ -1041,11 +1106,6 @@ namespace DAX.IO.Writers
                 int usagePointCounter = 0;
                 foreach (var feature in _usagePoints)
                 {
-                    if (feature.GetAttributeAsString("cim.ref.energyconsumer") == null)
-                    {
-                        Logger.Log(LogLevel.Warning, $"No cim.ref.energyconsumer found on usage point with id: {feature.GetAttributeAsString("cim.mrid")}");
-                    }
-
                     usagePointCounter++;
 
                     var ci = new CIMIdentifiedObject(_g.ObjectManager);

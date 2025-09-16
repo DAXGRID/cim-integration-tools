@@ -54,7 +54,10 @@ namespace DAX.IO.Readers
             "energyconsumer",
             "usagepoint",
             "petersencoil",
-            "faultindicator"
+            "faultindicator",
+            "asset",
+            "assetowner",
+            "maintainer"
         };
 
         private HashSet<string> _supportedCimObjectsNames = new()
@@ -192,11 +195,33 @@ namespace DAX.IO.Readers
                     if (_reader.HasAttributes)
                     {
                         var reference = _reader.GetAttribute("ref");
+                        var referenceType = _reader.GetAttribute("referenceType");
 
                         if (reference != null)
                         {
-                            keyValuePairs.Add(attributeName.ToLower(), reference);
-                            feature.Add(attributeName, reference);
+                            var key = attributeName.ToLower();
+
+                            if (keyValuePairs.ContainsKey(key))
+                            {
+                                var existingValue = keyValuePairs[key];
+
+                                var updatedValue = (existingValue + "," + referenceType + ":" + reference);
+
+                                keyValuePairs[key] = updatedValue;
+                                feature[key] = updatedValue;
+                            }
+                            else
+                            {
+                                string valueToAdd = reference;
+
+                                if (!String.IsNullOrEmpty(referenceType))
+                                {
+                                    valueToAdd = referenceType + ":" + reference;
+                                }
+
+                                keyValuePairs.Add(key, valueToAdd);
+                                feature.Add(key, valueToAdd);
+                            }
                         }
                     }
                 }
@@ -227,6 +252,10 @@ namespace DAX.IO.Readers
                         AddPsrType(feature, mrid.Value);
                         AddGeometry(feature, mrid.Value);
                         AddTerminals(feature, mrid.Value);
+
+                        if (classNameLower == "usagepoint")
+                        {
+                        }
 
                         // Get related data...
                         if (classNameLower == "powertransformer")
@@ -564,7 +593,19 @@ namespace DAX.IO.Readers
                         var reference = reader.GetAttribute("ref");
                         
                         if (reference != null) {
-                            keyValuePairs.Add(attributeName.ToLower(), reference);
+
+                            var key = attributeName.ToLower();
+
+                            if (keyValuePairs.ContainsKey(key))
+                            {
+                                var existingValue = keyValuePairs[key];
+
+                                keyValuePairs[key] = (existingValue + "," + reference);
+                            }
+                            else
+                            {
+                                keyValuePairs.Add(key, reference);
+                            }
                         }
 
                         var multiplier = reader.GetAttribute("multiplier");
@@ -602,7 +643,6 @@ namespace DAX.IO.Readers
                         else
                             _invalidCimObjectCount[className] = 1;
                     }
-
 
                     if (classNameLower == "positionpoint")
                     {
@@ -748,14 +788,14 @@ namespace DAX.IO.Readers
                 throw new DAXReaderException("Expected PositionPoint to contain the following child elements: Location, sequenceNumber, xPosition and yPosition");
             }
         }
-
+     
         private void AddManufacturerToDict(Dictionary<string, string> keyValuePairs)
         {
             if (keyValuePairs.ContainsKey("mrid") && keyValuePairs.ContainsKey("name"))
             {
                 Guid mrid = Guid.Parse(keyValuePairs["mrid"]);
 
-                string name = keyValuePairs["name"].Trim();
+                string name = keyValuePairs["name"];
 
                 _manufactureByMrid[mrid] = name;
             }
