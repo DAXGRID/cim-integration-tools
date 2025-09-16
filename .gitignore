@@ -26,3 +26,5 @@ _NCrunch_*
 docker_runtime_settings.env
 appsettings.json
 /src/CIM.Mapper.CLI/Properties/PublishProfiles
+/src/CIM.Mapper.Tests/TinyNetwork/NetSam1_3/data/mapper_ouput.jsonl
+/src/CIM.Mapper.Tests/TinyNetwork/NetSam1_3/data/validator_ouput.jsonl
