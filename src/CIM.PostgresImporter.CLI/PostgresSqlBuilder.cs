@@ -12,12 +12,14 @@ internal static class PostgresSqlBuilder
 
     private static string Build(SchemaType schemaType, string schemaName, bool addIfNotExists)
     {
+        var primaryKeys = string.Join(",", schemaType.Properties.Where(x => x.IsPrimaryKey).Select(x => CustomTableAndColumnNameConverter(x.Name)));
+
         var ifExists = addIfNotExists ? "IF NOT EXISTS" : "";
-        var columns = string.Join(",\n  ", schemaType.Properties.Select(x => $"\"{CustomTableAndColumnNameConverter(x.Name)}\" {ConvertInternalTypeToPostgresqlType(x.Type)}"));
+        var columns = string.Join(",\n  ", schemaType.Properties.Where(x => !x.ManyToManyAttribute).Select(x => $"\"{CustomTableAndColumnNameConverter(x.Name)}\" {ConvertInternalTypeToPostgresqlType(x.Type)}"));
         return @$"
 CREATE TABLE {ifExists} ""{schemaName}"".""{CustomTableAndColumnNameConverter(schemaType.Name)}"" (
   {columns},
-  PRIMARY KEY (""mrid"")
+  PRIMARY KEY ({primaryKeys})
 );";
     }
 
@@ -27,7 +29,7 @@ CREATE TABLE {ifExists} ""{schemaName}"".""{CustomTableAndColumnNameConverter(sc
         return $"COPY \"{schemaName}\".\"{CustomTableAndColumnNameConverter(typeName)}\" ({fields}) FROM STDIN (FORMAT BINARY)";
     }
 
-    private static string CustomTableAndColumnNameConverter(string x)
+    public static string CustomTableAndColumnNameConverter(string x)
     {
         #pragma warning disable CA1308 // We want lower case.
         // This is a hack since it's hard to test for this one.

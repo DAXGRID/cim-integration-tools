@@ -1,10 +1,35 @@
 using NetTopologySuite.Geometries;
 using Npgsql;
 using NpgsqlTypes;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Channels;
 
 namespace CIM.PostgresImporter.CLI;
+
+internal sealed class BinaryCopyImportConnection : IDisposable
+{
+    private NpgsqlDataSource _npgsqlDataSource;
+
+    private NpgsqlConnection _npgsqlConnection;
+
+    public NpgsqlBinaryImporter NpgsqlBinaryImporter { get; private set; }
+
+    public BinaryCopyImportConnection(NpgsqlDataSourceBuilder dataSourceBuilder, string binaryImportSql)
+    {
+        _npgsqlDataSource = dataSourceBuilder.Build();
+        _npgsqlConnection = _npgsqlDataSource.OpenConnection();
+        NpgsqlBinaryImporter = _npgsqlConnection.BeginBinaryImport(binaryImportSql);
+    }
+
+    public void Dispose()
+    {
+        NpgsqlBinaryImporter?.Complete();
+        NpgsqlBinaryImporter?.Dispose();
+        _npgsqlConnection?.Dispose();
+        _npgsqlDataSource?.Dispose();
+    }
+}
 
 internal static class PostgresImport
 {
@@ -22,7 +47,6 @@ internal static class PostgresImport
     public static async Task ExecuteScriptAsync(string connectionString, string sql)
     {
         using var conn = new NpgsqlConnection(connectionString);
-
         using var cmd = new NpgsqlCommand(sql, conn);
 
         await conn.OpenAsync().ConfigureAwait(false);
@@ -43,9 +67,23 @@ internal static class PostgresImport
         using var dataSource = builder.Build();
         using var connection = await dataSource.OpenConnectionAsync().ConfigureAwait(false);
 
-        var copySql = PostgresSqlBuilder.BuildCopyBulkInsert(schemaType.ToDictionary(x => x.Key, x => x.Value.Type), typeName, schemaName);
+        var copySql = PostgresSqlBuilder.BuildCopyBulkInsert(schemaType.Where(x => !x.Value.ManyToManyAttribute).ToDictionary(x => x.Key, x => x.Value.Type), typeName, schemaName);
+
+        var manyToManyRelationCopyInsertSqls = schemaType
+            .Where(x => x.Value.ManyToManyAttribute && x.Value.RefTypeSchema is not null)
+            .ToDictionary(x => x.Key, x => x.Value)
+            .ToDictionary(x => x.Key, x => PostgresSqlBuilder.BuildCopyBulkInsert(x.Value.RefTypeSchema?.ToDictionary(x => x.Key, x => x.Value.Type) ?? throw new UnreachableException("Warning, even tho it has been checked earlier, so it should not happen that it is null"), $"Relation{typeName}{x.Key}", schemaName))
+            ?? new();
 
         var postgresqlBinaryWriter = await connection.BeginBinaryImportAsync(copySql).ConfigureAwait(false);
+
+        var manyToManyRelationshipImporter = new Dictionary<string, BinaryCopyImportConnection>();
+
+        foreach (var manyToManyRelationCopyInsertSql in manyToManyRelationCopyInsertSqls)
+        {
+            var binaryCopyImportConnection = new BinaryCopyImportConnection(builder, manyToManyRelationCopyInsertSql.Value);
+            manyToManyRelationshipImporter.Add(manyToManyRelationCopyInsertSql.Key, binaryCopyImportConnection);
+        }
 
         var totalInsertionCount = 0;
         await foreach (var properties in readerChannel.ReadAllAsync().ConfigureAwait(false))
@@ -55,78 +93,129 @@ internal static class PostgresImport
 
             foreach (var schemaProperty in schemaType)
             {
-                var propertyType = schemaProperty.Value.Type;
-
-                JsonElement? propertyValue = null;
-
-                // If it is a composite object we have to lookup the value in a different way.
-                if (schemaProperty.Value.ContainingObjectName is not null && schemaProperty.Value.InnerObjectName is not null)
+                if (schemaProperty.Value.ManyToManyAttribute)
                 {
-                    if (properties.TryGetValue(schemaProperty.Value.ContainingObjectName, out var pv))
+                    if (properties.TryGetValue(schemaProperty.Key, out var pv))
                     {
-                        if (pv.TryGetProperty(schemaProperty.Value.InnerObjectName, out var innerPv))
+                        var manyToManyBinaryPostgresWriter = manyToManyRelationshipImporter[schemaProperty.Value.Name].NpgsqlBinaryImporter;
+
+                        var references = pv.Deserialize<List<string>>();
+                        if (references is null)
                         {
-                            propertyValue = innerPv;
+                            throw new InvalidOperationException("References are null, this should not be possible.");
+                        }
+
+                        foreach (var reference in references)
+                        {
+                            await manyToManyBinaryPostgresWriter.StartRowAsync().ConfigureAwait(false);
+
+                            // This is a convention that it looks like the following: Owner/2f2164c3-c683-4257-ba8e-7213997c545b
+                            var splittedReference = reference.Split("/");
+
+                            // parent_ref_id
+                            await manyToManyBinaryPostgresWriter
+                                .WriteAsync(
+                                    properties["mRID"].GetGuid(),
+                                    ConvertInternalTypeToPostgresqlType(typeof(Guid)))
+                                .ConfigureAwait(false);
+
+                            // child_ref_id
+                            await manyToManyBinaryPostgresWriter
+                                .WriteAsync(
+                                    Guid.Parse(splittedReference[1]),
+                                    ConvertInternalTypeToPostgresqlType(typeof(Guid)))
+                                .ConfigureAwait(false);
+
+                            // child_ref_type
+                            await manyToManyBinaryPostgresWriter
+                                .WriteAsync(
+                                    // Want lowercase name.
+                                    PostgresSqlBuilder.CustomTableAndColumnNameConverter(splittedReference[0]),
+                                    ConvertInternalTypeToPostgresqlType(typeof(string)))
+                                .ConfigureAwait(false);
                         }
                     }
                 }
                 else
                 {
-                    if (properties.TryGetValue(schemaProperty.Key, out var pv))
-                    {
-                        propertyValue = pv;
-                    }
-                }
+                    var propertyType = schemaProperty.Value.Type;
 
-                dynamic? parameter = null;
-                if (propertyValue is null)
-                {
-                    parameter = DBNull.Value;
-                }
-                else if (propertyType == typeof(CompositeObject))
-                {
-                    parameter = propertyValue.Value.GetRawText();
-                }
-                else if (propertyType == typeof(ICollection<Point2D>))
-                {
-                    var points = propertyValue.Value.Deserialize<ICollection<Point2D>>()?.ToArray()
-                        ?? throw new InvalidOperationException("Could not deserialize point array.");
+                    JsonElement? propertyValue = null;
 
-                    Geometry? geometry;
-                    if (points.Length == 1)
+                    // If it is a composite object we have to lookup the value in a different way.
+                    if (schemaProperty.Value.ContainingObjectName is not null && schemaProperty.Value.InnerObjectName is not null)
                     {
-                        geometry = new Point(points[0].X, points[0].Y);
+                        if (properties.TryGetValue(schemaProperty.Value.ContainingObjectName, out var pv))
+                        {
+                            if (pv.TryGetProperty(schemaProperty.Value.InnerObjectName, out var innerPv))
+                            {
+                                propertyValue = innerPv;
+                            }
+                        }
                     }
                     else
                     {
-                        geometry = new LineString(points.Select(x => new Coordinate(x.X, x.Y)).ToArray());
+                        if (properties.TryGetValue(schemaProperty.Key, out var pv))
+                        {
+                            propertyValue = pv;
+                        }
                     }
 
-                    geometry.SRID = srid;
-                    parameter = geometry;
+                    dynamic? parameter = null;
+                    if (propertyValue is null)
+                    {
+                        parameter = DBNull.Value;
+                    }
+                    else if (propertyType == typeof(CompositeObject))
+                    {
+                        parameter = propertyValue.Value.GetRawText();
+                    }
+                    else if (propertyType == typeof(ICollection<Point2D>))
+                    {
+                        var points = propertyValue.Value.Deserialize<ICollection<Point2D>>()?.ToArray()
+                            ?? throw new InvalidOperationException("Could not deserialize point array.");
+
+                        Geometry? geometry;
+                        if (points.Length == 1)
+                        {
+                            geometry = new Point(points[0].X, points[0].Y);
+                        }
+                        else
+                        {
+                            geometry = new LineString(points.Select(x => new Coordinate(x.X, x.Y)).ToArray());
+                        }
+
+                        geometry.SRID = srid;
+                        parameter = geometry;
+                    }
+                    else
+                    {
+                        parameter = propertyValue.Value.Deserialize(propertyType);
+                    }
+
+                    await postgresqlBinaryWriter
+                        .WriteAsync(
+                            parameter,
+                            ConvertInternalTypeToPostgresqlType(propertyType))
+                        .ConfigureAwait(false);
                 }
-                else
+
+                if (totalInsertionCount % bulkInsertCount == 0)
                 {
-                    parameter = propertyValue.Value.Deserialize(propertyType);
+                    await postgresqlBinaryWriter.CompleteAsync().ConfigureAwait(false);
+                    await postgresqlBinaryWriter.DisposeAsync().ConfigureAwait(false);
+                    postgresqlBinaryWriter = await connection.BeginBinaryImportAsync(copySql).ConfigureAwait(false);
                 }
-
-                await postgresqlBinaryWriter
-                    .WriteAsync(
-                        parameter,
-                        ConvertInternalTypeToPostgresqlType(propertyType))
-                    .ConfigureAwait(false);
-            }
-
-            if (totalInsertionCount % bulkInsertCount == 0)
-            {
-                await postgresqlBinaryWriter.CompleteAsync().ConfigureAwait(false);
-                await postgresqlBinaryWriter.DisposeAsync().ConfigureAwait(false);
-                postgresqlBinaryWriter = await connection.BeginBinaryImportAsync(copySql).ConfigureAwait(false);
             }
         }
 
         await postgresqlBinaryWriter.CompleteAsync().ConfigureAwait(false);
         await postgresqlBinaryWriter.DisposeAsync().ConfigureAwait(false);
+
+        foreach (var manyToManyRelationshipImport in manyToManyRelationshipImporter)
+        {
+            manyToManyRelationshipImport.Value.Dispose();
+        }
 
         return totalInsertionCount;
     }

@@ -15,6 +15,8 @@ internal sealed record SchemaType
 
 internal sealed record SchemaTypeProperty
 {
+    public bool IsPrimaryKey { get; init; }
+
     public required string Name { get; init; }
 
     public required Type Type { get; init; }
@@ -24,6 +26,12 @@ internal sealed record SchemaTypeProperty
     public string? InnerObjectName { get; init; }
 
     public int SortNumber => GetSortNumber();
+
+    // Hack to support many to many relationships.
+    // This was hard to support since the collections going in are not in a many to many relationship.
+    public bool ManyToManyAttribute => Type.Equals(typeof(ICollection<string>));
+
+    public Dictionary<string, SchemaColumn>? RefTypeSchema { get; init; }
 
     private int GetSortNumber()
     {
@@ -56,12 +64,17 @@ internal sealed class CompositeObject { }
 
 internal sealed class SchemaColumn
 {
+    public bool IsPrimaryKey { get; init; }
+
     public required string Name { get; init; }
     public required Type Type { get; init; }
 
     // This is a special case where we are dealing with a composite type.
     public string? ContainingObjectName { get; init; }
     public string? InnerObjectName { get; init; }
+
+    // TSpecial case to handle many to many relationship.
+    public Dictionary<string, SchemaColumn>? RefTypeSchema { get; set; }
 }
 
 internal static class DynamicSchema
@@ -103,7 +116,14 @@ internal static class DynamicSchema
                     var conversionType = ConvertJsonType((JsonElement)property.Value);
                     if (conversionType != typeof(CompositeObject))
                     {
-                        var schemaColumn = new SchemaColumn { Name = property.Key, Type = conversionType };
+                        var schemaColumn = new SchemaColumn
+                        {
+                            Name = property.Key,
+                            Type = conversionType,
+                            // If it contains mrid field make it the primary key.
+                            IsPrimaryKey = property.Key.Equals("mrid", StringComparison.OrdinalIgnoreCase)
+                        };
+
                         typeSchema.Add(property.Key, schemaColumn);
                     }
                     else
@@ -123,7 +143,7 @@ internal static class DynamicSchema
                                     Name = typeSchemaName,
                                     Type = ConvertJsonType((JsonElement)innerProperty.Value),
                                     ContainingObjectName = property.Key,
-                                    InnerObjectName = innerProperty.Key
+                                    InnerObjectName = innerProperty.Key,
                                 };
 
                                 typeSchema.Add(typeSchemaName, schemaColumn);
@@ -133,6 +153,46 @@ internal static class DynamicSchema
                 }
             }
         }
+
+        var extraSchemas = new Dictionary<string, Dictionary<string, SchemaColumn>>();
+
+        // Restructure schemas to handle cases with many to many relationships.
+        // This is a bit of a hack as it came later and current structure could not support it cleanly.
+        // What it does is that it finds all collection types with strings.
+        // In the case of a collection with strings, we create a new many to many table.
+        foreach (var schema in schemas.ToList())
+        {
+            // This is done to avoid duplicates.
+            var typesContainingRefTypes = schema.Value
+                .Select(x => x.Value)
+                .Where(x => x.Type.Equals(typeof(ICollection<string>)));
+
+            foreach (var refType in typesContainingRefTypes)
+            {
+                var refTypeSchema = new Dictionary<string, SchemaColumn>()
+                    {
+                        { $"{schema.Key}_id", new SchemaColumn { Type = typeof(Guid), Name = $"{schema.Key}_id", IsPrimaryKey = true } },
+                        { $"{refType.Name}_id", new SchemaColumn { Type = typeof(Guid), Name = $"{refType.Name}_id", IsPrimaryKey = true } },
+                        { $"{refType.Name}_type", new SchemaColumn { Type = typeof(string), Name = $"{refType.Name}_type" } },
+                    };
+
+                refType.RefTypeSchema = refTypeSchema;
+
+                var refTypeNameRelationName = $"Relation{schema.Key}{refType.Name}";
+
+                // Avoid duplicate entries.
+                if (extraSchemas.ContainsKey(refTypeNameRelationName))
+                {
+                    continue;
+                }
+
+
+                extraSchemas.Add(refTypeNameRelationName, refTypeSchema);
+            }
+        }
+
+        // Combine the scheam with the extra ref type schemas.
+        schemas = schemas.Concat(extraSchemas).ToDictionary(x => x.Key, x => x.Value);
 
         return new Schema
         {
@@ -148,7 +208,9 @@ internal static class DynamicSchema
                           Name = y.Key,
                           Type = y.Value.Type,
                           ContainingObjectName = y.Value.ContainingObjectName,
-                          InnerObjectName = y.Value.InnerObjectName
+                          InnerObjectName = y.Value.InnerObjectName,
+                          RefTypeSchema = y.Value.RefTypeSchema,
+                          IsPrimaryKey = y.Value.IsPrimaryKey
                       })
                       .OrderByDescending(x => x.SortNumber)
                       .ThenBy(x => x.Name)
