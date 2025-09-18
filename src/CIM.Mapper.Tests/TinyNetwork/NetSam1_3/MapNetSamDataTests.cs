@@ -86,7 +86,7 @@ namespace CIM.Mapper.Tests.TinyNetwork.NetSam1_3
         [Fact]
         public async Task MapNetSamToCim100()
         {
-            string rootFolder = @"c:/data/tme";
+            string rootFolder = @"c:/data/test";
 
             var mapperConfigFile = $"{rootFolder}/MapperConfig.xml";
 
@@ -106,12 +106,20 @@ namespace CIM.Mapper.Tests.TinyNetwork.NetSam1_3
                 CIMGraphWriter writer = transformer.GetFirstDataWriter() as CIMGraphWriter;
                 CIMGraph graph = writer.GetCIMGraph();
 
-                string mapperOutputFileName = $"{rootFolder}/data/mapper_ouput.jsonl";
+                string mapperOutputFileName = $"{rootFolder}/mapper_output.jsonl";
 
                 // Serialize to CIM 100 (jsonl file)
                 var serializer = config.InitializeSerializer("CIM100") as IDAXSerializeable;
 
                 var result = ((CIM100Serializer)serializer).GetIdentifiedObjects(CIMMetaDataManager.Repository, graph.CIMObjects, true, true, true).ToList();
+
+                using (var destination = File.Open(mapperOutputFileName, FileMode.Create))
+                {
+                    using (var source = new CsonSerializer().SerializeObjects(result))
+                    {
+                        source.CopyTo(destination);
+                    }
+                }
 
                 var stopWatch = Stopwatch.StartNew();
             }

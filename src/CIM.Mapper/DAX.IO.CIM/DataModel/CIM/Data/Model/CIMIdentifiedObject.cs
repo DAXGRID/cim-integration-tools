@@ -87,11 +87,6 @@ namespace DAX.IO.CIM
         /// <param name="obj"></param>
         internal void AddNeighbour(CIMIdentifiedObject obj)
         {
-            if (this.mRID.ToString() == "4bee251e-b43f-fff0-919d-62de8a508d0e")
-            {
-
-                //throw new Exception("slet mig");
-            }
             _neighbours.Add(obj);
         }
 

@@ -239,8 +239,8 @@ namespace CIM.PhysicalNetworkModel.FeederInfo
                 conductingEquipment != null &&
                 connectionPoint.Substation != null && 
                 connectionPoint.Substation.PSRType == "PrimarySubstation" && 
-                ((conductingEquipment.BaseVoltage < connectionPoint.Substation.GetPrimaryVoltageLevel(_cimContext)) || conductingEquipment.BaseVoltage < 20000)
-                )
+                (conductingEquipment is PowerTransformer || (conductingEquipment.BaseVoltage < connectionPoint.Substation.GetPrimaryVoltageLevel(_cimContext)) || conductingEquipment.BaseVoltage < 20000)
+            )
             {
                 var feeder = new Feeder()
                 {
@@ -258,7 +258,8 @@ namespace CIM.PhysicalNetworkModel.FeederInfo
                conductingEquipment != null &&
                connectionPoint.Substation != null &&
                connectionPoint.Substation.PSRType == "SecondarySubstation" &&
-               conductingEquipment.BaseVoltage < connectionPoint.Substation.GetPrimaryVoltageLevel(_cimContext))
+               (conductingEquipment is PowerTransformer || conductingEquipment.BaseVoltage < connectionPoint.Substation.GetPrimaryVoltageLevel(_cimContext))
+            )
             {
                 var feeder = new Feeder()
                 {

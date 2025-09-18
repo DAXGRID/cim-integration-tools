@@ -64,12 +64,6 @@ namespace DAX.IO.CIM
                                     g.ObjectManager.AdditionalObjectAttributes(otherEnd).IsFeederExitObject = g.ObjectManager.AdditionalObjectAttributes(connectivityNodeNeighbor).IsFeederExitObject;
                                     g.ObjectManager.AdditionalObjectAttributes(otherEnd).IsTransformerFeederObject = g.ObjectManager.AdditionalObjectAttributes(connectivityNodeNeighbor).IsTransformerFeederObject;
 
-
-                                    // SLET: sec forb kabel på byg som mister forbindelse til trafo
-                                    if (otherEnd.mRID == Guid.Parse("FDAB0C12-76B4-4AD2-B545-B2F48DD4103B") || obj.mRID == Guid.Parse("FDAB0C12-76B4-4AD2-B545-B2F48DD4103B"))
-                                    {
-                                    }
-
                                     // Fjern edge fra otherend
                                     otherEnd.RemoveNeighbour(connectivityNodeNeighbor);
 
@@ -198,11 +192,6 @@ namespace DAX.IO.CIM
                     List<CIMIdentifiedObject> neighborsToBeRemoved = new List<CIMIdentifiedObject>();
                     List<CIMIdentifiedObject> neighborsToBeAdded = new List<CIMIdentifiedObject>();
 
-                    // SLET: sec forb kabel på byg som mister forbindelse til trafo
-                    if (obj.mRID == Guid.Parse("FDAB0C12-76B4-4AD2-B545-B2F48DD4103B"))
-                    {
-                    }
-
                     foreach (var neighbor in obj.Neighbours)
                     {
                         if (neighbor.ClassType != CIMClassEnum.ConnectivityNode)
@@ -230,12 +219,6 @@ namespace DAX.IO.CIM
 
                 else if (obj.ClassType == CIMClassEnum.PowerTransformer && !g.ObjectManager.IsDeleted(obj))
                 {
-                    // SLET: trafo loss 60 kv connection
-                    if (obj.mRID == Guid.Parse("f06617c6-b615-478b-94dc-444cf0fa2e60"))
-                    {
-                    }
-
-
                     if (obj.EquipmentContainerRef != null && obj.Neighbours.Count > 1)
                     {
                         List<CIMIdentifiedObject> newNeighborList = new List<CIMIdentifiedObject>();

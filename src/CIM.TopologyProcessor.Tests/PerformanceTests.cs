@@ -64,15 +64,15 @@ namespace CIM.TopologyProcessor.Tests
 
 
         [Fact]
-        public void PerformanceTest1()
+        public void TopologyTest()
         {
             CsonSerializer serializer = new CsonSerializer();
 
-            string bigFileName = "C:/data/big.jsonl";
+            string testFileName = "C:/data/test/mapper_output.jsonl";
 
-            if (File.Exists(bigFileName))
+            if (File.Exists(testFileName))
             {
-                var cimObjects = serializer.DeserializeObjects(File.OpenRead(bigFileName));
+                var cimObjects = serializer.DeserializeObjects(File.OpenRead(testFileName));
 
                 var cimContext = new InMemCimContext(cimObjects);
 
@@ -87,10 +87,10 @@ namespace CIM.TopologyProcessor.Tests
                 var feededCount = feeders.Count(f => f.Nofeed == false);
                 var multiFeededCount = feeders.Count(f => f.Multifeed == true);
 
-                Console.WriteLine($"{feeders.Count()} total equipments");
-                Console.WriteLine($"{feededCount} equipments feeded");
-                Console.WriteLine($"{notFeededCount} equipments not feeded");
-                Console.WriteLine($"{multiFeededCount} equipments multi feeded");
+                System.Diagnostics.Debug.WriteLine($"{feeders.Count()} total equipments");
+                System.Diagnostics.Debug.WriteLine($"{feededCount} equipments feeded");
+                System.Diagnostics.Debug.WriteLine($"{notFeededCount} equipments not feeded");
+                System.Diagnostics.Debug.WriteLine($"{multiFeededCount} equipments multi feeded");
             }
         }
 

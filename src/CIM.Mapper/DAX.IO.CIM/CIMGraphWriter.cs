@@ -486,8 +486,6 @@ namespace DAX.IO.Writers
                         if (feature.Coordinates != null && feature.Coordinates.Length == 1)
                         {
                             MapCoords(feature, ec);
-                            _g.AddCIMObjectToVertex(ec);
-
 
                             if (buildCIM)
                             {
@@ -500,9 +498,9 @@ namespace DAX.IO.Writers
                             }
 
                         }
-                        else
-                            //Logger.Log(LogLevel.Warning, "CIM object " + ec.IdString() + " has invalid coordinates.");
-                            
+                        
+                        _g.AddCIMObjectToVertex(ec);
+
                         if (feature.ClassName == "substation")
                             nSubstations++;
                         else if (feature.ClassName == "equipmentcontainer")
@@ -1247,29 +1245,18 @@ namespace DAX.IO.Writers
                     CIMConductingEquipment ci = new CIMConductingEquipment(_g.ObjectManager);
                     ci.SetClass(CIMClassEnum.ACLineSegment);
 
-
                     MapCommonFields(feature, ci);
                     CopyAttributes(feature, ci);
                     MapCoords(feature, ci);
 
-
-                    // debug
-                    #if DEBUG
-                    if (ci.mRID == Guid.Parse("43E2A656-B2AA-428B-8018-F540ACF3A724"))
-                    {
-                    }
-                    #endif
-
-                    if (feature.Coordinates != null && feature.Coordinates.Length > 1)
-                    {
-                        if (feature.ContainsKey("cim.terminal.1"))
-                            TerminalBasedConnectivity_AddACLineSegmentToGraph(feature, ci);
-                        else
-                            CoordBasedConnectivity_AddACLineSegmentToGraph(feature, ci);
-                    }
+                    if (feature.ContainsKey("cim.terminal.1"))
+                        TerminalBasedConnectivity_AddACLineSegmentToGraph(feature, ci);
                     else
                     {
-                        // TODO: Log that no coordinat exists
+                        if (feature.Coordinates != null && feature.Coordinates.Length > 1)
+                        {
+                            CoordBasedConnectivity_AddACLineSegmentToGraph(feature, ci);
+                        }
                     }
                 }
 
