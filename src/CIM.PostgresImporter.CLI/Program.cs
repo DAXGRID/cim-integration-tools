@@ -10,8 +10,6 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        const int BULK_INSERT_COUNT = 50_000;
-
         var logger = LoggerFactory.Create(nameof(CIM.PostgresImporter.CLI));
 
         var rootCommand = new RootCommand("CIM Postgres Importer CLI.");
@@ -99,7 +97,6 @@ internal static class Program
 
                 await ImportFileAsync(
                     srid ?? 25812,
-                    BULK_INSERT_COUNT,
                     inputFilePath,
                     postgresConnectionString,
                     schemaName ?? "public",
@@ -131,7 +128,7 @@ internal static class Program
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
 
-    private static async Task ImportFileAsync(int srid, int bulkInsertCount, string dataFilePath, string connectionString, string schemaName, bool ignoreTableCreationIfExists, ILogger logger)
+    private static async Task ImportFileAsync(int srid, string dataFilePath, string connectionString, string schemaName, bool ignoreTableCreationIfExists, ILogger logger)
     {
         logger.LogInformation("Starting detection of schema.");
         var schemaReader = new StreamReader(dataFilePath);
@@ -195,7 +192,6 @@ internal static class Program
                     var schemaType = schemaTypeLookup[importChannelLookup.Key];
                     var totalInsertedCount = await PostgresImport.ImportAsync(
                         srid,
-                        bulkInsertCount,
                         connectionString,
                         schemaType,
                         importChannelLookup.Key,

@@ -55,7 +55,6 @@ internal static class PostgresImport
 
     public static async Task<int> ImportAsync(
         int srid,
-        int bulkInsertCount,
         string connectionString,
         Dictionary<string, SchemaTypeProperty> schemaType,
         string typeName,
@@ -198,13 +197,6 @@ internal static class PostgresImport
                             parameter,
                             ConvertInternalTypeToPostgresqlType(propertyType))
                         .ConfigureAwait(false);
-                }
-
-                if (totalInsertionCount % bulkInsertCount == 0)
-                {
-                    await postgresqlBinaryWriter.CompleteAsync().ConfigureAwait(false);
-                    await postgresqlBinaryWriter.DisposeAsync().ConfigureAwait(false);
-                    postgresqlBinaryWriter = await connection.BeginBinaryImportAsync(copySql).ConfigureAwait(false);
                 }
             }
         }
