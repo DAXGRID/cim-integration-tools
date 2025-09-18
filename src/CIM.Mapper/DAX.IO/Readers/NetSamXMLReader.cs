@@ -272,7 +272,7 @@ namespace DAX.IO.Readers
 
                                     powerTransformerEndAttributes.Remove("basevoltage");
 
-                                    if (baseVoltageId.HasValue)
+                                    if (baseVoltageId.HasValue && _baseVoltageByMrid.ContainsKey(baseVoltageId.Value))
                                         powerTransformerEndAttributes.Add("basevoltage", _baseVoltageByMrid[baseVoltageId.Value].ToString());
 
 
