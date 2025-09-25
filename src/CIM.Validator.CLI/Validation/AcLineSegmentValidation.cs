@@ -6,7 +6,7 @@ internal static class AcLineSegmentValidation
 {
     public static ValidationError? ValidateLocation(ACLineSegment a, Location? location)
     {
-        if (string.IsNullOrWhiteSpace(a.EquipmentContainer?.@ref))
+        if (!string.IsNullOrWhiteSpace(a.EquipmentContainer?.@ref) && string.IsNullOrWhiteSpace(a.Location?.@ref))
         {
             return null;
         }
@@ -20,7 +20,7 @@ internal static class AcLineSegmentValidation
             {
                 IdentifiedObjectId = a.mRID,
                 IdentifiedObjectClass = a.GetType().Name,
-                Code = "LOCATION_REQUIRED_AC_LINE_SEGMENT_IN_GROUND",
+                Code = "AC_LINE_SEGMENT_MISSING_LOCATION_REFERENCE",
                 Description = "AC Line Segment without equipment container reference requires location.",
                 Severity = Severity.Error
             };
