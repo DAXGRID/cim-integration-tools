@@ -23,7 +23,7 @@ internal static class ConductingEquipmentValidation
                 IdentifiedObjectClass = c.GetType().Name,
                 Code = "INVALID_EQUIPMENT_CONTAINER_TYPE",
                 Description = $"Cannot validate equipment container type because the reference is missing.",
-                Severity = Severity.Warning
+                Severity = Severity.Error
             };
         }
 
@@ -62,7 +62,7 @@ internal static class ConductingEquipmentValidation
                 IdentifiedObjectClass = c.GetType().Name,
                 Code = "REQUIRED_EQUIPMENT_CONTAINER_REFERENCE",
                 Description = "Conducting equipment should have a reference to an equipment container.",
-                Severity = Severity.Warning
+                Severity = Severity.Error
             };
         }
 
