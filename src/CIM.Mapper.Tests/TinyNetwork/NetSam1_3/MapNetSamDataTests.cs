@@ -15,21 +15,21 @@ namespace CIM.Mapper.Tests.TinyNetwork.NetSam1_3
     public class MapNetSamDataTests
     {
         [Fact]
-        public async Task MapTinyNetworkToCim100()
+        public async Task TinyNetworkToCim100_NoErrorsExpected()
         {
             string rootFolder = @"../../../TinyNetwork/NetSam1_3";
-
             var mapperConfigFile = $"{rootFolder}/mapper_config.xml";
+            var inputCimFile = "tiny_network_netsam_1_3_no_errors.xml";
 
             if (File.Exists(mapperConfigFile))
             {
-
                 Log.Logger = new LoggerConfiguration().WriteTo.Debug().CreateLogger();
                 Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
 
                 Logger.WriteToConsole = false;
-
                 var config = new TransformationConfig().LoadFromFile(mapperConfigFile);
+
+                config.DataReaders.First().ConfigParameters.First().Value = rootFolder + "/data/" + inputCimFile;
 
                 var transformer = config.InitializeDataTransformer("test");
 
@@ -80,6 +80,60 @@ namespace CIM.Mapper.Tests.TinyNetwork.NetSam1_3
 
                 // The input file should have no errors
                 Assert.True(validatorLines.Count == 0, "Expected no validation errors, but apparently the validator disagree");
+            }
+        }
+
+        [Fact]
+        public async Task TinyNetworkToCim100_MissingBayError()
+        {
+            string rootFolder = @"../../../TinyNetwork/NetSam1_3";
+            var mapperConfigFile = $"{rootFolder}/mapper_config.xml";
+            var inputCimFile = "tiny_network_netsam_1_3_missing_bay_error.xml";
+
+            if (File.Exists(mapperConfigFile))
+            {
+                Log.Logger = new LoggerConfiguration().WriteTo.Debug().CreateLogger();
+                Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
+
+                Logger.WriteToConsole = false;
+                var config = new TransformationConfig().LoadFromFile(mapperConfigFile);
+
+                config.DataReaders.First().ConfigParameters.First().Value = rootFolder + "/data/" + inputCimFile;
+
+                var transformer = config.InitializeDataTransformer("test");
+
+                transformer.TransferData();
+
+                CIMGraphWriter writer = transformer.GetFirstDataWriter() as CIMGraphWriter;
+                CIMGraph graph = writer.GetCIMGraph();
+
+                string mapperOutputFileName = $"{rootFolder}/data/mapper_ouput.jsonl";
+
+                // Serialize to CIM 100 (jsonl file)
+                var serializer = config.InitializeSerializer("CIM100") as IDAXSerializeable;
+
+                var stopWatch = Stopwatch.StartNew();
+
+                var result = ((CIM100Serializer)serializer).GetIdentifiedObjects(CIMMetaDataManager.Repository, graph.CIMObjects, true, true, true).ToList();
+
+                using (var destination = File.Open(mapperOutputFileName, FileMode.Create))
+                {
+                    using (var source = new CsonSerializer().SerializeObjects(result))
+                    {
+                        source.CopyTo(destination);
+                    }
+                }
+
+                // Run validator
+                string validatorOutputFileName = $"{rootFolder}/data/validator_ouput.jsonl";
+
+                await Validator.CLI.Program.Main(new string[] { $"--input-file={mapperOutputFileName}", $"--output-file={validatorOutputFileName}" });
+
+                // This is a hack for now, I'll handle it better in the future where it does not do a contains.
+                var validatorLines = File.ReadAllLines(validatorOutputFileName).Where(x => x.Contains("\"Severity\":\"Error\"")).ToList();
+
+                // The input file should have no errors
+                Assert.True(validatorLines.Count == 2, "Expected no validation errors, but apparently the validator disagree");
             }
         }
 

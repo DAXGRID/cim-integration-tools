@@ -1,0 +1,1835 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProfileEnvelop xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://net-sam.dk/EquipmentProfile_1_3">
+  <AssetOwner>
+    <mRID>2f2164c3-c683-4257-ba8e-7213997c545b</mRID>
+    <name>Super Power</name>
+  </AssetOwner>
+  <AssetOwner>
+    <mRID>ef0e19d7-05e3-43b2-a9eb-582d3f361c2d</mRID>
+    <name>Bilka Power</name>
+  </AssetOwner>
+  <Maintainer>
+    <mRID>f2939490-c873-46bf-901b-8423558dd1e6</mRID>
+    <name>Bob The Builder</name>
+  </Maintainer>
+  <Asset>
+    <mRID>453cafc7-0504-48ee-8b49-15e5ee07e95b</mRID>
+    <name>3x240AL</name>
+  </Asset>
+  <Asset>
+    <mRID>b659c146-ce7c-4265-b1b7-a480eff990e5</mRID>
+    <name>3x240AL</name>
+    <OrganisationRoles ref="2f2164c3-c683-4257-ba8e-7213997c545b" referenceType="Owner" />
+    <OrganisationRoles ref="f2939490-c873-46bf-901b-8423558dd1e6" referenceType="Maintainer" />
+  </Asset>
+  <Asset>
+    <mRID>dab1f41e-7670-4039-a994-cbb58a556ea1</mRID>
+    <name>3x150Al</name>
+    <OrganisationRoles ref="2f2164c3-c683-4257-ba8e-7213997c545b" referenceType="Owner" />
+  </Asset>
+  <Asset>
+    <mRID>f4ae753f-abc0-4103-8750-b1f77c62dbfe</mRID>
+    <name>4x150AL</name>
+  </Asset>
+  <Asset>
+    <mRID>af65c5e7-078c-4fad-9e57-349e0dc7021f</mRID>
+    <name>16 CU</name>
+  </Asset>
+  <Asset>
+    <mRID>32fbe2d8-4757-4680-82bb-b6a9649a66fa</mRID>
+    <name>25 CU</name>
+  </Asset>
+  <CoordinateSystem>
+    <mRID>82bf13be-c34d-4a92-867a-4020936b1efe</mRID>
+    <name>ETRS89 / UTM zone 32N</name>
+    <crsUrn>urn:ogc:def:crs:EPSG::25832</crsUrn>
+  </CoordinateSystem>
+  <Location>
+    <mRID>15ccba5d-6675-4490-9733-56d5276591d3</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>5b5095f3-ba27-49be-9d41-9c4e803d5d27</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>9435cc06-8963-46c9-a26d-e7052767155f</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>c108d61a-e917-4826-8fb5-5a198aa498fb</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>e71d2e26-16c8-49fa-8150-93f05d3110d0</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>323ebfbb-897b-45e3-879f-06902773d9c0</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>e3e97897-546a-4327-922e-a177c4c57000</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>6d0083c8-aa13-4538-b274-6a64217a554c</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>556ca29d-eec7-4456-bfeb-1b7b0547a3e8</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>b7c4774a-7ec2-4d60-bb3b-da9d033e53a9</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>89b7cc1f-f87b-4d18-ba8b-7588375b37e1</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <Location>
+    <mRID>b6f9db7e-3f76-4061-9cdb-45184978dc36</mRID>
+    <CoordinateSystem ref="82bf13be-c34d-4a92-867a-4020936b1efe" />
+  </Location>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>536943.7155000</xPosition>
+    <yPosition>6173450.8210000</yPosition>
+    <Location ref="15ccba5d-6675-4490-9733-56d5276591d3" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>536943.7155000</xPosition>
+    <yPosition>6173450.8210000</yPosition>
+    <Location ref="5b5095f3-ba27-49be-9d41-9c4e803d5d27" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>2</sequenceNumber>
+    <xPosition>537084.0102000</xPosition>
+    <yPosition>6173440.6177000</yPosition>
+    <Location ref="5b5095f3-ba27-49be-9d41-9c4e803d5d27" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>3</sequenceNumber>
+    <xPosition>537196.2459000</xPosition>
+    <yPosition>6173404.9064000</yPosition>
+    <Location ref="5b5095f3-ba27-49be-9d41-9c4e803d5d27" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>4</sequenceNumber>
+    <xPosition>537262.5670000</xPosition>
+    <yPosition>6173364.0934000</yPosition>
+    <Location ref="5b5095f3-ba27-49be-9d41-9c4e803d5d27" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>537262.5670000</xPosition>
+    <yPosition>6173364.0934000</yPosition>
+    <Location ref="9435cc06-8963-46c9-a26d-e7052767155f" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>2</sequenceNumber>
+    <xPosition>537313.5832000</xPosition>
+    <yPosition>6173313.0771000</yPosition>
+    <Location ref="9435cc06-8963-46c9-a26d-e7052767155f" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>3</sequenceNumber>
+    <xPosition>537313.5832000</xPosition>
+    <yPosition>6173241.6544000</yPosition>
+    <Location ref="9435cc06-8963-46c9-a26d-e7052767155f" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>4</sequenceNumber>
+    <xPosition>537295.7276000</xPosition>
+    <yPosition>6173129.4187000</yPosition>
+    <Location ref="9435cc06-8963-46c9-a26d-e7052767155f" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>537295.7276000</xPosition>
+    <yPosition>6173129.4187000</yPosition>
+    <Location ref="c108d61a-e917-4826-8fb5-5a198aa498fb" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>537295.7276000</xPosition>
+    <yPosition>6173129.4187000</yPosition>
+    <Location ref="e71d2e26-16c8-49fa-8150-93f05d3110d0" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>537295.7276000</xPosition>
+    <yPosition>6173129.4187000</yPosition>
+    <Location ref="323ebfbb-897b-45e3-879f-06902773d9c0" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>2</sequenceNumber>
+    <xPosition>537272.7702000</xPosition>
+    <yPosition>6173027.3862000</yPosition>
+    <Location ref="323ebfbb-897b-45e3-879f-06902773d9c0" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>3</sequenceNumber>
+    <xPosition>537201.3475000</xPosition>
+    <yPosition>6172996.7765000</yPosition>
+    <Location ref="323ebfbb-897b-45e3-879f-06902773d9c0" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>4</sequenceNumber>
+    <xPosition>537124.8232000</xPosition>
+    <yPosition>6172966.1667000</yPosition>
+    <Location ref="323ebfbb-897b-45e3-879f-06902773d9c0" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>5</sequenceNumber>
+    <xPosition>537058.5021000</xPosition>
+    <yPosition>6172966.1667000</yPosition>
+    <Location ref="323ebfbb-897b-45e3-879f-06902773d9c0" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>6</sequenceNumber>
+    <xPosition>536971.7744000</xPosition>
+    <yPosition>6172961.0651000</yPosition>
+    <Location ref="323ebfbb-897b-45e3-879f-06902773d9c0" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>7</sequenceNumber>
+    <xPosition>536910.5550000</xPosition>
+    <yPosition>6172945.7602000</yPosition>
+    <Location ref="323ebfbb-897b-45e3-879f-06902773d9c0" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>8</sequenceNumber>
+    <xPosition>536879.9452000</xPosition>
+    <yPosition>6172915.1505000</yPosition>
+    <Location ref="323ebfbb-897b-45e3-879f-06902773d9c0" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>9</sequenceNumber>
+    <xPosition>536856.9879000</xPosition>
+    <yPosition>6172853.9310000</yPosition>
+    <Location ref="323ebfbb-897b-45e3-879f-06902773d9c0" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>536856.9879000</xPosition>
+    <yPosition>6172853.9310000</yPosition>
+    <Location ref="e3e97897-546a-4327-922e-a177c4c57000" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>2</sequenceNumber>
+    <xPosition>536844.2339000</xPosition>
+    <yPosition>6172767.2034000</yPosition>
+    <Location ref="e3e97897-546a-4327-922e-a177c4c57000" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>3</sequenceNumber>
+    <xPosition>536839.1322000</xPosition>
+    <yPosition>6172700.8823000</yPosition>
+    <Location ref="e3e97897-546a-4327-922e-a177c4c57000" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>4</sequenceNumber>
+    <xPosition>536828.9290000</xPosition>
+    <yPosition>6172624.3580000</yPosition>
+    <Location ref="e3e97897-546a-4327-922e-a177c4c57000" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>5</sequenceNumber>
+    <xPosition>536841.6830000</xPosition>
+    <yPosition>6172537.6304000</yPosition>
+    <Location ref="e3e97897-546a-4327-922e-a177c4c57000" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>536841.6830000</xPosition>
+    <yPosition>6172537.6304000</yPosition>
+    <Location ref="6d0083c8-aa13-4538-b274-6a64217a554c" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>536841.6830000</xPosition>
+    <yPosition>6172537.6304000</yPosition>
+    <Location ref="556ca29d-eec7-4456-bfeb-1b7b0547a3e8" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>2</sequenceNumber>
+    <xPosition>536742.2014000</xPosition>
+    <yPosition>6172496.8174000</yPosition>
+    <Location ref="556ca29d-eec7-4456-bfeb-1b7b0547a3e8" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>3</sequenceNumber>
+    <xPosition>536655.4738000</xPosition>
+    <yPosition>6172461.1060000</yPosition>
+    <Location ref="556ca29d-eec7-4456-bfeb-1b7b0547a3e8" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>4</sequenceNumber>
+    <xPosition>536629.9657000</xPosition>
+    <yPosition>6172399.8865000</yPosition>
+    <Location ref="556ca29d-eec7-4456-bfeb-1b7b0547a3e8" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>5</sequenceNumber>
+    <xPosition>536609.5592000</xPosition>
+    <yPosition>6172313.1589000</yPosition>
+    <Location ref="556ca29d-eec7-4456-bfeb-1b7b0547a3e8" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>6</sequenceNumber>
+    <xPosition>536568.7462000</xPosition>
+    <yPosition>6172195.8216000</yPosition>
+    <Location ref="556ca29d-eec7-4456-bfeb-1b7b0547a3e8" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>7</sequenceNumber>
+    <xPosition>536568.7462000</xPosition>
+    <yPosition>6172109.0940000</yPosition>
+    <Location ref="556ca29d-eec7-4456-bfeb-1b7b0547a3e8" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>8</sequenceNumber>
+    <xPosition>536571.2970000</xPosition>
+    <yPosition>6172058.0777000</yPosition>
+    <Location ref="556ca29d-eec7-4456-bfeb-1b7b0547a3e8" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>536571.2970000</xPosition>
+    <yPosition>6172058.0777000</yPosition>
+    <Location ref="b7c4774a-7ec2-4d60-bb3b-da9d033e53a9" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>536841.6830000</xPosition>
+    <yPosition>6172537.6304000</yPosition>
+    <Location ref="89b7cc1f-f87b-4d18-ba8b-7588375b37e1" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>2</sequenceNumber>
+    <xPosition>537043.1972000</xPosition>
+    <yPosition>6172476.4109000</yPosition>
+    <Location ref="89b7cc1f-f87b-4d18-ba8b-7588375b37e1" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>3</sequenceNumber>
+    <xPosition>537129.9248000</xPosition>
+    <yPosition>6172404.9881000</yPosition>
+    <Location ref="89b7cc1f-f87b-4d18-ba8b-7588375b37e1" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>4</sequenceNumber>
+    <xPosition>537226.8556000</xPosition>
+    <yPosition>6172338.6670000</yPosition>
+    <Location ref="89b7cc1f-f87b-4d18-ba8b-7588375b37e1" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>5</sequenceNumber>
+    <xPosition>537247.2621000</xPosition>
+    <yPosition>6172206.0248000</yPosition>
+    <Location ref="89b7cc1f-f87b-4d18-ba8b-7588375b37e1" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>6</sequenceNumber>
+    <xPosition>537282.9735000</xPosition>
+    <yPosition>6172109.0940000</yPosition>
+    <Location ref="89b7cc1f-f87b-4d18-ba8b-7588375b37e1" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>7</sequenceNumber>
+    <xPosition>537239.6097000</xPosition>
+    <yPosition>6172022.3664000</yPosition>
+    <Location ref="89b7cc1f-f87b-4d18-ba8b-7588375b37e1" />
+  </PositionPoint>
+  <PositionPoint>
+    <sequenceNumber>1</sequenceNumber>
+    <xPosition>537239.6097000</xPosition>
+    <yPosition>6172022.3664000</yPosition>
+    <Location ref="b6f9db7e-3f76-4061-9cdb-45184978dc36" />
+  </PositionPoint>
+  <UsagePoint>
+    <mRID>f175a57f-1531-4c84-9ce4-10caf060ca39</mRID>
+    <name>999913124500100000</name>
+    <Equipments ref="8fed8ffa-9814-4d0f-ba64-76dd0fb83354" />
+  </UsagePoint>
+  <UsagePoint>
+    <mRID>c7185e65-f2de-4c62-86a5-aed3c820aaf9</mRID>
+    <name>9999913124500200000</name>
+    <Equipments ref="48639784-f685-4238-b706-dad65ba7bc89" />
+  </UsagePoint>
+  <UsagePoint>
+    <mRID>f575cfe7-bf75-460f-8707-b8e27a241e71</mRID>
+    <name>9999913124500300000</name>
+    <Equipments ref="48639784-f685-4238-b706-dad65ba7bc89" />
+  </UsagePoint>
+  <BaseVoltage>
+    <mRID>22d28ba0-3ca9-40b7-a6b9-0c8f03913df7</mRID>
+    <nominalVoltage multiplier="none" unit="V">60000</nominalVoltage>
+  </BaseVoltage>
+  <BaseVoltage>
+    <mRID>d5514314-cd24-4fa4-a04d-782b29e93845</mRID>
+    <nominalVoltage multiplier="none" unit="V">10000</nominalVoltage>
+  </BaseVoltage>
+  <BaseVoltage>
+    <mRID>ef7a4ad4-35ed-4226-b8f4-3f5e086649d4</mRID>
+    <nominalVoltage multiplier="none" unit="V">400</nominalVoltage>
+  </BaseVoltage>
+  <Bay>
+    <mRID>ad724db3-02e9-4c85-99ba-cf39f4398594</mRID>
+    <name>MOD EXT1</name>
+    <VoltageLevel ref="68632d2b-4a33-4c27-988a-0c9d5d7b4ef6" />
+  </Bay>
+  <Bay>
+    <mRID>f340031b-cff5-4699-b86f-198cc7cdcdd7</mRID>
+    <name>MOD BBB</name>
+    <VoltageLevel ref="68632d2b-4a33-4c27-988a-0c9d5d7b4ef6" />
+  </Bay>
+  <Bay>
+    <mRID>f7e61f0e-7ff2-497b-82d1-fb02f693e2cd</mRID>
+    <name>T1 PRI</name>
+    <VoltageLevel ref="68632d2b-4a33-4c27-988a-0c9d5d7b4ef6" />
+  </Bay>
+  <Bay>
+    <mRID>724e4062-6110-4f5b-8003-60e0b4a4c990</mRID>
+    <name>T1 SEC</name>
+    <VoltageLevel ref="934116b3-8cf2-48ac-9ca3-b482f0c608cc" />
+  </Bay>
+  <Bay>
+    <mRID>14506c63-dbe8-49e5-b12c-969b28edadb6</mRID>
+    <name>G1</name>
+    <VoltageLevel ref="934116b3-8cf2-48ac-9ca3-b482f0c608cc" />
+  </Bay>
+  <Bay>
+    <mRID>40711e3f-5eea-4c5e-91ea-5c332b912160</mRID>
+    <name>MOD 100</name>
+    <VoltageLevel ref="934116b3-8cf2-48ac-9ca3-b482f0c608cc" />
+  </Bay>
+  <Bay>
+    <mRID>7af0aaf0-74e6-44b1-b7be-cd18782ff06e</mRID>
+    <name>MOD AAA</name>
+    <VoltageLevel ref="205ef3a7-fb2a-4fe2-bd82-54e9f884f8c1" />
+  </Bay>
+  <Bay>
+    <mRID>1b7b7573-68dd-4f16-9c50-8de3bf3452f0</mRID>
+    <name>T1 PRI</name>
+    <VoltageLevel ref="205ef3a7-fb2a-4fe2-bd82-54e9f884f8c1" />
+  </Bay>
+  <Bay>
+    <mRID>2b2e2237-c1dc-4bc3-a2eb-1a06610bb6dd</mRID>
+    <name>T2 PRI</name>
+    <VoltageLevel ref="205ef3a7-fb2a-4fe2-bd82-54e9f884f8c1" />
+  </Bay>
+  <Bay>
+    <mRID>a859d591-d8f1-418c-a945-b67bcec2ed28</mRID>
+    <name>T1 SEC</name>
+    <VoltageLevel ref="de98b866-1b9d-4503-b377-d32c60fa2493" />
+  </Bay>
+  <Bay>
+    <mRID>96fda61e-20d5-49b8-8157-d35400516e23</mRID>
+    <name>T2 SEC</name>
+    <VoltageLevel ref="de98b866-1b9d-4503-b377-d32c60fa2493" />
+  </Bay>
+  <Bay>
+    <mRID>1b68994b-ebbe-4be4-a65f-e4c9a242fdb8</mRID>
+    <name>UDF 1</name>
+    <VoltageLevel ref="de98b866-1b9d-4503-b377-d32c60fa2493" />
+  </Bay>
+  <Bay>
+    <mRID>a929363c-899c-4e1d-be56-b17cfe50e0c3</mRID>
+    <name>UDF 2</name>
+    <VoltageLevel ref="de98b866-1b9d-4503-b377-d32c60fa2493" />
+  </Bay>
+  <Bay>
+    <mRID>dd89d923-044a-47e0-929d-a74e4f3931fd</mRID>
+    <name>UDF 3</name>
+    <VoltageLevel ref="de98b866-1b9d-4503-b377-d32c60fa2493" />
+  </Bay>
+  <Bay>
+    <mRID>ed8984ae-cf7e-4032-a5f8-efec8143fe24</mRID>
+    <name>MOD 100</name>
+    <VoltageLevel ref="22996c70-44d9-4460-8f42-57f06e1d05e0" />
+  </Bay>
+  <Bay>
+    <mRID>4ea70bb5-7e53-4b94-b591-b4e9f4670e8f</mRID>
+    <name>MOD 200</name>
+    <VoltageLevel ref="22996c70-44d9-4460-8f42-57f06e1d05e0" />
+  </Bay>
+  <Bay>
+    <mRID>2ff94286-91d7-47e2-a6d6-97b0bcce8cd7</mRID>
+    <name>UDF 1</name>
+    <VoltageLevel ref="22996c70-44d9-4460-8f42-57f06e1d05e0" />
+  </Bay>
+  <Bay>
+    <mRID>393d4aeb-8ce9-4c34-bef6-0c8dd60db2df</mRID>
+    <name>UDF 2</name>
+    <VoltageLevel ref="22996c70-44d9-4460-8f42-57f06e1d05e0" />
+  </Bay>
+  <ConnectivityNode>
+    <mRID>eac3c620-6522-4b1f-a721-051f3f9bc6c0</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>c774382d-20d7-4416-bf38-ee18a6ba1a68</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>ca7dc460-7c28-49c2-965b-42e0169ef192</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>e5afd6e5-c951-420b-b71b-fbb954140f48</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>95a21626-9f09-46cb-8dba-2a43bbb5885b</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>ac11583c-3a44-4bc4-aadd-56be5b32042d</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>7978eb81-fb69-4a1f-8f18-acca4a18e5b8</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>853b30e2-d2cc-45a5-812a-439e47f6f8c5</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>081dcc09-6ee7-4da1-97bc-5cf4d4400e92</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>54826323-831e-429e-a1d6-82a4eeda6ce2</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>49c2b76b-87c8-4d77-9e7e-4aa4dd7e4035</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>cba9856e-c99a-4dc3-8430-cd7880ee5847</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>1fb5a3ab-6f1e-42b0-af5b-994327578bbc</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>71e85ccd-8020-436e-9573-17401cc8ec59</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>cc760c1c-9ff1-4c51-8b11-39576b6a5b7e</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>a158e556-57c3-45dc-8b2c-5f30628ade6d</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>15fcb92e-7e88-4803-81f3-8a77d2b0d275</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>ee145298-d23f-482f-b3d9-3c4f0974745c</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>97ddae58-36ba-4292-aeb9-8306d425a3c9</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>a9944c37-e39f-4b82-98dd-7e89bfec2a1d</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>a5f3d89c-5e7a-4a59-bbc2-76d16bfb67fb</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>8df49147-c393-4985-8dea-aee7be705559</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>66b5cab7-d615-4473-964d-cbe13793a807</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>4717b69c-6024-4f62-aa73-34a759e1ae0e</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>377f3b9d-3e23-4f4d-b78e-e4fe3ab7fea6</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>19a6f65d-79a3-4583-8c19-bb3f5f8a26d7</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>797f79b6-2c7c-4cb4-868f-ba604838701b</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>c112a5ea-8cba-454b-b4be-cd7061acba0e</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>d566c598-06ba-4616-b4e4-2bba8963fed1</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>379f1951-764c-4464-947d-025fda5a63ac</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>4a54f31e-2199-4ee4-8292-519ddaa85396</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>fbd33f4a-bb61-4e93-899f-d09ba07ad902</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>80a32533-d2e1-46e3-b543-2decca9444d3</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>ff753a5d-4f94-461a-a5e1-2bcb0f992d32</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>b59f3f4a-034e-49ed-be89-98279a59eff6</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>356f8601-ee2d-40d2-9407-a3e4d98e2503</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>02eabf8f-e1cc-4bb5-a832-644b19276dea</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>a5cb78de-8487-4370-a56c-6f564c9acaa7</mRID>
+  </ConnectivityNode>
+  <ConnectivityNode>
+    <mRID>e0484f58-b452-4ade-9ee7-e9aa90ea9e60</mRID>
+  </ConnectivityNode>
+  <PSRType>
+    <mRID>7d7765cb-4473-4010-8adb-b729ece73aba</mRID>
+    <name>PrimarySubstation</name>
+  </PSRType>
+  <PSRType>
+    <mRID>f570b791-acea-49cf-84c3-6ff48bd3f59e</mRID>
+    <name>SecondarySubstation</name>
+  </PSRType>
+  <PSRType>
+    <mRID>cbb2b490-ac68-40a0-9424-43002c99cbe7</mRID>
+    <name>CableBox</name>
+  </PSRType>
+  <Substation>
+    <mRID>4c20c3f4-fe30-4ad8-84ad-334388a08576</mRID>
+    <name>AAA</name>
+    <PSRType ref="7d7765cb-4473-4010-8adb-b729ece73aba" />
+    <Location ref="c108d61a-e917-4826-8fb5-5a198aa498fb" />
+  </Substation>
+  <Substation>
+    <mRID>76c7da50-c69b-463b-a6fe-460d8845fdaf</mRID>
+    <name>100</name>
+    <PSRType ref="f570b791-acea-49cf-84c3-6ff48bd3f59e" />
+    <Location ref="e71d2e26-16c8-49fa-8150-93f05d3110d0" />
+  </Substation>
+  <Substation>
+    <mRID>ecb14828-6cfd-418b-b5ed-c3be20f6a74f</mRID>
+    <name>5000</name>
+    <PSRType ref="cbb2b490-ac68-40a0-9424-43002c99cbe7" />
+    <Location ref="6d0083c8-aa13-4538-b274-6a64217a554c" />
+  </Substation>
+  <Terminal>
+    <mRID>bf4c35e3-e677-4eb8-8033-511ec875e63b</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="3706e23a-b4c1-4062-9301-ffdec01367a4" />
+    <ConnectivityNode ref="eac3c620-6522-4b1f-a721-051f3f9bc6c0" />
+  </Terminal>
+  <Terminal>
+    <mRID>f282cd52-472d-4256-920b-e7a5f2e1bfe3</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="f6ba3a96-8a3d-4e0f-88cd-b71df3b6f916" />
+    <ConnectivityNode ref="eac3c620-6522-4b1f-a721-051f3f9bc6c0" />
+  </Terminal>
+  <Terminal>
+    <mRID>b259b0b0-60c7-4906-886e-383f8e1ec0d9</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="f6ba3a96-8a3d-4e0f-88cd-b71df3b6f916" />
+    <ConnectivityNode ref="c774382d-20d7-4416-bf38-ee18a6ba1a68" />
+  </Terminal>
+  <Terminal>
+    <mRID>8c649d8e-3786-4cbc-8ee5-fa2c4c9d2d09</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="7ca000db-ee63-4d4a-80be-844a8d8b9e65" />
+    <ConnectivityNode ref="c774382d-20d7-4416-bf38-ee18a6ba1a68" />
+  </Terminal>
+  <Terminal>
+    <mRID>8da506f6-a354-4c09-8ccf-60032349067b</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="7ca000db-ee63-4d4a-80be-844a8d8b9e65" />
+    <ConnectivityNode ref="ca7dc460-7c28-49c2-965b-42e0169ef192" />
+  </Terminal>
+  <Terminal>
+    <mRID>cc14359c-6b4f-4f73-a7de-b5d2c83fed81</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="ffe541e8-56d7-44ec-b7b6-9710e53a84d2" />
+    <ConnectivityNode ref="ac11583c-3a44-4bc4-aadd-56be5b32042d" />
+  </Terminal>
+  <Terminal>
+    <mRID>2205d023-4e45-4b56-a923-9451a9e25d85</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="f3c997c3-a7c3-4e03-8828-ad34228e2e44" />
+    <ConnectivityNode ref="ca7dc460-7c28-49c2-965b-42e0169ef192" />
+  </Terminal>
+  <Terminal>
+    <mRID>d44064ca-2db5-4462-a037-0a0332e679c5</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="f3c997c3-a7c3-4e03-8828-ad34228e2e44" />
+    <ConnectivityNode ref="e5afd6e5-c951-420b-b71b-fbb954140f48" />
+  </Terminal>
+  <Terminal>
+    <mRID>ceb16257-7dae-4b08-9273-75d89c012949</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="80209f40-20cd-4b54-9de0-a74521248ca4" />
+    <ConnectivityNode ref="e5afd6e5-c951-420b-b71b-fbb954140f48" />
+  </Terminal>
+  <Terminal>
+    <mRID>2c2747fb-055c-4ac4-9fc8-6a7a68a44495</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="80209f40-20cd-4b54-9de0-a74521248ca4" />
+    <ConnectivityNode ref="95a21626-9f09-46cb-8dba-2a43bbb5885b" />
+  </Terminal>
+  <Terminal>
+    <mRID>9b1296e4-89d5-47c8-b0ac-98f25325ed1f</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="52cc60f9-c4fb-4826-9f62-ee796212ff7a" />
+    <ConnectivityNode ref="95a21626-9f09-46cb-8dba-2a43bbb5885b" />
+  </Terminal>
+  <Terminal>
+    <mRID>d98f6a65-b2d3-4e71-a911-63c8e43ce4d6</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="52cc60f9-c4fb-4826-9f62-ee796212ff7a" />
+    <ConnectivityNode ref="ac11583c-3a44-4bc4-aadd-56be5b32042d" />
+  </Terminal>
+  <Terminal>
+    <mRID>8d163929-086d-4124-a5e6-9d58a443d199</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="52a84df3-4f62-4b0a-aa41-4a1ec64b68f2" />
+    <ConnectivityNode ref="081dcc09-6ee7-4da1-97bc-5cf4d4400e92" />
+  </Terminal>
+  <Terminal>
+    <mRID>bad3fc03-f341-47f8-bb30-02f5087cf3b7</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="52a84df3-4f62-4b0a-aa41-4a1ec64b68f2" />
+    <ConnectivityNode ref="853b30e2-d2cc-45a5-812a-439e47f6f8c5" />
+  </Terminal>
+  <Terminal>
+    <mRID>87a864ce-0ec2-469c-9395-280abc9663a4</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="3ab5c9f5-7919-4362-880a-c7e0730f5bb1" />
+    <ConnectivityNode ref="853b30e2-d2cc-45a5-812a-439e47f6f8c5" />
+  </Terminal>
+  <Terminal>
+    <mRID>c38627a7-536c-4cc3-bdca-4c8df1bf7391</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="3ab5c9f5-7919-4362-880a-c7e0730f5bb1" />
+    <ConnectivityNode ref="7978eb81-fb69-4a1f-8f18-acca4a18e5b8" />
+  </Terminal>
+  <Terminal>
+    <mRID>0aee7aff-1bb7-441c-ae97-fa4cf8c59236</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="d8d89390-7306-45ec-964c-d043d303ddff" />
+    <ConnectivityNode ref="7978eb81-fb69-4a1f-8f18-acca4a18e5b8" />
+  </Terminal>
+  <Terminal>
+    <mRID>1304c1de-80de-4ee1-be33-85da41944b84</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="d8d89390-7306-45ec-964c-d043d303ddff" />
+    <ConnectivityNode ref="ac11583c-3a44-4bc4-aadd-56be5b32042d" />
+  </Terminal>
+  <Terminal>
+    <mRID>28ad4190-7dd5-41ea-beaf-6694b0152060</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="2fbb5df0-4cec-494e-a250-c847821d1909" />
+    <ConnectivityNode ref="ac11583c-3a44-4bc4-aadd-56be5b32042d" />
+  </Terminal>
+  <Terminal>
+    <mRID>706baf84-b16c-4fb8-ab23-d0e001373799</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="2fbb5df0-4cec-494e-a250-c847821d1909" />
+    <ConnectivityNode ref="54826323-831e-429e-a1d6-82a4eeda6ce2" />
+  </Terminal>
+  <Terminal>
+    <mRID>5d41f3f2-8457-4e4c-a505-d98161b94087</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="3877cfe3-5577-4888-9905-8647e5287b13" />
+    <ConnectivityNode ref="54826323-831e-429e-a1d6-82a4eeda6ce2" />
+  </Terminal>
+  <Terminal>
+    <mRID>5f8457fa-0675-47c2-851a-97f4fde2ad8c</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="3877cfe3-5577-4888-9905-8647e5287b13" />
+    <ConnectivityNode ref="49c2b76b-87c8-4d77-9e7e-4aa4dd7e4035" />
+  </Terminal>
+  <Terminal>
+    <mRID>a4dfd656-c614-427c-841c-b7084a503709</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="8c16c454-9005-422f-8a86-cacb01aac1e5" />
+    <ConnectivityNode ref="49c2b76b-87c8-4d77-9e7e-4aa4dd7e4035" />
+  </Terminal>
+  <Terminal>
+    <mRID>10592370-aa18-4546-82c5-a100cb1cd207</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="8c16c454-9005-422f-8a86-cacb01aac1e5" />
+    <ConnectivityNode ref="cba9856e-c99a-4dc3-8430-cd7880ee5847" />
+  </Terminal>
+  <Terminal>
+    <mRID>5ac5f871-b4de-410b-871c-24b17522b70d</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="9e1d8a96-d9d7-4e9e-8dc3-0b6fa511933d" />
+    <ConnectivityNode ref="a158e556-57c3-45dc-8b2c-5f30628ade6d" />
+  </Terminal>
+  <Terminal>
+    <mRID>f45b8114-9abe-4cef-894e-4f0d5d8bcbf1</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="d26702d9-7f0f-4d4a-b505-56d91111c086" />
+    <ConnectivityNode ref="15fcb92e-7e88-4803-81f3-8a77d2b0d275" />
+  </Terminal>
+  <Terminal>
+    <mRID>2f536fbb-6f25-43c0-8abd-5e5af736a47e</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="551ae812-4e9b-418d-a965-26b11edb2342" />
+    <ConnectivityNode ref="cba9856e-c99a-4dc3-8430-cd7880ee5847" />
+  </Terminal>
+  <Terminal>
+    <mRID>09db749e-6178-48db-8ce3-110290b6d387</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="551ae812-4e9b-418d-a965-26b11edb2342" />
+    <ConnectivityNode ref="1fb5a3ab-6f1e-42b0-af5b-994327578bbc" />
+  </Terminal>
+  <Terminal>
+    <mRID>b32a6112-a430-4be8-a172-8bee1a6006f3</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="5a5fc31b-8987-405c-8567-94434f0007f0" />
+    <ConnectivityNode ref="cba9856e-c99a-4dc3-8430-cd7880ee5847" />
+  </Terminal>
+  <Terminal>
+    <mRID>d8499575-3a15-413d-a09f-5ebb373c1f59</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <phases>N</phases>
+    <ConductingEquipment ref="25509194-f62a-4ea9-94fa-7f8f37bf36a5" />
+    <ConnectivityNode ref="1fb5a3ab-6f1e-42b0-af5b-994327578bbc" />
+  </Terminal>
+  <Terminal>
+    <mRID>bf1610d3-f0a4-4b01-8507-c2bf4a34e747</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="ce6d3257-7c5d-4b25-b49c-d94a418b85f0" />
+    <ConnectivityNode ref="1fb5a3ab-6f1e-42b0-af5b-994327578bbc" />
+  </Terminal>
+  <Terminal>
+    <mRID>81b54385-d0f8-4785-beb1-13e5a8bb0518</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="ce6d3257-7c5d-4b25-b49c-d94a418b85f0" />
+    <ConnectivityNode ref="71e85ccd-8020-436e-9573-17401cc8ec59" />
+  </Terminal>
+  <Terminal>
+    <mRID>22ba1124-ae04-4c01-a33e-2e09da581f6a</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="658f633f-a6a6-4225-a22a-2eea308fe2be" />
+    <ConnectivityNode ref="71e85ccd-8020-436e-9573-17401cc8ec59" />
+  </Terminal>
+  <Terminal>
+    <mRID>a38bf5ce-4ea2-4e19-a687-ba509e28a161</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="658f633f-a6a6-4225-a22a-2eea308fe2be" />
+    <ConnectivityNode ref="cc760c1c-9ff1-4c51-8b11-39576b6a5b7e" />
+  </Terminal>
+  <Terminal>
+    <mRID>14b7dfe9-de1f-47e7-b9e1-77c7248afa79</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="b4a78ecb-7dab-4a69-8ba8-497f6e0f3685" />
+    <ConnectivityNode ref="cc760c1c-9ff1-4c51-8b11-39576b6a5b7e" />
+  </Terminal>
+  <Terminal>
+    <mRID>00c72a6e-b714-4b07-8cac-541d6cbc4599</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="b4a78ecb-7dab-4a69-8ba8-497f6e0f3685" />
+    <ConnectivityNode ref="15fcb92e-7e88-4803-81f3-8a77d2b0d275" />
+  </Terminal>
+  <Terminal>
+    <mRID>0ee92608-fe90-4e63-a222-2bacf0a4970d</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="b23035db-e48b-4778-8183-199efd753f0e" />
+    <ConnectivityNode ref="cc760c1c-9ff1-4c51-8b11-39576b6a5b7e" />
+  </Terminal>
+  <Terminal>
+    <mRID>f1de3919-30a5-4671-bc22-49deb08ea220</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="b23035db-e48b-4778-8183-199efd753f0e" />
+    <ConnectivityNode ref="a158e556-57c3-45dc-8b2c-5f30628ade6d" />
+  </Terminal>
+  <Terminal>
+    <mRID>a6e5b999-0a62-409a-b739-badd4837d162</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="8643a4de-5d4d-4203-9713-f011cab2526a" />
+    <ConnectivityNode ref="a158e556-57c3-45dc-8b2c-5f30628ade6d" />
+  </Terminal>
+  <Terminal>
+    <mRID>b77312be-d8f5-44a1-883a-f502afc854a8</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="8643a4de-5d4d-4203-9713-f011cab2526a" />
+    <ConnectivityNode ref="ee145298-d23f-482f-b3d9-3c4f0974745c" />
+  </Terminal>
+  <Terminal>
+    <mRID>7ea47221-34a2-458a-8e8a-1e5eb5e48c72</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="df33d431-c53d-483d-9380-1d7c5fcede39" />
+    <ConnectivityNode ref="15fcb92e-7e88-4803-81f3-8a77d2b0d275" />
+  </Terminal>
+  <Terminal>
+    <mRID>82022b9f-157d-4dac-bc8c-c910d8a82b92</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="df33d431-c53d-483d-9380-1d7c5fcede39" />
+    <ConnectivityNode ref="ee145298-d23f-482f-b3d9-3c4f0974745c" />
+  </Terminal>
+  <Terminal>
+    <mRID>5ba27b2f-f8e4-4008-8a7a-7c4bac79b5f5</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="44966999-4e15-4d50-8a64-609ac18b4c76" />
+    <ConnectivityNode ref="ee145298-d23f-482f-b3d9-3c4f0974745c" />
+  </Terminal>
+  <Terminal>
+    <mRID>810fab87-00dd-47eb-8cfa-50b550061bb8</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="44966999-4e15-4d50-8a64-609ac18b4c76" />
+    <ConnectivityNode ref="97ddae58-36ba-4292-aeb9-8306d425a3c9" />
+  </Terminal>
+  <Terminal>
+    <mRID>dfb5fdb2-c6d0-411a-a5a5-e7536fc70317</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="67786ea5-2488-48a7-95fc-a0bc69314246" />
+    <ConnectivityNode ref="97ddae58-36ba-4292-aeb9-8306d425a3c9" />
+  </Terminal>
+  <Terminal>
+    <mRID>9d13127e-0460-443c-8a8d-4ccb94148fc5</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="d6f067c9-5e6f-4e9e-860e-c50dfe938965" />
+    <ConnectivityNode ref="a158e556-57c3-45dc-8b2c-5f30628ade6d" />
+  </Terminal>
+  <Terminal>
+    <mRID>47cfe1a4-05d6-4e59-b59e-ab2d082be5f5</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="d6f067c9-5e6f-4e9e-860e-c50dfe938965" />
+    <ConnectivityNode ref="a9944c37-e39f-4b82-98dd-7e89bfec2a1d" />
+  </Terminal>
+  <Terminal>
+    <mRID>bb359c28-654c-46a9-947d-c28c968b67b8</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="a17a1086-1917-40be-a055-f01224e7405a" />
+    <ConnectivityNode ref="15fcb92e-7e88-4803-81f3-8a77d2b0d275" />
+  </Terminal>
+  <Terminal>
+    <mRID>9e5807b8-cbaa-4aae-8138-9f7d3ff25aaf</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="a17a1086-1917-40be-a055-f01224e7405a" />
+    <ConnectivityNode ref="a9944c37-e39f-4b82-98dd-7e89bfec2a1d" />
+  </Terminal>
+  <Terminal>
+    <mRID>0d239d20-d810-4fef-b7c3-1e467a38c4ec</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="41108080-1721-4cdd-b9cf-fe25fdadccf6" />
+    <ConnectivityNode ref="a9944c37-e39f-4b82-98dd-7e89bfec2a1d" />
+  </Terminal>
+  <Terminal>
+    <mRID>33d9e7f2-321c-4b42-8168-8fd88bc2bc2d</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="41108080-1721-4cdd-b9cf-fe25fdadccf6" />
+    <ConnectivityNode ref="a5f3d89c-5e7a-4a59-bbc2-76d16bfb67fb" />
+  </Terminal>
+  <Terminal>
+    <mRID>d43f87c0-b9c1-4b32-b3bf-adf09a22a2c5</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="f184e7f0-cdf8-45fd-ae03-fb8819454424" />
+    <ConnectivityNode ref="a5f3d89c-5e7a-4a59-bbc2-76d16bfb67fb" />
+  </Terminal>
+  <Terminal>
+    <mRID>cf2e35c1-7573-4c4c-84f2-6ad4368f76f3</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="f184e7f0-cdf8-45fd-ae03-fb8819454424" />
+    <ConnectivityNode ref="8df49147-c393-4985-8dea-aee7be705559" />
+  </Terminal>
+  <Terminal>
+    <mRID>6a08a063-879d-4f80-90cb-3c910175f97b</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="3d0828bf-a7d6-44e5-bc09-62992ce6989c" />
+    <ConnectivityNode ref="4717b69c-6024-4f62-aa73-34a759e1ae0e" />
+  </Terminal>
+  <Terminal>
+    <mRID>43dc7a86-a21c-4761-a3b1-a284e48fccda</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="c0a71ff5-e7ee-490e-bcf2-f8d5548b83dd" />
+    <ConnectivityNode ref="66b5cab7-d615-4473-964d-cbe13793a807" />
+  </Terminal>
+  <Terminal>
+    <mRID>75eac253-7bff-4249-b4d6-283b170f80f0</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="c0a71ff5-e7ee-490e-bcf2-f8d5548b83dd" />
+    <ConnectivityNode ref="4717b69c-6024-4f62-aa73-34a759e1ae0e" />
+  </Terminal>
+  <Terminal>
+    <mRID>0579a225-d026-483f-bc04-e83743fce34f</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="bc57d4a0-a110-4b7f-b2f7-7f9d8e4ef53e" />
+    <ConnectivityNode ref="8df49147-c393-4985-8dea-aee7be705559" />
+  </Terminal>
+  <Terminal>
+    <mRID>be5da97f-849b-40f1-878f-5234ee2d181c</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="bc57d4a0-a110-4b7f-b2f7-7f9d8e4ef53e" />
+    <ConnectivityNode ref="66b5cab7-d615-4473-964d-cbe13793a807" />
+  </Terminal>
+  <Terminal>
+    <mRID>df33c503-37d4-458e-9c6c-aa9a32efc375</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="ab379798-701e-487d-b796-60b677b1329c" />
+    <ConnectivityNode ref="4717b69c-6024-4f62-aa73-34a759e1ae0e" />
+  </Terminal>
+  <Terminal>
+    <mRID>6b0010da-6369-4d0f-88c6-2bdcc2d39147</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="ab379798-701e-487d-b796-60b677b1329c" />
+    <ConnectivityNode ref="377f3b9d-3e23-4f4d-b78e-e4fe3ab7fea6" />
+  </Terminal>
+  <Terminal>
+    <mRID>cf332008-8cf9-40b7-81d7-2096702823b9</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="2e6ad4d6-7ab9-40de-be08-9001c5db9283" />
+    <ConnectivityNode ref="377f3b9d-3e23-4f4d-b78e-e4fe3ab7fea6" />
+  </Terminal>
+  <Terminal>
+    <mRID>b3394034-bd11-4ece-a9e2-65df968e03e9</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="2e6ad4d6-7ab9-40de-be08-9001c5db9283" />
+    <ConnectivityNode ref="797f79b6-2c7c-4cb4-868f-ba604838701b" />
+  </Terminal>
+  <Terminal>
+    <mRID>b76b3942-5fd6-481e-8c22-057ca04e56ab</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="a1a81588-4225-485c-886d-7ec2ab76c139" />
+    <ConnectivityNode ref="4717b69c-6024-4f62-aa73-34a759e1ae0e" />
+  </Terminal>
+  <Terminal>
+    <mRID>d1c42b28-a051-49c0-a24d-398a3b64d6b0</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="a1a81588-4225-485c-886d-7ec2ab76c139" />
+    <ConnectivityNode ref="19a6f65d-79a3-4583-8c19-bb3f5f8a26d7" />
+  </Terminal>
+  <Terminal>
+    <mRID>1bc2b907-9569-4158-a907-d13925927fe1</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="3e91256a-77cf-4f55-b846-4f6fb1f059f3" />
+    <ConnectivityNode ref="19a6f65d-79a3-4583-8c19-bb3f5f8a26d7" />
+  </Terminal>
+  <Terminal>
+    <mRID>aba03ff1-22f1-482f-935e-2d68f6585b2e</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="3e91256a-77cf-4f55-b846-4f6fb1f059f3" />
+    <ConnectivityNode ref="c112a5ea-8cba-454b-b4be-cd7061acba0e" />
+  </Terminal>
+  <Terminal>
+    <mRID>917c02d9-f35a-4a09-bd70-8d17374e20bc</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="a8365ca4-bc5c-433a-a939-e1879caf38f4" />
+    <ConnectivityNode ref="4a54f31e-2199-4ee4-8292-519ddaa85396" />
+  </Terminal>
+  <Terminal>
+    <mRID>97e6d601-3368-4058-9f10-7c7f9343d4ce</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="5beb4ddb-9182-4fb8-84d9-43d8dffeb3b9" />
+    <ConnectivityNode ref="797f79b6-2c7c-4cb4-868f-ba604838701b" />
+  </Terminal>
+  <Terminal>
+    <mRID>c6833d33-cb4b-4503-a07f-7d4de4eef1c2</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="5beb4ddb-9182-4fb8-84d9-43d8dffeb3b9" />
+    <ConnectivityNode ref="d566c598-06ba-4616-b4e4-2bba8963fed1" />
+  </Terminal>
+  <Terminal>
+    <mRID>362bca7a-2e2d-4a1f-b05e-53a9455eef3f</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="5beb4ddb-9182-4fb8-84d9-43d8dffeb3b9" />
+    <ConnectivityNode ref="c112a5ea-8cba-454b-b4be-cd7061acba0e" />
+  </Terminal>
+  <Terminal>
+    <mRID>66c6c20c-2cf9-4f49-b07e-e2c2ab0ca011</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="5beb4ddb-9182-4fb8-84d9-43d8dffeb3b9" />
+    <ConnectivityNode ref="379f1951-764c-4464-947d-025fda5a63ac" />
+  </Terminal>
+  <Terminal>
+    <mRID>071fbcec-9902-4ba4-98b9-bbc9f09d8b98</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="bea97029-964b-4b0c-953c-b3d0d733a66b" />
+    <ConnectivityNode ref="d566c598-06ba-4616-b4e4-2bba8963fed1" />
+  </Terminal>
+  <Terminal>
+    <mRID>f108627f-61ca-42ee-8e33-ea78cb0c2e06</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="bea97029-964b-4b0c-953c-b3d0d733a66b" />
+    <ConnectivityNode ref="4a54f31e-2199-4ee4-8292-519ddaa85396" />
+  </Terminal>
+  <Terminal>
+    <mRID>a7079031-d853-4cad-9253-ce3f75344c00</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="e2537ffc-f736-4606-b6e3-7cc530e2f1f8" />
+    <ConnectivityNode ref="379f1951-764c-4464-947d-025fda5a63ac" />
+  </Terminal>
+  <Terminal>
+    <mRID>dd6369b9-819c-4fe0-8226-828beb5c19d2</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="e2537ffc-f736-4606-b6e3-7cc530e2f1f8" />
+    <ConnectivityNode ref="4a54f31e-2199-4ee4-8292-519ddaa85396" />
+  </Terminal>
+  <Terminal>
+    <mRID>381e7582-8445-416e-af05-9df2480469e4</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="b9405815-ef73-4479-bbb4-3dad582db6e3" />
+    <ConnectivityNode ref="4a54f31e-2199-4ee4-8292-519ddaa85396" />
+  </Terminal>
+  <Terminal>
+    <mRID>999ebd4c-10af-4064-9175-c91898f3ec87</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="b9405815-ef73-4479-bbb4-3dad582db6e3" />
+    <ConnectivityNode />
+  </Terminal>
+  <Terminal>
+    <mRID>7e91578e-50f2-4312-bf74-bdf666f9d373</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="fa41ab57-8512-4cf9-8f66-2fbde70f2864" />
+    <ConnectivityNode ref="4a54f31e-2199-4ee4-8292-519ddaa85396" />
+  </Terminal>
+  <Terminal>
+    <mRID>64023aab-28d0-41f3-a5bb-28baeb1ee602</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="fa41ab57-8512-4cf9-8f66-2fbde70f2864" />
+    <ConnectivityNode />
+  </Terminal>
+  <Terminal>
+    <mRID>93a091cd-31e7-499e-bfb3-4387b3fcdaf9</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="cad4492c-a1de-4eb5-9c6a-ad16ce106ccc" />
+    <ConnectivityNode ref="4a54f31e-2199-4ee4-8292-519ddaa85396" />
+  </Terminal>
+  <Terminal>
+    <mRID>a7363ad8-5bc6-46ba-a166-9ddf88dd9e66</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="cad4492c-a1de-4eb5-9c6a-ad16ce106ccc" />
+    <ConnectivityNode ref="fbd33f4a-bb61-4e93-899f-d09ba07ad902" />
+  </Terminal>
+  <Terminal>
+    <mRID>b99d5b1f-9ab2-4a25-a08e-c7399510dfd0</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="940461f4-4f1a-4926-88cc-268c26b56da2" />
+    <ConnectivityNode ref="fbd33f4a-bb61-4e93-899f-d09ba07ad902" />
+  </Terminal>
+  <Terminal>
+    <mRID>70681324-3c0c-447e-985c-71604ca6f109</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="940461f4-4f1a-4926-88cc-268c26b56da2" />
+    <ConnectivityNode ref="80a32533-d2e1-46e3-b543-2decca9444d3" />
+  </Terminal>
+  <Terminal>
+    <mRID>b1cdfde4-5b0a-4079-a98e-bdcc1c6024af</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="4064cafe-a874-4d72-9bda-c4405b8f209b" />
+    <ConnectivityNode ref="ff753a5d-4f94-461a-a5e1-2bcb0f992d32" />
+  </Terminal>
+  <Terminal>
+    <mRID>d3647cf4-66de-414d-8794-5ee83b0310e5</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="c537050f-46fa-463f-babd-afa855a24324" />
+    <ConnectivityNode ref="ff753a5d-4f94-461a-a5e1-2bcb0f992d32" />
+  </Terminal>
+  <Terminal>
+    <mRID>8e54f916-31b6-4a85-9dc0-31d10a381546</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="c537050f-46fa-463f-babd-afa855a24324" />
+    <ConnectivityNode ref="80a32533-d2e1-46e3-b543-2decca9444d3" />
+  </Terminal>
+  <Terminal>
+    <mRID>ef8017d5-b71a-44e6-9b2a-1176e1521503</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="ed618bf6-031e-42e2-9b7e-25b594ab9f49" />
+    <ConnectivityNode ref="ff753a5d-4f94-461a-a5e1-2bcb0f992d32" />
+  </Terminal>
+  <Terminal>
+    <mRID>0057bba2-442f-4bf0-bc46-3d89e23cc49b</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="ed618bf6-031e-42e2-9b7e-25b594ab9f49" />
+    <ConnectivityNode />
+  </Terminal>
+  <Terminal>
+    <mRID>78019d69-c987-4f8a-9ce6-df5de1565349</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="70540612-2b17-4d6f-a702-913adc76f3cd" />
+    <ConnectivityNode ref="ff753a5d-4f94-461a-a5e1-2bcb0f992d32" />
+  </Terminal>
+  <Terminal>
+    <mRID>e3472180-e56a-4bd7-ae39-5a9b634b0d85</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="70540612-2b17-4d6f-a702-913adc76f3cd" />
+    <ConnectivityNode ref="b59f3f4a-034e-49ed-be89-98279a59eff6" />
+  </Terminal>
+  <Terminal>
+    <mRID>a976ab66-a913-48c0-a834-66e9148d2e82</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="ef3709f0-9d91-49d4-9e30-71df7dfbaa3e" />
+    <ConnectivityNode ref="ff753a5d-4f94-461a-a5e1-2bcb0f992d32" />
+  </Terminal>
+  <Terminal>
+    <mRID>db0ed3bb-a0d3-4866-8435-ada9b125424d</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="ef3709f0-9d91-49d4-9e30-71df7dfbaa3e" />
+    <ConnectivityNode ref="356f8601-ee2d-40d2-9407-a3e4d98e2503" />
+  </Terminal>
+  <Terminal>
+    <mRID>8decf640-6aa2-4b2f-82a6-95cdff219af9</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="efae5286-ba7c-4bb2-a41d-cef6a36a610f" />
+    <ConnectivityNode ref="b59f3f4a-034e-49ed-be89-98279a59eff6" />
+  </Terminal>
+  <Terminal>
+    <mRID>e1e4cc2d-f80e-4883-95bf-7839c6738fe4</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="efae5286-ba7c-4bb2-a41d-cef6a36a610f" />
+    <ConnectivityNode ref="02eabf8f-e1cc-4bb5-a832-644b19276dea" />
+  </Terminal>
+  <Terminal>
+    <mRID>5b2fbb79-3903-4309-bea7-8b9573806902</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="8fed8ffa-9814-4d0f-ba64-76dd0fb83354" />
+    <ConnectivityNode ref="02eabf8f-e1cc-4bb5-a832-644b19276dea" />
+  </Terminal>
+  <Terminal>
+    <mRID>1b85664a-98a0-4687-8a6c-7e19dda8348a</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="f0bdcb37-2aef-49bf-993e-e2dbbe91b6c4" />
+    <ConnectivityNode ref="356f8601-ee2d-40d2-9407-a3e4d98e2503" />
+  </Terminal>
+  <Terminal>
+    <mRID>05afe21c-6835-4770-bb31-3a61cd0e443d</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="f0bdcb37-2aef-49bf-993e-e2dbbe91b6c4" />
+    <ConnectivityNode ref="a5cb78de-8487-4370-a56c-6f564c9acaa7" />
+  </Terminal>
+  <Terminal>
+    <mRID>b714619f-b881-4b8c-846c-a5cc6c3af336</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="48639784-f685-4238-b706-dad65ba7bc89" />
+    <ConnectivityNode ref="a5cb78de-8487-4370-a56c-6f564c9acaa7" />
+  </Terminal>
+  <Terminal>
+    <mRID>66c6c20c-2cf9-4f49-b07e-e2c2ab0ca011</mRID>
+    <sequenceNumber>1</sequenceNumber>
+    <ConductingEquipment ref="5c177460-9a5b-4b85-b81f-001ad203877f" />
+    <ConnectivityNode ref="c112a5ea-8cba-454b-b4be-cd7061acba0e" />
+  </Terminal>
+  <Terminal>
+    <mRID>362bca7a-2e2d-4a1f-b05e-53a9455eef3f</mRID>
+    <sequenceNumber>2</sequenceNumber>
+    <ConductingEquipment ref="5c177460-9a5b-4b85-b81f-001ad203877f" />
+    <ConnectivityNode ref="379f1951-764c-4464-947d-025fda5a63ac" />
+  </Terminal>
+  <VoltageLevel>
+    <mRID>68632d2b-4a33-4c27-988a-0c9d5d7b4ef6</mRID>
+    <name>60 kV</name>
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <EquipmentContainer ref="4c20c3f4-fe30-4ad8-84ad-334388a08576" />
+  </VoltageLevel>
+  <VoltageLevel>
+    <mRID>934116b3-8cf2-48ac-9ca3-b482f0c608cc</mRID>
+    <name>10 kV</name>
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <EquipmentContainer ref="4c20c3f4-fe30-4ad8-84ad-334388a08576" />
+  </VoltageLevel>
+  <VoltageLevel>
+    <mRID>205ef3a7-fb2a-4fe2-bd82-54e9f884f8c1</mRID>
+    <name>10 kV</name>
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <EquipmentContainer ref="76c7da50-c69b-463b-a6fe-460d8845fdaf" />
+  </VoltageLevel>
+  <VoltageLevel>
+    <mRID>de98b866-1b9d-4503-b377-d32c60fa2493</mRID>
+    <name>0,4 kV</name>
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <EquipmentContainer ref="76c7da50-c69b-463b-a6fe-460d8845fdaf" />
+  </VoltageLevel>
+  <VoltageLevel>
+    <mRID>22996c70-44d9-4460-8f42-57f06e1d05e0</mRID>
+    <name>0,4 kV</name>
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <EquipmentContainer ref="ecb14828-6cfd-418b-b5ed-c3be20f6a74f" />
+  </VoltageLevel>  
+  <ACLineSegmentExt>
+    <mRID>f6ba3a96-8a3d-4e0f-88cd-b71df3b6f916</mRID>
+    <name>EXT1-AAA#1</name>
+    <Location ref="5b5095f3-ba27-49be-9d41-9c4e803d5d27" />
+    <Assets ref="453cafc7-0504-48ee-8b49-15e5ee07e95b" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <length multiplier="none" unit="m">1234</length>
+    <b0ch multiplier="micro" unit="S">3.72877601096078</b0ch>
+    <bch multiplier="micro" unit="S">1.24292533698693</bch>
+    <g0ch multiplier="micro" unit="S">0.0118217119493674</g0ch>
+    <gch multiplier="micro" unit="S">0.0354651358481021</gch>
+    <r multiplier="none" unit="ohm">0.01452652</r>
+    <r0 multiplier="none" unit="ohm">0.04357956</r0>
+    <x multiplier="none" unit="ohm">0.00249674567</x>
+    <x0 multiplier="none" unit="ohm">0.007490237</x0>
+    <c multiplier="micro" unit="F">0.00453953738855707</c>
+    <c0 multiplier="micro" unit="F">0.0136186121656712</c0>
+    <maximumCurrent multiplier="none" unit="A">160</maximumCurrent>
+  </ACLineSegmentExt>
+  <ACLineSegmentExt>
+    <mRID>7ca000db-ee63-4d4a-80be-844a8d8b9e65</mRID>
+    <name>EXT1-AAA#2</name>
+    <Location ref="9435cc06-8963-46c9-a26d-e7052767155f" />
+    <Assets ref="b659c146-ce7c-4265-b1b7-a480eff990e5" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <length multiplier="none" unit="m">1234</length>
+    <b0ch multiplier="micro" unit="S">3.72877601096078</b0ch>
+    <bch multiplier="micro" unit="S">1.24292533698693</bch>
+    <g0ch multiplier="micro" unit="S">0.0118217119493674</g0ch>
+    <gch multiplier="micro" unit="S">0.0354651358481021</gch>
+    <r multiplier="none" unit="ohm">0.01452652</r>
+    <r0 multiplier="none" unit="ohm">0.04357956</r0>
+    <x multiplier="none" unit="ohm">0.00249674567</x>
+    <x0 multiplier="none" unit="ohm">0.007490237</x0>
+    <c multiplier="micro" unit="F">0.00453953738855707</c>
+    <c0 multiplier="micro" unit="F">0.0136186121656712</c0>
+    <maximumCurrent multiplier="none" unit="A">160</maximumCurrent>
+  </ACLineSegmentExt>
+  <ACLineSegmentExt>
+    <mRID>bc57d4a0-a110-4b7f-b2f7-7f9d8e4ef53e</mRID>
+    <name>AAA-100</name>
+    <Location ref="323ebfbb-897b-45e3-879f-06902773d9c0" />
+    <Assets ref="dab1f41e-7670-4039-a994-cbb58a556ea1" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <length multiplier="none" unit="m">1234</length>
+    <b0ch multiplier="micro" unit="S">3.72877601096078</b0ch>
+    <bch multiplier="micro" unit="S">1.24292533698693</bch>
+    <g0ch multiplier="micro" unit="S">0.0118217119493674</g0ch>
+    <gch multiplier="micro" unit="S">0.0354651358481021</gch>
+    <r multiplier="none" unit="ohm">0.01452652</r>
+    <r0 multiplier="none" unit="ohm">0.04357956</r0>
+    <x multiplier="none" unit="ohm">0.00249674567</x>
+    <x0 multiplier="none" unit="ohm">0.007490237</x0>
+    <c multiplier="micro" unit="F">0.00453953738855707</c>
+    <c0 multiplier="micro" unit="F">0.0136186121656712</c0>
+    <maximumCurrent multiplier="none" unit="A">160</maximumCurrent>
+  </ACLineSegmentExt>
+  <ACLineSegmentExt>
+    <mRID>940461f4-4f1a-4926-88cc-268c26b56da2</mRID>
+    <name>100-5000</name>
+    <Location ref="e3e97897-546a-4327-922e-a177c4c57000" />
+    <Assets ref="f4ae753f-abc0-4103-8750-b1f77c62dbfe" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <length multiplier="none" unit="m">1234</length>
+    <b0ch multiplier="micro" unit="S">3.72877601096078</b0ch>
+    <bch multiplier="micro" unit="S">1.24292533698693</bch>
+    <g0ch multiplier="micro" unit="S">0.0118217119493674</g0ch>
+    <gch multiplier="micro" unit="S">0.0354651358481021</gch>
+    <r multiplier="none" unit="ohm">0.01452652</r>
+    <r0 multiplier="none" unit="ohm">0.04357956</r0>
+    <x multiplier="none" unit="ohm">0.00249674567</x>
+    <x0 multiplier="none" unit="ohm">0.007490237</x0>
+    <c multiplier="micro" unit="F">0.00453953738855707</c>
+    <c0 multiplier="micro" unit="F">0.0136186121656712</c0>
+    <maximumCurrent multiplier="none" unit="A">160</maximumCurrent>
+  </ACLineSegmentExt>
+  <ACLineSegmentExt>
+    <mRID>efae5286-ba7c-4bb2-a41d-cef6a36a610f</mRID>
+    <name>stik 1</name>
+    <Location ref="556ca29d-eec7-4456-bfeb-1b7b0547a3e8" />
+    <Assets ref="af65c5e7-078c-4fad-9e57-349e0dc7021f" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <length multiplier="none" unit="m">1234</length>
+    <b0ch multiplier="micro" unit="S">3.72877601096078</b0ch>
+    <bch multiplier="micro" unit="S">1.24292533698693</bch>
+    <g0ch multiplier="micro" unit="S">0.0118217119493674</g0ch>
+    <gch multiplier="micro" unit="S">0.0354651358481021</gch>
+    <r multiplier="none" unit="ohm">0.01452652</r>
+    <r0 multiplier="none" unit="ohm">0.04357956</r0>
+    <x multiplier="none" unit="ohm">0.00249674567</x>
+    <x0 multiplier="none" unit="ohm">0.007490237</x0>
+    <c multiplier="micro" unit="F">0.00453953738855707</c>
+    <c0 multiplier="micro" unit="F">0.0136186121656712</c0>
+    <maximumCurrent multiplier="none" unit="A">160</maximumCurrent>
+  </ACLineSegmentExt>
+  <ACLineSegmentExt>
+    <mRID>f0bdcb37-2aef-49bf-993e-e2dbbe91b6c4</mRID>
+    <name>stik 2</name>
+    <Location ref="89b7cc1f-f87b-4d18-ba8b-7588375b37e1" />
+    <Assets ref="32fbe2d8-4757-4680-82bb-b6a9649a66fa" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <length multiplier="none" unit="m">1234</length>
+    <b0ch multiplier="micro" unit="S">3.72877601096078</b0ch>
+    <bch multiplier="micro" unit="S">1.24292533698693</bch>
+    <g0ch multiplier="micro" unit="S">0.0118217119493674</g0ch>
+    <gch multiplier="micro" unit="S">0.0354651358481021</gch>
+    <r multiplier="none" unit="ohm">0.01452652</r>
+    <r0 multiplier="none" unit="ohm">0.04357956</r0>
+    <x multiplier="none" unit="ohm">0.00249674567</x>
+    <x0 multiplier="none" unit="ohm">0.007490237</x0>
+    <c multiplier="micro" unit="F">0.00453953738855707</c>
+    <c0 multiplier="micro" unit="F">0.0136186121656712</c0>
+    <maximumCurrent multiplier="none" unit="A">160</maximumCurrent>
+  </ACLineSegmentExt>
+  <Breaker>
+    <mRID>80209f40-20cd-4b54-9de0-a74521248ca4</mRID>
+    <name>BR1</name>
+    <EquipmentContainer ref="ad724db3-02e9-4c85-99ba-aaaabbbbcccc" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <normalOpen>false</normalOpen>
+  </Breaker>
+  <Breaker>
+    <mRID>3ab5c9f5-7919-4362-880a-c7e0730f5bb1</mRID>
+    <name>BR1</name>
+    <EquipmentContainer ref="f340031b-cff5-4699-b86f-198cc7cdcdd7" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <normalOpen>true</normalOpen>
+  </Breaker>
+  <Breaker>
+    <mRID>3877cfe3-5577-4888-9905-8647e5287b13</mRID>
+    <name>BR1</name>
+    <EquipmentContainer ref="f7e61f0e-7ff2-497b-82d1-fb02f693e2cd" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <normalOpen>false</normalOpen>
+  </Breaker>
+  <Breaker>
+    <mRID>658f633f-a6a6-4225-a22a-2eea308fe2be</mRID>
+    <name>BR1</name>
+    <EquipmentContainer ref="724e4062-6110-4f5b-8003-60e0b4a4c990" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </Breaker>
+  <Breaker>
+    <mRID>44966999-4e15-4d50-8a64-609ac18b4c76</mRID>
+    <name>BR1</name>
+    <EquipmentContainer ref="14506c63-dbe8-49e5-b12c-969b28edadb6" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </Breaker>
+  <Breaker>
+    <mRID>41108080-1721-4cdd-b9cf-fe25fdadccf6</mRID>
+    <name>BR1</name>
+    <EquipmentContainer ref="40711e3f-5eea-4c5e-91ea-5c332b912160" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </Breaker>
+  <Breaker>
+    <mRID>c0a71ff5-e7ee-490e-bcf2-f8d5548b83dd</mRID>
+    <name>BR1</name>
+    <EquipmentContainer ref="7af0aaf0-74e6-44b1-b7be-cd18782ff06e" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </Breaker>
+  <BusbarSection>
+    <mRID>ffe541e8-56d7-44ec-b7b6-9710e53a84d2</mRID>
+    <name>BUS1</name>
+    <EquipmentContainer ref="68632d2b-4a33-4c27-988a-0c9d5d7b4ef6" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+  </BusbarSection>
+  <BusbarSection>
+    <mRID>9e1d8a96-d9d7-4e9e-8dc3-0b6fa511933d</mRID>
+    <name>BUS2</name>
+    <EquipmentContainer ref="934116b3-8cf2-48ac-9ca3-b482f0c608cc" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+  </BusbarSection>
+  <BusbarSection>
+    <mRID>d26702d9-7f0f-4d4a-b505-56d91111c086</mRID>
+    <name>BUS3</name>
+    <EquipmentContainer ref="934116b3-8cf2-48ac-9ca3-b482f0c608cc" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+  </BusbarSection>
+  <BusbarSection>
+    <mRID>3d0828bf-a7d6-44e5-bc09-62992ce6989c</mRID>
+    <name>BUS1</name>
+    <EquipmentContainer ref="205ef3a7-fb2a-4fe2-bd82-54e9f884f8c1" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+  </BusbarSection>
+  <BusbarSection>
+    <mRID>a8365ca4-bc5c-433a-a939-e1879caf38f4</mRID>
+    <name>BUS2</name>
+    <EquipmentContainer ref="de98b866-1b9d-4503-b377-d32c60fa2493" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+  </BusbarSection>
+  <BusbarSection>
+    <mRID>4064cafe-a874-4d72-9bda-c4405b8f209b</mRID>
+    <name>BUS1</name>
+    <EquipmentContainer ref="22996c70-44d9-4460-8f42-57f06e1d05e0" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+  </BusbarSection>
+  <CurrentTransformerExt>
+    <mRID>ddae9686-4059-4e52-a45f-be59ddf5e112</mRID>
+    <name>CT1</name>
+    <EquipmentContainer ref="40711e3f-5eea-4c5e-91ea-5c332b912160" />
+    <Terminal ref="33d9e7f2-321c-4b42-8168-8fd88bc2bc2d" />
+    <maximumCurrent>200</maximumCurrent>
+  </CurrentTransformerExt>
+  <Disconnector>
+    <mRID>f3c997c3-a7c3-4e03-8828-ad34228e2e44</mRID>
+    <name>SW1</name>
+    <EquipmentContainer ref="ad724db3-02e9-4c85-99ba-cf39f4398594" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <normalOpen>false</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>52cc60f9-c4fb-4826-9f62-ee796212ff7a</mRID>
+    <name>SW2</name>
+    <EquipmentContainer ref="ad724db3-02e9-4c85-99ba-cf39f4398594" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <normalOpen>false</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>52a84df3-4f62-4b0a-aa41-4a1ec64b68f2</mRID>
+    <name>SW1</name>
+    <EquipmentContainer ref="f340031b-cff5-4699-b86f-198cc7cdcdd7" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <normalOpen>false</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>d8d89390-7306-45ec-964c-d043d303ddff</mRID>
+    <name>SW2</name>
+    <EquipmentContainer ref="f340031b-cff5-4699-b86f-198cc7cdcdd7" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <normalOpen>false</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>2fbb5df0-4cec-494e-a250-c847821d1909</mRID>
+    <name>SW1</name>
+    <EquipmentContainer ref="f7e61f0e-7ff2-497b-82d1-fb02f693e2cd" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <normalOpen>false</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>8c16c454-9005-422f-8a86-cacb01aac1e5</mRID>
+    <name>SW2</name>
+    <EquipmentContainer ref="f7e61f0e-7ff2-497b-82d1-fb02f693e2cd" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <normalOpen>false</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>ce6d3257-7c5d-4b25-b49c-d94a418b85f0</mRID>
+    <name>SW1</name>
+    <EquipmentContainer ref="724e4062-6110-4f5b-8003-60e0b4a4c990" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>b4a78ecb-7dab-4a69-8ba8-497f6e0f3685</mRID>
+    <name>SW2</name>
+    <EquipmentContainer ref="724e4062-6110-4f5b-8003-60e0b4a4c990" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>b23035db-e48b-4778-8183-199efd753f0e</mRID>
+    <name>SW3</name>
+    <EquipmentContainer ref="724e4062-6110-4f5b-8003-60e0b4a4c990" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>true</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>8643a4de-5d4d-4203-9713-f011cab2526a</mRID>
+    <name>SW1</name>
+    <EquipmentContainer ref="14506c63-dbe8-49e5-b12c-969b28edadb6" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>true</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>df33d431-c53d-483d-9380-1d7c5fcede39</mRID>
+    <name>SW2</name>
+    <EquipmentContainer ref="14506c63-dbe8-49e5-b12c-969b28edadb6" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>d6f067c9-5e6f-4e9e-860e-c50dfe938965</mRID>
+    <name>SW1</name>
+    <EquipmentContainer ref="40711e3f-5eea-4c5e-91ea-5c332b912160" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>true</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>a17a1086-1917-40be-a055-f01224e7405a</mRID>
+    <name>SW2</name>
+    <EquipmentContainer ref="40711e3f-5eea-4c5e-91ea-5c332b912160" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </Disconnector>
+  <Disconnector>
+    <mRID>f184e7f0-cdf8-45fd-ae03-fb8819454424</mRID>
+    <name>SW3</name>
+    <EquipmentContainer ref="40711e3f-5eea-4c5e-91ea-5c332b912160" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>true</normalOpen>
+  </Disconnector>
+  <EnergyConsumer>
+    <mRID>8fed8ffa-9814-4d0f-ba64-76dd0fb83354</mRID>
+    <name>EC 1</name>
+    <Location ref="b7c4774a-7ec2-4d60-bb3b-da9d033e53a9" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+  </EnergyConsumer>
+  <EnergyConsumer>
+    <mRID>48639784-f685-4238-b706-dad65ba7bc89</mRID>
+    <name>EC 2</name>
+    <Location ref="b6f9db7e-3f76-4061-9cdb-45184978dc36" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+  </EnergyConsumer>
+  <ExternalNetworkInjection>
+    <mRID>3706e23a-b4c1-4062-9301-ffdec01367a4</mRID>
+    <name>EXT1</name>
+    <Location ref="15ccba5d-6675-4490-9733-56d5276591d3" />
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+  </ExternalNetworkInjection>
+  <FaultIndicatorExt>
+    <mRID>aa17a575-bfad-4c09-989b-02abdaacaae0</mRID>
+    <name>KI1</name>
+    <EquipmentContainer ref="7af0aaf0-74e6-44b1-b7be-cd18782ff06e" />
+    <Terminal ref="be5da97f-849b-40f1-878f-5234ee2d181c" />
+    <resetKind>automatic</resetKind>
+  </FaultIndicatorExt>
+  <Fuse>
+    <mRID>2e6ad4d6-7ab9-40de-be08-9001c5db9283</mRID>
+    <name>F1</name>
+    <EquipmentContainer ref="1b7b7573-68dd-4f16-9c50-8de3bf3452f0" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </Fuse>
+  <Fuse>
+    <mRID>3e91256a-77cf-4f55-b846-4f6fb1f059f3</mRID>
+    <name>F1</name>
+    <EquipmentContainer ref="2b2e2237-c1dc-4bc3-a2eb-1a06610bb6dd" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </Fuse>
+  <Fuse>
+    <mRID>b9405815-ef73-4479-bbb4-3dad582db6e3</mRID>
+    <name>F1</name>
+    <EquipmentContainer ref="1b68994b-ebbe-4be4-a65f-e4c9a242fdb8" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <normalOpen>false</normalOpen>
+  </Fuse>
+  <Fuse>
+    <mRID>fa41ab57-8512-4cf9-8f66-2fbde70f2864</mRID>
+    <name>F1</name>
+    <EquipmentContainer ref="a929363c-899c-4e1d-be56-b17cfe50e0c3" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <normalOpen>false</normalOpen>
+  </Fuse>
+  <Fuse>
+    <mRID>cad4492c-a1de-4eb5-9c6a-ad16ce106ccc</mRID>
+    <name>F1</name>
+    <EquipmentContainer ref="dd89d923-044a-47e0-929d-a74e4f3931fd" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <normalOpen>false</normalOpen>
+  </Fuse>
+  <Fuse>
+    <mRID>70540612-2b17-4d6f-a702-913adc76f3cd</mRID>
+    <name>F1</name>
+    <EquipmentContainer ref="2ff94286-91d7-47e2-a6d6-97b0bcce8cd7" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <normalOpen>false</normalOpen>
+  </Fuse>
+  <Fuse>
+    <mRID>ef3709f0-9d91-49d4-9e30-71df7dfbaa3e</mRID>
+    <name>F1</name>
+    <EquipmentContainer ref="393d4aeb-8ce9-4c34-bef6-0c8dd60db2df" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <normalOpen>false</normalOpen>
+  </Fuse>
+  <LoadBreakSwitch>
+    <mRID>ab379798-701e-487d-b796-60b677b1329c</mRID>
+    <name>LB1</name>
+    <EquipmentContainer ref="1b7b7573-68dd-4f16-9c50-8de3bf3452f0" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </LoadBreakSwitch>
+  <LoadBreakSwitch>
+    <mRID>a1a81588-4225-485c-886d-7ec2ab76c139</mRID>
+    <name>LB1</name>
+    <EquipmentContainer ref="2b2e2237-c1dc-4bc3-a2eb-1a06610bb6dd" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </LoadBreakSwitch>
+  <LoadBreakSwitch>
+    <mRID>bea97029-964b-4b0c-953c-b3d0d733a66b</mRID>
+    <name>LB1</name>
+    <EquipmentContainer ref="a859d591-d8f1-418c-a945-b67bcec2ed28" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </LoadBreakSwitch>
+  <LoadBreakSwitch>
+    <mRID>e2537ffc-f736-4606-b6e3-7cc530e2f1f8</mRID>
+    <name>LB1</name>
+    <EquipmentContainer ref="96fda61e-20d5-49b8-8157-d35400516e23" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <normalOpen>false</normalOpen>
+  </LoadBreakSwitch>
+  <LoadBreakSwitch>
+    <mRID>c537050f-46fa-463f-babd-afa855a24324</mRID>
+    <name>LB1</name>
+    <EquipmentContainer ref="ed8984ae-cf7e-4032-a5f8-efec8143fe24" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <normalOpen>false</normalOpen>
+  </LoadBreakSwitch>
+  <LoadBreakSwitch>
+    <mRID>ed618bf6-031e-42e2-9b7e-25b594ab9f49</mRID>
+    <name>LB1</name>
+    <EquipmentContainer ref="4ea70bb5-7e53-4b94-b591-b4e9f4670e8f" />
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <normalOpen>false</normalOpen>
+  </LoadBreakSwitch>
+  <PetersenCoil>
+    <mRID>25509194-f62a-4ea9-94fa-7f8f37bf36a5</mRID>
+    <name>PETER1</name>
+    <EquipmentContainer ref="934116b3-8cf2-48ac-9ca3-b482f0c608cc" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <r multiplier="none" unit="ohm">10</r>
+    <mode>manual</mode>
+    <nominalU multiplier="none" unit="V">63000</nominalU>
+    <offsetCurrent multiplier="none" unit="A">0</offsetCurrent>
+    <positionCurrent multiplier="none" unit="A">94</positionCurrent>
+    <xGroundMax multiplier="none" unit="ohm">572</xGroundMax>
+    <xGroundMin multiplier="none" unit="ohm">6000</xGroundMin>
+    <xGroundNominal multiplier="none" unit="ohm">638</xGroundNominal>
+  </PetersenCoil>
+  <PowerTransformer>
+    <mRID>551ae812-4e9b-418d-a965-26b11edb2342</mRID>
+    <name>T1</name>
+    <EquipmentContainer ref="4c20c3f4-fe30-4ad8-84ad-334388a08576" />
+  </PowerTransformer>
+  <PowerTransformer>
+    <mRID>5beb4ddb-9182-4fb8-84d9-43d8dffeb3b9</mRID>
+    <name>T1</name>
+    <EquipmentContainer ref="76c7da50-c69b-463b-a6fe-460d8845fdaf" />
+  </PowerTransformer>
+  <PowerTransformer>
+    <mRID>5c177460-9a5b-4b85-b81f-001ad203877f</mRID>
+    <name>T2</name>
+    <EquipmentContainer ref="76c7da50-c69b-463b-a6fe-460d8845fdaf" />
+  </PowerTransformer>
+  <PowerTransformerEndExt>
+    <mRID>8b98ac1c-d73c-4201-8e34-8f9ca960d035</mRID>
+    <name>W1</name>
+    <endNumber>1</endNumber>
+    <grounded>false</grounded>
+    <BaseVoltage ref="22d28ba0-3ca9-40b7-a6b9-0c8f03913df7" />
+    <Terminal ref="2f536fbb-6f25-43c0-8abd-5e5af736a47e" />
+    <phaseAngleClock>0</phaseAngleClock>
+    <ratedS multiplier="k" unit="VA">16000</ratedS>
+    <ratedU multiplier="none" unit="V">63000</ratedU>
+    <PowerTransformer ref="551ae812-4e9b-418d-a965-26b11edb2342" />
+    <excitingCurrentZero multiplier="none">4</excitingCurrentZero>
+    <loss multiplier="none" unit="W">69320</loss>
+    <lossZero multiplier="none" unit="W">8356</lossZero>
+    <nominalVoltage multiplier="none" unit="V">60000</nominalVoltage>
+    <uk multiplier="none">9.85</uk>
+  </PowerTransformerEndExt>
+  <PowerTransformerEndExt>
+    <mRID>e3bdc415-701a-464c-b5ac-6687b5d532dd</mRID>
+    <name>W2</name>
+    <endNumber>2</endNumber>
+    <grounded>false</grounded>
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <Terminal ref="09db749e-6178-48db-8ce3-110290b6d387" />
+    <phaseAngleClock>11</phaseAngleClock>
+    <ratedS multiplier="k" unit="VA">16000</ratedS>
+    <ratedU multiplier="none" unit="V">10500</ratedU>
+    <PowerTransformer ref="551ae812-4e9b-418d-a965-26b11edb2342" />
+    <excitingCurrentZero multiplier="none">4</excitingCurrentZero>
+    <loss multiplier="none" unit="W">69320</loss>
+    <lossZero multiplier="none" unit="W">8356</lossZero>
+    <nominalVoltage multiplier="none" unit="V">10000</nominalVoltage>
+    <uk multiplier="none">9.85</uk>
+  </PowerTransformerEndExt>
+  <PowerTransformerEndExt>
+    <mRID>deed7d6c-9d43-4000-8eb6-724517b62e56</mRID>
+    <name>W1</name>
+    <endNumber>1</endNumber>
+    <grounded>false</grounded>
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <Terminal ref="97e6d601-3368-4058-9f10-7c7f9343d4ce" />
+    <phaseAngleClock>0</phaseAngleClock>
+    <ratedS multiplier="k" unit="VA">630</ratedS>
+    <ratedU multiplier="none" unit="V">10500</ratedU>
+    <PowerTransformer ref="5beb4ddb-9182-4fb8-84d9-43d8dffeb3b9" />
+    <excitingCurrentZero multiplier="none">4</excitingCurrentZero>
+    <loss multiplier="none" unit="W">69320</loss>
+    <lossZero multiplier="none" unit="W">8356</lossZero>
+    <nominalVoltage multiplier="none" unit="V">10000</nominalVoltage>
+    <uk multiplier="none">9.85</uk>
+  </PowerTransformerEndExt>
+  <PowerTransformerEndExt>
+    <mRID>ac66c72d-5cb6-4ae0-814e-7eb8e6ac19eb</mRID>
+    <name>W2</name>
+    <endNumber>2</endNumber>
+    <grounded>false</grounded>
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <Terminal ref="c6833d33-cb4b-4503-a07f-7d4de4eef1c2" />
+    <phaseAngleClock>11</phaseAngleClock>
+    <ratedS multiplier="k" unit="VA">630</ratedS>
+    <ratedU multiplier="none" unit="V">420</ratedU>
+    <PowerTransformer ref="5beb4ddb-9182-4fb8-84d9-43d8dffeb3b9" />
+    <excitingCurrentZero multiplier="none">4</excitingCurrentZero>
+    <loss multiplier="none" unit="W">69320</loss>
+    <lossZero multiplier="none" unit="W">8356</lossZero>
+    <nominalVoltage multiplier="none" unit="V">400</nominalVoltage>
+    <uk multiplier="none">9.85</uk>
+  </PowerTransformerEndExt>
+  <PowerTransformerEndExt>
+    <mRID>d955d549-daee-464d-a415-73e18a1267d2</mRID>
+    <name>W1</name>
+    <endNumber>1</endNumber>
+    <grounded>false</grounded>
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <Terminal ref="362bca7a-2e2d-4a1f-b05e-53a9455eef3f" />
+    <phaseAngleClock>0</phaseAngleClock>
+    <ratedS multiplier="k" unit="VA">630</ratedS>
+    <ratedU multiplier="none" unit="V">10500</ratedU>
+    <PowerTransformer ref="5c177460-9a5b-4b85-b81f-001ad203877f" />
+    <excitingCurrentZero multiplier="none">4</excitingCurrentZero>
+    <loss multiplier="none" unit="W">69320</loss>
+    <lossZero multiplier="none" unit="W">8356</lossZero>
+    <nominalVoltage multiplier="none" unit="V">10000</nominalVoltage>
+    <uk multiplier="none">9.85</uk>
+  </PowerTransformerEndExt>
+  <PowerTransformerEndExt>
+    <mRID>a1a84ce6-2516-4eaf-96bd-d1508d9db4e3</mRID>
+    <name>W2</name>
+    <endNumber>2</endNumber>
+    <grounded>false</grounded>
+    <BaseVoltage ref="ef7a4ad4-35ed-4226-b8f4-3f5e086649d4" />
+    <Terminal ref="66c6c20c-2cf9-4f49-b07e-e2c2ab0ca011" />
+    <phaseAngleClock>11</phaseAngleClock>
+    <ratedS multiplier="k" unit="VA">630</ratedS>
+    <ratedU multiplier="none" unit="V">420</ratedU>
+    <PowerTransformer ref="5c177460-9a5b-4b85-b81f-001ad203877f" />
+    <excitingCurrentZero multiplier="none">4</excitingCurrentZero>
+    <loss multiplier="none" unit="W">69320</loss>
+    <lossZero multiplier="none" unit="W">8356</lossZero>
+    <nominalVoltage multiplier="none" unit="V">400</nominalVoltage>
+    <uk multiplier="none">9.85</uk>
+  </PowerTransformerEndExt>
+  <RatioTapChanger>
+    <mRID>5a5fc31b-8987-405c-8567-94434f0007f0</mRID>
+    <name>TapChanger1</name>
+    <highStep>10</highStep>
+    <lowStep>1</lowStep>
+    <ltcFlag>false</ltcFlag>
+    <neutralStep>5</neutralStep>
+    <neutralU multiplier="none" unit="V">63000</neutralU>
+    <normalStep>3</normalStep>
+    <stepVoltageIncrement multiplier="none">1.8</stepVoltageIncrement>
+    <TransformerEnd ref="8b98ac1c-d73c-4201-8e34-8f9ca960d035" />
+  </RatioTapChanger>
+  <SynchronousMachine>
+    <mRID>67786ea5-2488-48a7-95fc-a0bc69314246</mRID>
+    <name>G1</name>
+    <EquipmentContainer ref="14506c63-dbe8-49e5-b12c-969b28edadb6" />
+    <BaseVoltage ref="d5514314-cd24-4fa4-a04d-782b29e93845" />
+    <ratedPowerFactor>0.8</ratedPowerFactor>
+    <ratedS multiplier="k" unit="VA">17500</ratedS>
+    <ratedU multiplier="none" unit="V">10500</ratedU>
+    <ikk multiplier="none" unit="A">0.69</ikk>
+    <maxQ multiplier="k" unit="VAr">7000</maxQ>
+    <minQ multiplier="k" unit="VAr">-3500</minQ>
+    <mu>1</mu>
+    <qPercent multiplier="none">0</qPercent>
+    <r multiplier="none" unit="ohm">0.0022</r>
+    <r0 multiplier="none">0.0066</r0>
+    <r2 multiplier="none">0.0225</r2>
+    <referencePriority>0</referencePriority>
+    <satDirectSubtransX multiplier="none">1.45</satDirectSubtransX>
+    <shortCircuitRotorType>turboSeries1</shortCircuitRotorType>
+    <type>generator</type>
+    <voltageRegulationRange multiplier="none">10</voltageRegulationRange>
+    <x0 multiplier="none">0.083</x0>
+    <x2 multiplier="none">0.148</x2>
+  </SynchronousMachine>
+</ProfileEnvelop>
