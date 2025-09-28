@@ -1790,35 +1790,14 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 asset.lifecycle.installationDate = Convert.ToDateTime(cimObj.GetPropertyValueAsString("cim.asset.installationdate"));
             }
 
-            if (cimObj.ContainsPropertyValue("cim.ref.organisationroles"))
+            asset.OrganisationRoles = MapRelation(cimObj, "cim.ref.organisationroles", (string referenceType, string @ref) =>
             {
-                string roleRef = cimObj.GetPropertyValueAsString("cim.ref.organisationroles");
-
-                if (roleRef != null)
+                return new AssetOrganisationRole()
                 {
-                    string[] roles = roleRef.Split(",");
-
-                    List<AssetOrganisationRole> orgRoles = new();
-
-                    foreach (var role in roles)
-                    {
-                        string[] refTypeAndRef = role.Split(":");
-
-                        if (refTypeAndRef.Length == 2)
-                        {
-                            AssetOrganisationRole assetOrganisationRole = new AssetOrganisationRole()
-                            {
-                                referenceType = refTypeAndRef[0],
-                                @ref = refTypeAndRef[1]
-                            };
-
-                            orgRoles.Add(assetOrganisationRole);
-                        }
-                    }
-
-                    asset.OrganisationRoles = orgRoles.ToArray();
-                }
-            }
+                    referenceType = referenceType,
+                    @ref = @ref
+                };
+            });
 
 
             if (cimObj.ContainsPropertyValue("cim.asset.productmodel"))
@@ -1834,10 +1813,16 @@ namespace DAX.IO.CIM.Serialization.CIM100
             return asset;
         }
 
-
         private AssetExt MapIdentifiedObjectAssetRef(CIMIdentifiedObject cimObj, PowerSystemResource xmlObj, bool forceAssetRecord = false)
         {
-            xmlObj.Assets = new PowerSystemResourceAssets() { @ref = "hest" };
+            xmlObj.Assets = MapRelation(cimObj, "cim.ref.assets", (string referenceType, string @ref) =>
+            {
+                return new PowerSystemResourceAssets()
+                {
+                    referenceType = referenceType,
+                    @ref = @ref
+                };
+            }).FirstOrDefault();
 
             return null;
         }
@@ -2230,7 +2215,42 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 }
             }
         }
-               
+
+        private T[] MapRelation<T>(CIMIdentifiedObject cimObj, string propertyName, Func<string, string, T> f)
+        {
+            if (cimObj.ContainsPropertyValue(propertyName))
+            {
+                string roleRef = cimObj.GetPropertyValueAsString(propertyName);
+
+                if (roleRef != null)
+                {
+                    string[] roles = roleRef.Split(",");
+
+                    List<T> orgRoles = new();
+
+                    foreach (var role in roles)
+                    {
+                        string[] refTypeAndRef = role.Split(":");
+
+                        if (refTypeAndRef.Length == 1)
+                        {
+                            T assetOrganisationRole = f(null, refTypeAndRef[0]);
+                            orgRoles.Add(assetOrganisationRole);
+                        }
+                        else if (refTypeAndRef.Length == 2)
+                        {
+                            T assetOrganisationRole = f(refTypeAndRef[0], refTypeAndRef[1]);
+                            orgRoles.Add(assetOrganisationRole);
+                        }
+                    }
+
+                    return orgRoles.ToArray();
+                }
+            }
+
+            return [];
+        }
+
         private Location CreateLocation(double[] coords, CIMIdentifiedObject cimObj)
         {
             Location loc = null;
