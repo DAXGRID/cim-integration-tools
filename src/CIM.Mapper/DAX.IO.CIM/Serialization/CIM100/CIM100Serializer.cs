@@ -1819,7 +1819,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
             {
                 return new PowerSystemResourceAssets()
                 {
-                    referenceType = referenceType,
+                    referenceType = null,
                     @ref = @ref
                 };
             }).FirstOrDefault();
