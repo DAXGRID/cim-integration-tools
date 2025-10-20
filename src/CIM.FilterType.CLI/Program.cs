@@ -1,9 +1,36 @@
-﻿namespace CIM.FilterType.CLI;
+﻿using System.CommandLine;
+
+namespace CIM.FilterType.CLI;
 
 internal static class Program
 {
-    public static void Main()
+    public static async Task<int> Main(string[] args)
     {
-        Console.WriteLine("CIM Filter Type CLI.");
+        var rootCommand = new RootCommand("CIM Filter Type CLI.");
+
+        var inputFilePathOption = new Option<string>(
+            name: "--input-file-path",
+            description: "The path to the input file, example: /home/user/my_input_file.jsonl."
+        )
+        { IsRequired = true };
+
+        var outputFilePathOption = new Option<string>(
+            name: "--output-file-path",
+            description: "The path to the output file, example: /home/user/my_output_file.jsonl."
+        )
+        { IsRequired = true };
+
+        rootCommand.Add(inputFilePathOption);
+        rootCommand.Add(outputFilePathOption);
+
+        rootCommand.SetHandler(
+            async (inputFilePath, outputFilePath) =>
+            {
+                await Task.Delay(1000).ConfigureAwait(false);
+            },
+            inputFilePathOption,
+            outputFilePathOption);
+
+        return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
 }
