@@ -20,16 +20,25 @@ internal static class Program
         )
         { IsRequired = true };
 
+        var includedTypes = new Option<string[]>(
+            name: "--included-types",
+            description: "The types that should be included in the output."
+        )
+        { IsRequired = true };
+
         rootCommand.Add(inputFilePathOption);
         rootCommand.Add(outputFilePathOption);
+        rootCommand.Add(includedTypes);
 
         rootCommand.SetHandler(
-            async (inputFilePath, outputFilePath) =>
+            async (inputFilePath, outputFilePath, includedTypes) =>
             {
                 await Task.Delay(1000).ConfigureAwait(false);
             },
             inputFilePathOption,
-            outputFilePathOption);
+            outputFilePathOption,
+            includedTypes
+        );
 
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
     }
