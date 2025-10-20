@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using System.Text.Json;
 
 namespace CIM.FilterType.CLI;
 
@@ -20,7 +21,7 @@ internal static class Program
         )
         { IsRequired = true };
 
-        var includedTypes = new Option<string[]>(
+        var includedTypesOption = new Option<List<string>>(
             name: "--included-types",
             description: "The types that should be included in the output."
         )
@@ -28,18 +29,39 @@ internal static class Program
 
         rootCommand.Add(inputFilePathOption);
         rootCommand.Add(outputFilePathOption);
-        rootCommand.Add(includedTypes);
+        rootCommand.Add(includedTypesOption);
 
         rootCommand.SetHandler(
             async (inputFilePath, outputFilePath, includedTypes) =>
             {
-                await Task.Delay(1000).ConfigureAwait(false);
+                await ExecuteFilterAsync(inputFilePath, outputFilePath, includedTypes.ToHashSet()).ConfigureAwait(false);
             },
             inputFilePathOption,
             outputFilePathOption,
-            includedTypes
+            includedTypesOption
         );
 
         return await rootCommand.InvokeAsync(args).ConfigureAwait(false);
+    }
+
+    private static async Task ExecuteFilterAsync(
+        string inputFilePath,
+        string outputFilePath,
+        HashSet<string> includedTypes)
+    {
+        var linesAsync = File.ReadLinesAsync(inputFilePath).ConfigureAwait(false);
+        using var outputFileStream = new StreamWriter(outputFilePath);
+
+        await foreach (var line in linesAsync.ConfigureAwait(false))
+        {
+            var objectType =
+                JsonDocument.Parse(line).RootElement.GetProperty("$type").GetString()
+                ?? throw new InvalidOperationException("Could not get the $type from the line.");
+
+            if (includedTypes.Contains(objectType))
+            {
+                await outputFileStream.WriteLineAsync(line).ConfigureAwait(false);
+            }
+        }
     }
 }
