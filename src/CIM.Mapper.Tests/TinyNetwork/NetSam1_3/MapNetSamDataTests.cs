@@ -73,7 +73,7 @@ namespace CIM.Mapper.Tests.TinyNetwork.NetSam1_3
                 // Run validator
                 string validatorOutputFileName = $"{rootFolder}/data/validator_ouput.jsonl";
 
-                await Validator.CLI.Program.Main(new string[] { $"--input-file={mapperOutputFileName}", $"--output-file={validatorOutputFileName}"});
+                await Validator.CLI.Program.Main(new string[] { $"--input-file={mapperOutputFileName}", $"--output-file={validatorOutputFileName}" });
 
                 // This is a hack for now, I'll handle it better in the future where it does not do a contains.
                 var validatorLines = File.ReadAllLines(validatorOutputFileName).Where(x => x.Contains("\"Severity\":\"Error\"")).ToList();
