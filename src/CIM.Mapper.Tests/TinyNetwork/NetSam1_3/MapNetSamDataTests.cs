@@ -138,7 +138,7 @@ namespace CIM.Mapper.Tests.TinyNetwork.NetSam1_3
         }
 
         [Fact]
-        public async Task MapNetSamToCim100()
+        public void MapNetSamToCim100()
         {
             string rootFolder = @"c:/data/test";
 
@@ -177,7 +177,6 @@ namespace CIM.Mapper.Tests.TinyNetwork.NetSam1_3
 
                 var stopWatch = Stopwatch.StartNew();
             }
-                      
         }
     }
 }
