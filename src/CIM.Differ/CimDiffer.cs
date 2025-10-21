@@ -285,11 +285,6 @@ from type {objectType}");
 
             return (prev, nev) =>
             {
-                //
-
-                //var previousValue = accessor[prev, property];
-                //var newValue = accessor[nev, property];
-
                 if (AreEqual(prev, nev)) return EmptyPropMod;
 
                 return (
@@ -298,109 +293,6 @@ from type {objectType}");
                 );
             };
 
-            //if (type == typeof(Point2D))
-            //{
-            //    return (prev, nev) =>
-            //    {
-            //        var previousX = (double)accessor.GetValueOrNull(previousValue, nameof(Point2D.X));
-            //        var newX = (double)accessor.GetValueOrNull(newValue, nameof(Point2D.X));
-            //        var previousY = (double)accessor.GetValueOrNull(previousValue, nameof(Point2D.Y));
-            //        var newY = (double)accessor.GetValueOrNull(newValue, nameof(Point2D.Y));
-
-            //        if (AreEqual(previousX, newX) && AreEqual(previousY, newY)) return EmptyPropMod;
-
-            //        return (
-            //            new PropertyModification
-            //            {
-            //                Name = property,
-            //                IsReference = false,
-            //                Value = EncodeCoords2(newX, newY)
-            //            },
-            //            new PropertyModification
-            //            {
-            //                Name = property,
-            //                IsReference = false,
-            //                Value = EncodeCoords2(previousX, previousY)
-            //            }
-            //        );
-            //    };
-            //}
-
-            //if (IsReferenceType(accessor))
-            //{
-            //    return (prev, nev) =>
-            //    {
-            //        var previousType = (string)accessor.GetValueOrNull(previousValue, nameof(PowerSystemResourceAssets.referenceType));
-            //        var newType = (string)accessor.GetValueOrNull(newValue, nameof(PowerSystemResourceAssets.referenceType));
-            //        var previousRef = (string)accessor.GetValueOrNull(previousValue, nameof(PowerSystemResourceAssets.@ref));
-            //        var newRef = (string)accessor.GetValueOrNull(newValue, nameof(PowerSystemResourceAssets.@ref));
-
-            //        if (AreEqual(previousType, newType) && AreEqual(previousRef, newRef)) return EmptyPropMod;
-
-            //        return (
-            //            new PropertyModification
-            //            {
-            //                Name = property,
-            //                IsReference = true,
-            //                Value = EncodeRef(newType, newRef)
-            //            },
-            //            new PropertyModification
-            //            {
-            //                Name = property,
-            //                IsReference = true,
-            //                Value = EncodeRef(previousType, previousRef)
-            //            }
-            //        );
-            //    };
-            //}
-
-            //if (IsValueType(accessor))
-            //{
-            //    return (prev, nev) =>
-            //    {
-            //        var previousValueField = accessor.GetValueOrNull(previousValue, nameof(KiloActivePower.Value));
-            //        var newValueField = accessor.GetValueOrNull(newValue, nameof(KiloActivePower.Value));
-
-            //        var previousUnitField = accessor.GetValueOrNull(previousValue, nameof(KiloActivePower.unit));
-            //        var newUnitField = accessor.GetValueOrNull(previousValue, nameof(KiloActivePower.unit));
-
-            //        var previousMultiplierField = accessor.GetValueOrNull(previousValue, nameof(KiloActivePower.multiplier));
-            //        var newMultiplierField = accessor.GetValueOrNull(previousValue, nameof(KiloActivePower.multiplier));
-
-            //        if (AreEqual(previousValueField, newValueField)
-            //            && AreEqual(previousUnitField, newUnitField)
-            //            && AreEqual(previousMultiplierField, newMultiplierField)) return EmptyPropMod;
-
-            //        return (
-            //            new PropertyModification
-            //            {
-            //                Name = property,
-            //                IsReference = false,
-            //                Multiplier = (UnitMultiplier)newMultiplierField,
-            //                Unit = (UnitSymbol)newUnitField,
-            //                Value = FormatValue(newValueField)
-            //            },
-            //            new PropertyModification
-            //            {
-            //                Name = property,
-            //                IsReference = false,
-            //                Multiplier = (UnitMultiplier)previousMultiplierField,
-            //                Unit = (UnitSymbol)previousUnitField,
-            //                Value = FormatValue(previousValueField)
-            //            }
-            //        );
-            //    };
-            //}
-
-            //return (prev, nev) =>
-            //{
-            //    if (AreEqual(prev, nev)) return EmptyPropMod;
-
-            //    return (
-            //        new PropertyModification { Name = property, IsReference = false, Value = nev?.ToString() },
-            //        new PropertyModification { Name = property, IsReference = false, Value = prev?.ToString() }
-            //    );
-            //};
         }
 
         static string EncodeRef(string type, string @ref) => $"{type}/{@ref}";
@@ -424,58 +316,6 @@ from type {objectType}");
             var valueAccessor = TypeAccessor.Create(memberType);
 
             return moditication => moditication.Value;
-
-            //if (IsReferenceType(valueAccessor))
-            //{
-            //    return modification =>
-            //    {
-            //        var newValue = valueAccessor.CreateNew();
-            //        var parts = modification.Value.Split('/').Select(v => v.Trim()).ToArray();
-
-            //        if (parts.Length != 2)
-            //        {
-            //            throw new FormatException($"Could not turn the text '{modification.Value}' into a reference - expected exactly two parts separated by /");
-            //        }
-
-            //        valueAccessor[newValue, nameof(PowerSystemResourceAssets.referenceType)] = parts[0];
-            //        valueAccessor[newValue, nameof(PowerSystemResourceAssets.@ref)] = parts[1];
-
-            //        return newValue;
-            //    };
-            //}
-
-            //if (IsValueType(accessor))
-            //{
-            //    return modification =>
-            //    {
-            //        var newValue = valueAccessor.CreateNew();
-
-            //        valueAccessor[newValue, "Value"] = double.Parse(modification.Value, InvariantCulture);
-            //        valueAccessor[newValue, "unit"] = modification.Unit;
-            //        valueAccessor[newValue, "multiplier"] = modification.Multiplier;
-
-            //        return newValue;
-            //    };
-            //}
-
-            //if (memberType.IsEnum)
-            //{
-            //    return modification => modification.Value != null
-            //        ? Enum.Parse(memberType, modification.Value)
-            //        : null;
-            //}
-
-            //return modification =>
-            //{
-            //    try
-            //    {
-            //        return Convert.ChangeType(modification.Value, memberType);
-            //    }
-            //    catch (Exception exception)
-            //    {
-            //        throw new FormatException($"Could not turn '{modification.Value}' into a {memberType}", exception);
-            //    }
-            //};
         }
 
         static bool IsValueType(TypeAccessor accessor)
