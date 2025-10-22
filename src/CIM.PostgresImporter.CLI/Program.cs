@@ -220,7 +220,11 @@ internal static class Program
         logger.LogInformation($"Total CIM objects imported: '{totalInsertCountByType.Sum(x => x.Value)}'.");
         foreach (var insertionCountPair in totalInsertCountByType)
         {
-            logger.LogInformation($"Inserted a total of '{insertionCountPair.Value}' of type '{insertionCountPair.Key}'.");
+            // This is done to handle relationship types, so they're not written out, since the count will always be 0.
+            if (insertionCountPair.Value > 0)
+            {
+                logger.LogInformation($"Inserted a total of '{insertionCountPair.Value}' of type '{insertionCountPair.Key}'.");
+            }
         }
     }
 }

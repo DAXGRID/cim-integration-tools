@@ -15,7 +15,7 @@ internal static class PostgresSqlBuilder
         var primaryKeys = string.Join(",", schemaType.Properties.Where(x => x.IsPrimaryKey).Select(x => CustomTableAndColumnNameConverter(x.Name)));
 
         var ifExists = addIfNotExists ? "IF NOT EXISTS" : "";
-        var columns = string.Join(",\n  ", schemaType.Properties.Where(x => !x.ManyToManyAttribute).Select(x => $"\"{CustomTableAndColumnNameConverter(x.Name)}\" {ConvertInternalTypeToPostgresqlType(x.Type)}"));
+        var columns = string.Join(",\n  ", schemaType.Properties.Where(x => !x.ManyToManyAttribute).Select(x => $"\"{CustomTableAndColumnNameConverter(x.Name)}\" {ConvertInternalTypeToPostgresqlType(x.Type, x.Name)}"));
         return @$"
 CREATE TABLE {ifExists} ""{schemaName}"".""{CustomTableAndColumnNameConverter(schemaType.Name)}"" (
   {columns},
@@ -38,9 +38,13 @@ CREATE TABLE {ifExists} ""{schemaName}"".""{CustomTableAndColumnNameConverter(sc
         #pragma warning restore CA1308
     }
 
-    private static string ConvertInternalTypeToPostgresqlType(Type type)
+    private static string ConvertInternalTypeToPostgresqlType(Type type, string propertyName)
     {
-        if (type == typeof(int))
+        if (propertyName.Equals("geometry", StringComparison.OrdinalIgnoreCase))
+        {
+            return "GEOMETRY";
+        }
+        else if (type == typeof(int))
         {
             return "INTEGER";
         }
@@ -59,10 +63,6 @@ CREATE TABLE {ifExists} ""{schemaName}"".""{CustomTableAndColumnNameConverter(sc
         else if (type == typeof(bool))
         {
             return "BOOLEAN";
-        }
-        else if (type == typeof(ICollection<Point2D>))
-        {
-            return $"GEOMETRY";
         }
         else if (type == typeof(ICollection<Guid>))
         {

@@ -40,7 +40,7 @@ internal static class AcLineSegmentValidation
         }
 
         // The referenced location should be a line.
-        if (location is LocationExt && ((LocationExt)location).coordinates.Length < 2)
+        if (location is LocationExt && ((LocationExt)location).GeometryType != GeometryType.LineString)
         {
             return new ValidationError
             {

@@ -51,14 +51,6 @@ internal sealed record SchemaTypeProperty
 }
 
 #pragma warning disable CA1812 // Type class for utility useage.
-internal sealed record Point2D
-{
-    public double X { get; init; }
-    public double Y { get; init; }
-}
-#pragma warning restore CA1812
-
-#pragma warning disable CA1812 // Type class for utility useage.
 internal sealed class CompositeObject { }
 #pragma warning restore CA1812
 
@@ -253,17 +245,6 @@ internal static class DynamicSchema
             case JsonValueKind.False:
                 return typeof(bool);
             default:
-                if (jsonElement.TryGetProperty("$type", out var elementType))
-                {
-                    // Point2D is a special type.
-                    // In the future it might be simplified to an array of arrays with doubles in side.
-                    // Until then it's handled in this way.
-                    if (elementType.GetString() == "Point2D")
-                    {
-                        return typeof(Point2D);
-                    }
-                }
-
                 return typeof(CompositeObject);
         }
 

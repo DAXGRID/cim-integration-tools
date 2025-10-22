@@ -2,6 +2,7 @@
 using DAX.IO.CIM.Processing;
 using DAX.Util;
 using System.Globalization;
+using System.Text;
 
 namespace DAX.IO.CIM.Serialization.CIM100
 {
@@ -2099,20 +2100,29 @@ namespace DAX.IO.CIM.Serialization.CIM100
             loc = new LocationExt() { mRID = GUIDHelper.CreateDerivedGuid(cimObj.mRID, 999, true).ToString() };
             loc.CoordinateSystem = new LocationCoordinateSystem() { @ref = _coordSys.mRID };
 
-            if (coords != null)
+            if (coords is not null)
             {
-                List<Point2D> points = new List<Point2D>();
+                var stringBuilder = new StringBuilder();
 
-                for (int i = 0; i < coords.Length; i += 2)
+                stringBuilder.AppendLine("[");
+
+                // LineString
+                if (coords.Length > 2)
                 {
-                    double x = ((double)coords[i]);
-                    double y = ((double)coords[i + 1]);
-
-                    points.Add(new Point2D(x, y));
-
+                    ((LocationExt)loc).GeometryType = GeometryType.LineString;
+                    ((LocationExt)loc).Geometry = $"[{String.Join(",", coords.Chunk(2).Select(x => $"[{x[0]}, {x[1]}]"))}]";
                 }
-
-                ((LocationExt)loc).coordinates = points.ToArray();
+                // Point
+                else if (coords.Length == 2)
+                {
+                    ((LocationExt)loc).GeometryType = GeometryType.Point;
+                    ((LocationExt)loc).Geometry = $"[{coords[0]}, {coords[1]}]";
+                }
+                // Not handled geometry type
+                else
+                {
+                    throw new InvalidOperationException($"Could not handle geometry with length '{coords.Length}'.");
+                }
             }
 
             return loc;

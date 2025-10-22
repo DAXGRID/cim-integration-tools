@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CIM.PhysicalNetworkModel;
+﻿using CIM.PhysicalNetworkModel;
 using CIM.PhysicalNetworkModel.Traversal;
 using CIM.PhysicalNetworkModel.Traversal.Extensions;
 using DAX.IO.CIM;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Operation.Linemerge;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CIM.PowerFactoryExporter
 {
@@ -162,7 +163,7 @@ namespace CIM.PowerFactoryExporter
                                     throw new Exception("Cannot merge ACLS: " + acls1.mRID + " and " + acls2.mRID);
 
                                 // Overwrite loc 1 coordinated with merged strings
-                                loc1.coordinates = GetPoints((LineString)mergedLineList[0]).ToArray();
+                                loc1.Geometry = GetStringGeometry((LineString)mergedLineList[0]);
 
                                 // Sum length
                                 acls1.length.Value += acls2.length.Value;
@@ -312,7 +313,7 @@ namespace CIM.PowerFactoryExporter
                             {
                                 var aclsCn = aclsConnections.First(o => o.ConnectivityNode != ecCn).ConnectivityNode;
 
-                         
+
                                 var aclsSt = aclsCn.GetSubstation(context);
 
                                 if (aclsSt == null)
@@ -390,21 +391,18 @@ namespace CIM.PowerFactoryExporter
 
         private Geometry GetGeometry(PhysicalNetworkModel.LocationExt location)
         {
-            List<Coordinate> points = new List<Coordinate>();
-            foreach (var locPt in location.coordinates)
-                points.Add(new Coordinate(locPt.X, locPt.Y));
+            var convertedPoints = JsonConvert.DeserializeObject<double[][]>(location.Geometry);
+
+            var points = new List<Coordinate>();
+            foreach (var point in convertedPoints)
+                points.Add(new Coordinate(point[0], point[1]));
 
             return (new LineString(points.ToArray()));
         }
 
-        private List<PhysicalNetworkModel.Point2D> GetPoints(LineString line)
+        private string GetStringGeometry(LineString line)
         {
-            List<PhysicalNetworkModel.Point2D> result = new List<Point2D>();
-
-            foreach (var pt in line.Coordinates)
-                result.Add(new Point2D() { X = pt.X, Y = pt.Y });
-
-            return result;
+            return $"[{String.Join(",", line.Coordinates.Select(coord => $"[{coord.X}, {coord.Y}]"))}]";
         }
     }
 }

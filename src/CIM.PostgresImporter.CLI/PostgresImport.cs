@@ -169,19 +169,27 @@ internal static class PostgresImport
                     {
                         parameter = propertyValue.Value.GetRawText();
                     }
-                    else if (propertyType == typeof(ICollection<Point2D>))
+                    else if (schemaProperty.Key.Equals("Geometry", StringComparison.OrdinalIgnoreCase))
                     {
-                        var points = propertyValue.Value.Deserialize<ICollection<Point2D>>()?.ToArray()
-                            ?? throw new InvalidOperationException("Could not deserialize point array.");
+                        var geometryType = properties.First(x => x.Key == "GeometryType").Value.GetString()!;
 
                         Geometry? geometry;
-                        if (points.Length == 1)
+
+                        var coordinateJson = propertyValue.Value.GetString()!;
+
+                        if (geometryType.Equals("Point", StringComparison.OrdinalIgnoreCase))
                         {
-                            geometry = new Point(points[0].X, points[0].Y);
+                            var coordinates = JsonSerializer.Deserialize<double[]>(coordinateJson)!;
+                            geometry = new Point(coordinates[0], coordinates[1]);
+                        }
+                        else if (geometryType.Equals("LineString", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var coordinates = JsonSerializer.Deserialize<double[][]>(coordinateJson)!;
+                            geometry = new LineString(coordinates.Select(x => new Coordinate(x[0], x[1])).ToArray());
                         }
                         else
                         {
-                            geometry = new LineString(points.Select(x => new Coordinate(x.X, x.Y)).ToArray());
+                            throw new InvalidOperationException($"Could not handle: '{geometryType}'.");
                         }
 
                         geometry.SRID = srid;
@@ -195,7 +203,8 @@ internal static class PostgresImport
                     await postgresqlBinaryWriter
                         .WriteAsync(
                             parameter,
-                            ConvertInternalTypeToPostgresqlType(propertyType))
+                            schemaProperty.Key.Equals("Geometry", StringComparison.OrdinalIgnoreCase)
+                            ? NpgsqlDbType.Geometry : ConvertInternalTypeToPostgresqlType(propertyType))
                         .ConfigureAwait(false);
                 }
             }
@@ -219,7 +228,6 @@ internal static class PostgresImport
         { typeof(Guid), NpgsqlDbType.Uuid },
         { typeof(string), NpgsqlDbType.Text },
         { typeof(bool), NpgsqlDbType.Boolean },
-        { typeof(ICollection<Point2D>), NpgsqlDbType.Geometry },
         { typeof(ICollection<Guid>), NpgsqlDbType.Array | NpgsqlDbType.Uuid },
         { typeof(ICollection<string>), NpgsqlDbType.Array | NpgsqlDbType.Text },
         { typeof(CompositeObject), NpgsqlDbType.Jsonb }

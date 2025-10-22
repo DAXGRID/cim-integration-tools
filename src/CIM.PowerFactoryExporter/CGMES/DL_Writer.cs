@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace CIM.PowerFactoryExporter
 {
@@ -62,16 +63,18 @@ namespace CIM.PowerFactoryExporter
         {
             Guid locationId = AddLocation(psrId, Guid.Parse(loc.mRID));
 
-            if (loc.coordinates.Length == 1)
+            if (loc.GeometryType == PhysicalNetworkModel.GeometryType.Point)
             {
-                AddPositionPoint(locationId, 0, loc.coordinates[0].X, loc.coordinates[0].Y);
+                var point = JsonConvert.DeserializeObject<double[]>(loc.Geometry);
+                AddPositionPoint(locationId, 0, point[0], point[1]);
             }
             else
             {
                 int seqNo = 1;
-                foreach (var coord in loc.coordinates)
+                var points = JsonConvert.DeserializeObject<double[][]>(loc.Geometry);
+                foreach (var point in points)
                 {
-                    AddPositionPoint(locationId, seqNo, coord.X, coord.Y);
+                    AddPositionPoint(locationId, seqNo, point[0], point[1]);
                     seqNo++;
                 }
             }

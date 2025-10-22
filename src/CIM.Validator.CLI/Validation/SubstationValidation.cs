@@ -30,7 +30,7 @@ internal static class SubstationValidation
             };
         }
 
-        if (l is LocationExt && ((LocationExt)l).coordinates.Length != 1)
+        if (l is LocationExt && ((LocationExt)l).GeometryType != GeometryType.Point)
         {
             return new ValidationError
             {

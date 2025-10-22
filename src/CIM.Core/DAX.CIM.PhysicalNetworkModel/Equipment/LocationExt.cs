@@ -6,17 +6,31 @@
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://daxgrid.net/PhysicalNetworkModel_0_1")]
     public partial class LocationExt : Location
     {
-        private Point2D[] coordinatesField;
+        private GeometryType geometryType;
 
-        public Point2D[] coordinates
+        private string geometry;
+
+        public GeometryType GeometryType
         {
             get
             {
-                return this.coordinatesField;
+                return this.geometryType;
             }
             set
             {
-                this.coordinatesField = value;
+                this.geometryType = value;
+            }
+        }
+
+        public string Geometry
+        {
+            get
+            {
+                return this.geometry;
+            }
+            set
+            {
+                this.geometry = value;
             }
         }
     }
