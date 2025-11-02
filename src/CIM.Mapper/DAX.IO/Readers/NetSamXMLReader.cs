@@ -624,7 +624,11 @@ namespace DAX.IO.Readers
                 // End of cim property
                 else if (reader.Depth == 2 && reader.NodeType == XmlNodeType.EndElement)
                 {
-                    keyValuePairs.Add(attributeName.ToLower(), attributeValue);
+                    if (!keyValuePairs.TryAdd(attributeName.ToLower(), attributeValue))
+                    {
+                        throw new InvalidDataException(
+                            $"Duplicate CIM property: '{attributeName.ToLower()}' on line {lineNumber}.");
+                    }
                 }
                 // End of cim object
                 if (reader.Depth == 1 && reader.NodeType == XmlNodeType.EndElement)
