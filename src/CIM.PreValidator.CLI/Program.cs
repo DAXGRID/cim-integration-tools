@@ -43,6 +43,7 @@ internal static class Program
     {
         var mrids = new HashSet<Guid>();
         var duplicateIds = new HashSet<Guid>();
+        var invalidMrIds = new List<(int lineNumber, string invalidMrid)>();
 
         using (var reader = XmlReader.Create(inputFilePath, new XmlReaderSettings { Async = true }))
         {
@@ -50,18 +51,37 @@ internal static class Program
             {
                 if (reader.NodeType == XmlNodeType.Element && reader.LocalName == "mRID")
                 {
-                    var mrid = Guid.Parse(await reader.ReadElementContentAsStringAsync().ConfigureAwait(false));
-                    if (mrids.Contains(mrid))
+                    var mridXmlValue = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                    if (Guid.TryParse(mridXmlValue, out var mrid))
                     {
-                        duplicateIds.Add(mrid);
-                    }
+                        if (mrids.Contains(mrid))
+                        {
+                            duplicateIds.Add(mrid);
+                        }
 
-                    mrids.Add(mrid);
+                        mrids.Add(mrid);
+
+                    }
+                    else
+                    {
+                        var xmlInfo = (IXmlLineInfo)reader;
+                        invalidMrIds.Add((xmlInfo.LineNumber, mridXmlValue));
+                    }
                 }
             }
         }
 
-        var validationErrors = duplicateIds.Select(x =>
+        var validationErrorsInvalidMrids = invalidMrIds.Select(x =>
+            new ValidationError
+            {
+                IdentifiedObjectId = $"INVALID_MRID_{x.invalidMrid}_{x.lineNumber}",
+                Code = "INVALID_MRID",
+                Description = $"Invalid MRID: {x.invalidMrid} on line {x.lineNumber}.",
+                Severity = Severity.Error,
+                IdentifiedObjectClass = "IdentifiedObject",
+            });
+
+        var validationErrorDuplicateIds = duplicateIds.Select(x =>
             new ValidationError
             {
                 IdentifiedObjectId = x.ToString(),
@@ -73,7 +93,12 @@ internal static class Program
 
         using (var sw = new StreamWriter(outputFilePath))
         {
-            foreach (var validationError in validationErrors)
+            foreach (var validationError in validationErrorsInvalidMrids)
+            {
+                await sw.WriteLineAsync(JsonSerializer.Serialize(validationError)).ConfigureAwait(false);
+            }
+
+            foreach (var validationError in validationErrorDuplicateIds)
             {
                 await sw.WriteLineAsync(JsonSerializer.Serialize(validationError)).ConfigureAwait(false);
             }
