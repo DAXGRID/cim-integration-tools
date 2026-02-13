@@ -1036,7 +1036,7 @@
     <ConnectivityNode ref="c112a5ea-8cba-454b-b4be-cd7061acba0e" />
   </Terminal>
   <Terminal>
-    <mRID>f558d2d9-af73-4a80-b9d5-d066dc538f23</mRID>
+    <mRID>66c6c20c-2cf9-4f49-b07e-e2c2ab0ca011</mRID>
     <sequenceNumber>2</sequenceNumber>
     <ConductingEquipment ref="5beb4ddb-9182-4fb8-84d9-43d8dffeb3b9" />
     <ConnectivityNode ref="379f1951-764c-4464-947d-025fda5a63ac" />
@@ -1210,7 +1210,7 @@
     <ConnectivityNode ref="c112a5ea-8cba-454b-b4be-cd7061acba0e" />
   </Terminal>
   <Terminal>
-    <mRID>3ee0b862-634d-4e8d-baef-e389b6714630</mRID>
+    <mRID>362bca7a-2e2d-4a1f-b05e-53a9455eef3f</mRID>
     <sequenceNumber>2</sequenceNumber>
     <ConductingEquipment ref="5c177460-9a5b-4b85-b81f-001ad203877f" />
     <ConnectivityNode ref="379f1951-764c-4464-947d-025fda5a63ac" />
