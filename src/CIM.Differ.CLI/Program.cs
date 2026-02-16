@@ -11,17 +11,20 @@ internal static class Program
         var previousStateFileOption = new Option<string?>(
             name: "--previous-state-file",
             description: "The path to the previous state file. Example: './my-previous-state-file.jsonl'."
-        ) { IsRequired = false };
+        )
+        { IsRequired = false };
 
         var newStateFileOption = new Option<string>(
             name: "--new-state-file",
             description: "The path to the new state file. Example: './my-new-state-file.jsonl'."
-        ) {  IsRequired = true };
+        )
+        { IsRequired = true };
 
         var outputFileOption = new Option<string>(
             name: "--output-file",
             description: "The path and filename of the output file. Example: '/home/notation/my-new-outputfile.jsonl'."
-        ) {  IsRequired = true };
+        )
+        { IsRequired = true };
 
         var rootCommand = new RootCommand("CIM Differ CLI.");
         rootCommand.Add(previousStateFileOption);
