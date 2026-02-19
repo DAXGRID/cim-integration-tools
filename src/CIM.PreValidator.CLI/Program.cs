@@ -60,7 +60,6 @@ internal static class Program
                         }
 
                         mrids.Add(mrid);
-
                     }
                     else
                     {
