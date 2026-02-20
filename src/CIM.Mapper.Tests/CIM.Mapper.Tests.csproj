@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CIM.Filter.CLI\CIM.Filter.CLI.csproj" />
     <ProjectReference Include="..\CIM.Mapper\CIM.Mapper.csproj" />
     <ProjectReference Include="..\CIM.Validator.CLI\CIM.Validator.CLI.csproj" />
   </ItemGroup>

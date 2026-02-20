@@ -28,24 +28,29 @@ namespace CIM.PowerFactoryExporter
         public static DateTime _timeStamp = DateTime.Now;
 
         static string _modelVersion = "http://konstant.dk/CIM/AssetExtension/1/4";
-        
-        string _startContent = @"<?xml version='1.0' encoding='UTF-8'?>
-  <rdf:RDF xml:base='http://iec.ch/TC57/2013/CIM-schema-cim16' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:md='http://iec.ch/TC57/61970-552/ModelDescription/1#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:xsd='http://www.w3.org/2001/XMLSchema#' xmlns:kon='" + _modelVersion + @"#' xmlns:cim='http://iec.ch/TC57/2013/CIM-schema-cim16#' xmlns:cims='http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#' xmlns:entsoe='http://entsoe.eu/CIM/SchemaExtension/3/1#'>
-  <md:FullModel rdf:about='" + _assetModelId.ToString() + @"'>
-    <md:Model.DependentOn rdf:resource='" + EQ_Writer._eqModelId.ToString() + @"' />
-    <md:Model.DependentOn rdf:resource='" + PE_Writer._protectionModelId.ToString() + @"' />
-    <md:Model.scenarioTime>" + EQ_Writer._timeStamp.ToString() + @"</md:Model.scenarioTime>
-    <md:Model.created>" + EQ_Writer._timeStamp.ToString() + @"</md:Model.created>
-    <md:Model.description>DAX Konstant PowerFactory Export</md:Model.description>
-    <md:Model.version>1</md:Model.version>
-    <md:Model.profile>" + _modelVersion + @"</md:Model.profile>
-    <md:Model.modelingAuthoritySet>http://TME.dk/Planning/1</md:Model.modelingAuthoritySet>
-  </md:FullModel>
-";
+
+        private static MappingContext _mappingContext;
+
+
+        private string GetStartContent()
+        {
+            return (@"<?xml version='1.0' encoding='UTF-8'?>
+              <rdf:RDF xml:base='http://iec.ch/TC57/2013/CIM-schema-cim16' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:md='http://iec.ch/TC57/61970-552/ModelDescription/1#' xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#' xmlns:xsd='http://www.w3.org/2001/XMLSchema#' xmlns:kon='" + _modelVersion + @"#' xmlns:cim='http://iec.ch/TC57/2013/CIM-schema-cim16#' xmlns:cims='http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#' xmlns:entsoe='http://entsoe.eu/CIM/SchemaExtension/3/1#'>
+              <md:FullModel rdf:about='" + _assetModelId.ToString() + @"'>
+                <md:Model.DependentOn rdf:resource='" + EQ_Writer._eqModelId.ToString() + @"' />
+                <md:Model.DependentOn rdf:resource='" + PE_Writer._protectionModelId.ToString() + @"' />
+                <md:Model.scenarioTime>" + EQ_Writer._timeStamp.ToString() + @"</md:Model.scenarioTime>
+                <md:Model.created>" + EQ_Writer._timeStamp.ToString() + @"</md:Model.created>
+                <md:Model.description>" + _mappingContext.OrganisationName + @"PowerFactory Export</md:Model.description>
+                <md:Model.version>1</md:Model.version>
+                <md:Model.profile>" + _modelVersion + @"</md:Model.profile>
+                <md:Model.modelingAuthoritySet>http://TME.dk/Planning/1</md:Model.modelingAuthoritySet>
+              </md:FullModel>
+            ");
+        }
 
      
-        MappingContext _mappingContext;
-
+     
         public AI_Writer(string fileName, CimContext cimContext, MappingContext mappingContext)
         {
             _fileName = fileName;
@@ -58,7 +63,7 @@ namespace CIM.PowerFactoryExporter
         private void Open()
         {
             _writer = new StreamWriter(_fileName, false, Encoding.UTF8);
-            _writer.Write(_startContent);
+            _writer.Write(GetStartContent());
             _writer.Write("\r\n\r\n");
         }
 

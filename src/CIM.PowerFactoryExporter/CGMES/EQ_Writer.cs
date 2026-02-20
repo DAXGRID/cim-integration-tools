@@ -1,13 +1,8 @@
 ﻿using CIM.PhysicalNetworkModel.Traversal;
 using CIM.PhysicalNetworkModel.Traversal.Extensions;
 using DAX.IO.CIM;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace CIM.PowerFactoryExporter
@@ -37,12 +32,12 @@ namespace CIM.PowerFactoryExporter
   <md:FullModel rdf:about='" + EQ_Writer._eqModelId.ToString() + @"'>
     <md:Model.scenarioTime>" + _timeStamp.ToString() + @"</md:Model.scenarioTime>
     <md:Model.created>" + _timeStamp.ToString() + @"</md:Model.created>    
-    <md:Model.description>DAX Konstant PowerFactory Export</md:Model.description>
+    <md:Model.description>" + _mappingContext.OrganisationName + @" PowerFactory Export</md:Model.description>
     <md:Model.version>4</md:Model.version>
 	<md:Model.profile>http://entsoe.eu/CIM/EquipmentCore/3/1</md:Model.profile>
     <md:Model.profile>http://entsoe.eu/CIM/EquipmentOperation/3/1</md:Model.profile>
     <md:Model.profile>http://entsoe.eu/CIM/EquipmentShortCircuit/3/1</md:Model.profile>
-    <md:Model.modelingAuthoritySet>http://TME.dk/Planning/1</md:Model.modelingAuthoritySet>
+    <md:Model.modelingAuthoritySet>http://" + _mappingContext.OrganisationName + @".dk/Planning/1</md:Model.modelingAuthoritySet>
   </md:FullModel>
 
   <cim:GeographicalRegion rdf:ID='_0472f5a6-c766-11e1-8775-005056c00008'>
@@ -53,10 +48,20 @@ namespace CIM.PowerFactoryExporter
     <cim:IdentifiedObject.name>" + FormatName(_netName) + @"</cim:IdentifiedObject.name>
     <cim:SubGeographicalRegion.Region rdf:resource='#_0472f5a6-c766-11e1-8775-005056c00008' />
   </cim:SubGeographicalRegion>
+
+  <cim:BaseVoltage rdf:ID='_13f8bd6f-f7a9-47f7-a393-bf5350e73feb'>
+    <cim:IdentifiedObject.name>0</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>0</cim:BaseVoltage.nominalVoltage>
+  </cim:BaseVoltage>
  
   <cim:BaseVoltage rdf:ID='_c6dd6dc7-d8b0-4beb-b78d-9e472b038ffc'>
     <cim:IdentifiedObject.name>0.4</cim:IdentifiedObject.name>
     <cim:BaseVoltage.nominalVoltage>0.4</cim:BaseVoltage.nominalVoltage>
+  </cim:BaseVoltage>
+
+ <cim:BaseVoltage rdf:ID='_ec05e24c-52a0-4e09-997d-d6e0c0d67cb2'>
+    <cim:IdentifiedObject.name>690 Volt</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>0.69</cim:BaseVoltage.nominalVoltage>
   </cim:BaseVoltage>
 
   <cim:BaseVoltage rdf:ID='_c63f79cc-7953-4ab6-9fa6-f8c729bf895b'>
@@ -77,6 +82,11 @@ namespace CIM.PowerFactoryExporter
   <cim:BaseVoltage rdf:ID='_60ee59f3-5ed7-4551-b623-f4346554b22a'>
     <cim:IdentifiedObject.name>60.00</cim:IdentifiedObject.name>
     <cim:BaseVoltage.nominalVoltage>64</cim:BaseVoltage.nominalVoltage>
+  </cim:BaseVoltage>
+
+  <cim:BaseVoltage rdf:ID='_2f5da125-5489-4604-9858-ffa662c00df6'>
+    <cim:IdentifiedObject.name>150.00</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>150</cim:BaseVoltage.nominalVoltage>
   </cim:BaseVoltage>
 
   <cim:OperationalLimitType rdf:ID='_b05800c4-9744-45d8-8d9e-c1f39562e4fb'>
@@ -102,11 +112,14 @@ namespace CIM.PowerFactoryExporter
             _eqModelId = modelId.ToString();
             _netName = netName;
 
+            _baseVoltageIdLookup.Add(0, "13f8bd6f-f7a9-47f7-a393-bf5350e73feb");
             _baseVoltageIdLookup.Add(400, "c6dd6dc7-d8b0-4beb-b78d-9e472b038ffc");
+            _baseVoltageIdLookup.Add(690, "ec05e24c-52a0-4e09-997d-d6e0c0d67cb2");
             _baseVoltageIdLookup.Add(10000, "c63f79cc-7953-4ab6-9fa6-f8c729bf895b");
             _baseVoltageIdLookup.Add(15000, "c1f24620-610b-41dd-bc75-7f14a7bad90f");
             _baseVoltageIdLookup.Add(30000, "4eb4495e-ddff-4fd9-85d6-c09c2486ac9a");
             _baseVoltageIdLookup.Add(60000, "60ee59f3-5ed7-4551-b623-f4346554b22a");
+            _baseVoltageIdLookup.Add(150000, "2f5da125-5489-4604-9858-ffa662c00df6");
 
             Open();
         }
@@ -701,7 +714,7 @@ namespace CIM.PowerFactoryExporter
                 xml += "  <cim:PowerTransformerEnd.ratedU>" + DoubleToString(end.ratedU.Value / 1000) + "</cim:PowerTransformerEnd.ratedU>\r\n";
 
             if (end.ratedS != null)
-                xml += "  <cim:PowerTransformerEnd.ratedS>" + DoubleToString(end.ratedS.Value / 1000) + "</cim:PowerTransformerEnd.ratedS>\r\n";
+                xml += "  <cim:PowerTransformerEnd.ratedS>" + DoubleToString(end.ratedS.Value / 1000000) + "</cim:PowerTransformerEnd.ratedS>\r\n";
 
 
             xml += "</cim:PowerTransformerEnd>\r\n\r\n";

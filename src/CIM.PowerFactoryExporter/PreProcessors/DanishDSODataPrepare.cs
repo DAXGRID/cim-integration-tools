@@ -657,6 +657,7 @@ namespace CIM.PowerFactoryExporter.PreProcessors
         private string GetVoltageLevelStr(double voltageLevel)
         {
             string vlStr = "";
+
             if (voltageLevel == 400)
                 vlStr = "004";
             else if (voltageLevel == 10000)
@@ -668,7 +669,9 @@ namespace CIM.PowerFactoryExporter.PreProcessors
             else if (voltageLevel == 60000)
                 vlStr = "060";
             else
-                throw new Exception("Don't know how to handle voltage level: " + voltageLevel);
+            {
+                vlStr = "000";
+            }
 
             return vlStr;
         }

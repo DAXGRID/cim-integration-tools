@@ -15,5 +15,7 @@ namespace CIM.PowerFactoryExporter
         /// Power Factory CGMES import requires that all connectivity nodes are inside a voltage level
         /// </summary>
         public Dictionary<CIM.PhysicalNetworkModel.ConnectivityNode, PhysicalNetworkModel.VoltageLevel> ConnectivityNodeToVoltageLevel = new Dictionary<PhysicalNetworkModel.ConnectivityNode, PhysicalNetworkModel.VoltageLevel>();
+
+        public string OrganisationName { get; init; }
     }
 }

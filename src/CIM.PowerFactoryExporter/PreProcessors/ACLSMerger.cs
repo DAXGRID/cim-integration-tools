@@ -281,6 +281,7 @@ namespace CIM.PowerFactoryExporter
             }
 
 
+            /*
             // Handle EC's not connected to a substation
             foreach (var inputCimObject in input)
             {
@@ -365,6 +366,7 @@ namespace CIM.PowerFactoryExporter
                     }
                 }
             }
+            */
 
             // return objects, except the one dropped
             foreach (var inputObj in input)

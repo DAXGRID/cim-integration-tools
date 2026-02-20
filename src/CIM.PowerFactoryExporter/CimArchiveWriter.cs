@@ -3,6 +3,7 @@ using CIM.PhysicalNetworkModel.LineInfo;
 using CIM.PhysicalNetworkModel.Traversal;
 using CIM.PhysicalNetworkModel.Traversal.Internals;
 using CIM.PowerFactoryExporter.PreProcessors;
+using DAX.CIM.PFAdapter;
 using DAX.IO.CIM;
 using System.IO.Compression;
 
@@ -15,7 +16,10 @@ namespace CIM.PowerFactoryExporter
     {
         public CimArchiveWriter(IEnumerable<PhysicalNetworkModel.IdentifiedObject> cimObjects, string outputFolder, string archiveName, Guid modelRdfId, string organizationName)
         {
-            var mappingContext = new MappingContext();
+            var mappingContext = new MappingContext()
+            {
+                OrganisationName = organizationName
+            };
 
             var converter = new PNM2PowerFactoryCimConverter(cimObjects,
                new List<IPreProcessor> {
@@ -26,6 +30,71 @@ namespace CIM.PowerFactoryExporter
 
             var _ = CreateCimArchive(outputFolder, archiveName, modelRdfId, mappingContext, converter.GetCimObjects());
         }
+
+        public CimArchiveWriter(IEnumerable<PhysicalNetworkModel.IdentifiedObject> cimObjects, string outputFolder, string archiveName, Guid modelRdfId, ExportKind exportKind, string split60kVStationName = null)
+        {
+            CimContext initialContext = new InMemCimContext(cimObjects);
+
+
+            double minVoltageLevel = 0;
+
+            double maxVoltageLevel = 1000000;
+
+            if (exportKind == ExportKind.HighAndMediumAndLowVoltage)
+            {
+                minVoltageLevel = 0;
+            }
+            else if (exportKind == ExportKind.HighAndMediumVoltage)
+                minVoltageLevel = 10000;
+            else if (exportKind == ExportKind.HighVoltage)
+                minVoltageLevel = 20000;
+            else if (exportKind == ExportKind.MediumAndLowVoltage)
+            {
+                minVoltageLevel = 0;
+                maxVoltageLevel = 35000;
+            }
+            else if (exportKind == ExportKind.MediumVoltageSplit)
+            {
+                minVoltageLevel = 5000;
+                maxVoltageLevel = 35000;
+            }
+
+            HashSet<string> stations = null;
+
+        
+            if (split60kVStationName != null)
+            {
+                stations = new HashSet<string>() { split60kVStationName };
+            }
+
+            var filtered = FilterHelper.Filter(initialContext, new FilterRule()
+            {
+                MinVoltageLevel = minVoltageLevel,
+                MaxVoltageLevel = maxVoltageLevel,
+                RemoveCustomerCables = false,
+                IncludeSpecificSubstations = stations
+            });
+
+
+            var mappingContext = new MappingContext();
+
+
+            var allCimObjects = initialContext.GetAllObjects();
+
+
+            var converter = new PNM2PowerFactoryCimConverter(filtered,
+               new List<IPreProcessor> {
+                    new ACLSMerger(mappingContext),
+                    new TransformerCableMerger(mappingContext),
+                    new DanishDSODataPrepare(mappingContext)
+               });
+
+            // Reinitialize cim context to converted objects
+            var outputCimObjects = converter.GetCimObjects().ToList();
+
+            var _ = CreateCimArchive(outputFolder, archiveName, modelRdfId, mappingContext, outputCimObjects);
+        }
+
 
         private static CimContext CreateCimArchive(string outputFolder, string archiveName, Guid modelRdfId, MappingContext mappingContext, IEnumerable<IdentifiedObject> outputCimObjects)
         {
@@ -91,13 +160,16 @@ namespace CIM.PowerFactoryExporter
                     {
                         // Don't add things that goes into asset and protectionn file
                         if (!(
-                            (cimObject is PhysicalNetworkModel.Asset) ||
-                            (cimObject is PhysicalNetworkModel.AssetInfo) ||
-                            (cimObject is PhysicalNetworkModel.ProductAssetModel) ||
-                            (cimObject is PhysicalNetworkModel.Manufacturer) ||
+                            (cimObject is Asset) ||
+                            (cimObject is AssetInfo) ||
+                            (cimObject is AssetOwner) ||
+                            (cimObject is ProductAssetModel) ||
+                            (cimObject is Manufacturer) ||
                             (cimObject is CurrentTransformerExt) ||
                             (cimObject is PotentialTransformer) ||
-                            (cimObject is ProtectionEquipmentExt)
+                            (cimObject is ProtectionEquipmentExt) ||
+                            (cimObject is CoordinateSystem) ||
+                            (cimObject is UsagePoint)
                             ))
                             eqWriter.AddPNMObject((dynamic)cimObject);
                     }
@@ -173,4 +245,14 @@ namespace CIM.PowerFactoryExporter
             return _context;
         }
     }
+
+    public enum ExportKind
+    {
+        HighVoltage = 1,
+        HighAndMediumVoltage = 2,
+        HighAndMediumAndLowVoltage = 3,
+        MediumAndLowVoltage = 4,
+        MediumVoltageSplit = 5
+    }
+
 }

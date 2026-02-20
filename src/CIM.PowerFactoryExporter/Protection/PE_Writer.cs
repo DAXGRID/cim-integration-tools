@@ -24,23 +24,27 @@ namespace CIM.PowerFactoryExporter
 
         public static string _protectionModelId = Guid.NewGuid().ToString();
         public static DateTime _timeStamp = DateTime.Now;
-        
 
-        string _startContent = @"<?xml version='1.0' encoding='UTF-8'?>
-  <rdf:RDF xmlns:entsoe='http://entsoe.eu/CIM/SchemaExtension/3/1#' xmlns:cim='http://iec.ch/TC57/2013/CIM-schema-cim16#' xmlns:md='http://iec.ch/TC57/61970-552/ModelDescription/1#' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
-  <md:FullModel rdf:about='" + _protectionModelId.ToString() + @"'>
-    <md:Model.DependentOn rdf:resource='" + EQ_Writer._eqModelId.ToString() + @"' />
-    <md:Model.scenarioTime>" + EQ_Writer._timeStamp.ToString() + @"</md:Model.scenarioTime>
-    <md:Model.created>" + EQ_Writer._timeStamp.ToString() + @"</md:Model.created>
-    <md:Model.description>DAX Konstant PowerFactory Export</md:Model.description>
-    <md:Model.version>1</md:Model.version>
-    <md:Model.profile>http://konstant.dk/CIM/ProtectionExtension/1/1</md:Model.profile>
-    <md:Model.modelingAuthoritySet>http://TME.dk/Planning/1</md:Model.modelingAuthoritySet>
-  </md:FullModel>
-";
+        MappingContext _mappingContext;
+
+        private string GetStartContent()
+        {
+            return (@"<?xml version='1.0' encoding='UTF-8'?>
+              <rdf:RDF xmlns:entsoe='http://entsoe.eu/CIM/SchemaExtension/3/1#' xmlns:cim='http://iec.ch/TC57/2013/CIM-schema-cim16#' xmlns:md='http://iec.ch/TC57/61970-552/ModelDescription/1#' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+              <md:FullModel rdf:about='" + _protectionModelId.ToString() + @"'>
+                <md:Model.DependentOn rdf:resource='" + EQ_Writer._eqModelId.ToString() + @"' />
+                <md:Model.scenarioTime>" + EQ_Writer._timeStamp.ToString() + @"</md:Model.scenarioTime>
+                <md:Model.created>" + EQ_Writer._timeStamp.ToString() + @"</md:Model.created>
+                <md:Model.description>" + _mappingContext.OrganisationName + @" Export</md:Model.description>
+                <md:Model.version>1</md:Model.version>
+                <md:Model.profile>http://" + _mappingContext.OrganisationName + @".dk/CIM/ProtectionExtension/1/1</md:Model.profile>
+                <md:Model.modelingAuthoritySet>http://" + _mappingContext.OrganisationName + @".dk/Planning/1</md:Model.modelingAuthoritySet>
+              </md:FullModel>
+            ");
+         }
 
      
-        MappingContext _mappingContext;
+        
 
         public PE_Writer(string fileName, CimContext cimContext, MappingContext mappingContext)
         {
@@ -54,7 +58,7 @@ namespace CIM.PowerFactoryExporter
         private void Open()
         {
             _writer = new StreamWriter(_fileName, false, Encoding.UTF8);
-            _writer.Write(_startContent);
+            _writer.Write(GetStartContent());
             _writer.Write("\r\n\r\n");
         }
 
