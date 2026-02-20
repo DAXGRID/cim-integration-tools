@@ -2110,13 +2110,13 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 if (coords.Length > 2)
                 {
                     ((LocationExt)loc).GeometryType = GeometryType.LineString;
-                    ((LocationExt)loc).Geometry = $"[{String.Join(",", coords.Chunk(2).Select(x => $"[{x[0]}, {x[1]}]"))}]";
+                    ((LocationExt)loc).Geometry = $"[{String.Join(",", coords.Chunk(2).Select(x => $"[{ DoubleToString(x[0]) }, {DoubleToString(x[1]) }]"))}]";
                 }
                 // Point
                 else if (coords.Length == 2)
                 {
                     ((LocationExt)loc).GeometryType = GeometryType.Point;
-                    ((LocationExt)loc).Geometry = $"[{coords[0]}, {coords[1]}]";
+                    ((LocationExt)loc).Geometry = $"[{ DoubleToString(coords[0]) }, { DoubleToString(coords[1]) }]";
                 }
                 // Not handled geometry type
                 else
@@ -2212,6 +2212,11 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 return true;
             else
                 return false;
+        }
+
+        private string DoubleToString(double value)
+        {
+            return value.ToString("0.0#########", CultureInfo.GetCultureInfo("en-GB"));
         }
     }
 
