@@ -90,7 +90,7 @@ namespace CIM.PhysicalNetworkModel.Traversal.Internals
                         }
 
                         // Upsert connectivity node connections
-                        if (tc.ConnectivityNode != null)
+                        if (tc.ConnectivityNode != null && tc.ConnectivityNode.mRID != "00000000-0000-0000-0000-000000000000")
                         {
                             if (!_connectivityNodeConnections.ContainsKey(tc.ConnectivityNode))
                                 _connectivityNodeConnections[tc.ConnectivityNode] = new List<TerminalConnection> { tc };
