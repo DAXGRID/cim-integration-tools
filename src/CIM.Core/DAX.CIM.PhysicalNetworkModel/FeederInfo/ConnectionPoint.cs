@@ -20,6 +20,7 @@ namespace CIM.PhysicalNetworkModel.FeederInfo
         public ConnectivityNode ConnectivityNode { get; set; }
         public Substation Substation { get; set; }
         public PowerTransformer PowerTransformer { get; set; }
+        public BusbarSectionExt BusbarSection { get; set; }
         public Bay Bay { get; set; }
 
         public IReadOnlyList<Feeder> Feeders
@@ -32,6 +33,7 @@ namespace CIM.PhysicalNetworkModel.FeederInfo
                     return _feeders;
             }
         }
+
 
         public void AddFeeder(Feeder feeder)
         {

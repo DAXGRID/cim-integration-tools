@@ -15,7 +15,6 @@ namespace CIM.PhysicalNetworkModel
         public bool Multifeed { get; set; }
         public Guid CustomerFeederCableMRID { get; set; }
         public Guid CableBoxMRID { get; set; }
-        public Guid CableBoxBusbarMRID { get; set; }
         public Guid SecondarySubstationMRID { get; set; }
         public Guid SecondarySubstationBayMRID { get; set; }
         public Guid SecondarySubstationTransformerMRID { get; set; }
@@ -27,7 +26,18 @@ namespace CIM.PhysicalNetworkModel
         public bool MultifeedAllowed { get; set; }
         public int NodeHopCount { get; set; }
         public int TraversalOrder { get; set; }
-  
+        public Guid CableBoxBayMRID { get; set; }
+        
+        /// <summary>
+        /// Upstream busbar in the feeding substation that the feeder get its power from. Might be null - i.e. if there's a connection directly to the power transformer.
+        /// </summary>
+        public Guid FeederBusbarMRID { get; set; }
+
+        /// <summary>
+        /// As soon a busbar is passed this attribut will be filled out. Until then it will be null. Can be used to create busbar-to-busbar topologies.
+        /// </summary>
+        public Guid ParentBusbarMRID { get; set; }
+
         public FlatFeederInfo()
         {
             mRID = Guid.NewGuid().ToString();
