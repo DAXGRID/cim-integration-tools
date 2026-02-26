@@ -260,6 +260,9 @@ namespace CIM.TopologyProcessor
                     }
                 }
             }
+
+            if (feederInfo.FeederBusbarMRID == Guid.Empty && hspFeeder.ConnectionPoint.BusbarSection != null)
+                feederInfo.FeederBusbarMRID = Guid.Parse(hspFeeder.ConnectionPoint.BusbarSection.mRID);
         }
 
         static void AddMspFeederInfo(Feeder mspFeeder, FlatFeederInfo feederInfo)
@@ -272,6 +275,9 @@ namespace CIM.TopologyProcessor
 
             if (mspFeeder.ConnectionPoint.PowerTransformer != null)
                 feederInfo.SecondarySubstationTransformerMRID = Guid.Parse(mspFeeder.ConnectionPoint.PowerTransformer.mRID);
+
+            if (mspFeeder.ConnectionPoint.BusbarSection != null)
+                feederInfo.FeederBusbarMRID = Guid.Parse(mspFeeder.ConnectionPoint.BusbarSection.mRID);
         }
 
         static FlatFeederInfo CreateBasicFeederInfo(int seqNo, KeyValuePair<ConductingEquipment, List<Feeder>> cnFeeder, FeederInfoContext feederContext)
@@ -297,6 +303,9 @@ namespace CIM.TopologyProcessor
                 {
                     feederInfo.CustomerFeederCableMRID = conductingEquipmentfeederInfo.FirstCustomerCableId;
                     feederInfo.TraversalOrder = conductingEquipmentfeederInfo.TraversalOrder;
+
+                    if (conductingEquipmentfeederInfo.ParentBusbarId != Guid.Parse(cnFeeder.Key.mRID))
+                        feederInfo.ParentBusbarMRID = conductingEquipmentfeederInfo.ParentBusbarId;
                 }
             }
 
@@ -305,6 +314,9 @@ namespace CIM.TopologyProcessor
             if (cableBoxFeeder != null)
             {
                 feederInfo.CableBoxMRID = Guid.Parse(cableBoxFeeder.ConnectionPoint.Substation.mRID);
+
+                if (cableBoxFeeder.ConnectionPoint.Bay != null) 
+                    feederInfo.CableBoxBayMRID = Guid.Parse(cableBoxFeeder.ConnectionPoint.Bay.mRID);
             }
 
             return feederInfo;
