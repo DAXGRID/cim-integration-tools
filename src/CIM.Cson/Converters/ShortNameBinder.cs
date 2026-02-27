@@ -9,7 +9,6 @@ namespace CIM.Cson.Converters
 {
     class ShortNameBinder : DefaultSerializationBinder
     {
-        //const string MagicAssemlyName = "(DAX)";
         readonly Dictionary<Type, string> _typeToName = new Dictionary<Type, string>();
         readonly Dictionary<string, Type> _nameToType = new Dictionary<string, Type>();
 
