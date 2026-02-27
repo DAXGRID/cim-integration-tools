@@ -13,13 +13,14 @@ namespace CIM.Cson
     /// </summary>
     public class CsonSerializer
     {
-        readonly CustomizedJsonSerializer _serializer = new CustomizedJsonSerializer();
-        readonly int _lineBufferSize;
+        private readonly CustomizedJsonSerializer _serializer;
+        private readonly int _lineBufferSize;
 
-        /// <summary>
-        /// Creates the CSON serializer with the given line buffer size
-        /// </summary>
-        public CsonSerializer(int lineBufferSize = 1024) => _lineBufferSize = lineBufferSize;
+        public CsonSerializer(int lineBufferSize = 1024, List<string>? includeShorthandNamespaces = null)
+        {
+            var _serializer = new CustomizedJsonSerializer(includeShorthandNamespaces ?? new List<string>());
+            _lineBufferSize = lineBufferSize;
+        }
 
         /// <summary>
         /// Serializes a single object to a JSON string

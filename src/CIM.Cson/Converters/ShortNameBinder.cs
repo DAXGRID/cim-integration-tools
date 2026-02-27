@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CIM.PhysicalNetworkModel;
+﻿using CIM.PhysicalNetworkModel;
 using CIM.PhysicalNetworkModel.Changes;
 using Newtonsoft.Json.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CIM.Cson.Converters
 {
@@ -12,10 +12,15 @@ namespace CIM.Cson.Converters
         readonly Dictionary<Type, string> _typeToName = new Dictionary<Type, string>();
         readonly Dictionary<string, Type> _nameToType = new Dictionary<string, Type>();
 
-        public ShortNameBinder()
+        public ShortNameBinder(List<string> includeShortNameNamespaces)
         {
             AddTypesFromNamespace(typeof(IdentifiedObject).Namespace);
             AddTypesFromNamespace(typeof(DataSetMember).Namespace);
+
+            foreach (var includeShortNameNamespace in includeShortNameNamespaces)
+            {
+                AddTypesFromNamespace(includeShortNameNamespace);
+            }
         }
 
         void AddTypesFromNamespace(string ns)
@@ -66,6 +71,12 @@ namespace CIM.Cson.Converters
 
         void AddType(Type type, string name)
         {
+            if (_nameToType.ContainsKey(name))
+            {
+                _typeToName.Remove(_nameToType[name]);
+                _nameToType.Remove(name);
+            }
+
             _typeToName[type] = name;
             _nameToType[name] = type;
         }

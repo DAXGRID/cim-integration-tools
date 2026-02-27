@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using CIM.Cson.Converters;
 using Newtonsoft.Json;
@@ -8,15 +9,15 @@ namespace CIM.Cson.Internals
 {
     class CustomizedJsonSerializer
     {
-        static readonly JsonSerializerSettings SerializerSettings = GetSettings();
+        private JsonSerializerSettings _serializerSettings;
 
-        static JsonSerializerSettings GetSettings()
+        public CustomizedJsonSerializer(List<string> includeShortNameNamespaces)
         {
-            var settings = new JsonSerializerSettings
+            _serializerSettings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects,
                 NullValueHandling = NullValueHandling.Ignore,
-                SerializationBinder = new ShortNameBinder(),
+                SerializationBinder = new ShortNameBinder(includeShortNameNamespaces),
                 Converters =
                 {
                    new ObjectReferenceSerializer(),
@@ -25,15 +26,13 @@ namespace CIM.Cson.Internals
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
                 ContractResolver = new CustomizedContractResolver(),
             };
-
-            return settings;
         }
 
         public string Serialize(object obj)
         {
             try
             {
-                var json = JsonConvert.SerializeObject(obj, SerializerSettings);
+                var json = JsonConvert.SerializeObject(obj, _serializerSettings);
 
                 return json;
             }
@@ -47,7 +46,7 @@ namespace CIM.Cson.Internals
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject(json, SerializerSettings);
+                var obj = JsonConvert.DeserializeObject(json, _serializerSettings);
 
                 return obj;
             }
