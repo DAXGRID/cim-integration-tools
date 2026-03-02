@@ -11,13 +11,13 @@ namespace CIM.Cson.Internals
     {
         private JsonSerializerSettings _serializerSettings;
 
-        public CustomizedJsonSerializer(List<string> includeShortNameNamespaces)
+        public CustomizedJsonSerializer(List<Type> includeShortHandForTypes)
         {
             _serializerSettings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects,
                 NullValueHandling = NullValueHandling.Ignore,
-                SerializationBinder = new ShortNameBinder(includeShortNameNamespaces),
+                SerializationBinder = new ShortNameBinder(includeShortHandForTypes),
                 Converters =
                 {
                    new ObjectReferenceSerializer(),

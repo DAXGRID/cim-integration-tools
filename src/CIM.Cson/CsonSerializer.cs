@@ -16,9 +16,9 @@ namespace CIM.Cson
         private readonly CustomizedJsonSerializer _serializer;
         private readonly int _lineBufferSize;
 
-        public CsonSerializer(int lineBufferSize = 1024, List<string>? includeShorthandNamespaces = null)
+        public CsonSerializer(int lineBufferSize = 1024, List<Type>? includeShortHandForTypes = null)
         {
-            _serializer = new CustomizedJsonSerializer(includeShorthandNamespaces ?? new List<string>());
+            _serializer = new CustomizedJsonSerializer(includeShortHandForTypes ?? new List<Type>());
             _lineBufferSize = lineBufferSize;
         }
 

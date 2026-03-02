@@ -12,14 +12,14 @@ namespace CIM.Cson.Converters
         readonly Dictionary<Type, string> _typeToName = new Dictionary<Type, string>();
         readonly Dictionary<string, Type> _nameToType = new Dictionary<string, Type>();
 
-        public ShortNameBinder(List<string> includeShortNameNamespaces)
+        public ShortNameBinder(List<Type> includeShortHandForTypes)
         {
             AddTypesFromNamespace(typeof(IdentifiedObject).Namespace);
             AddTypesFromNamespace(typeof(DataSetMember).Namespace);
 
-            foreach (var includeShortNameNamespace in includeShortNameNamespaces)
+            foreach (var type in includeShortHandForTypes)
             {
-                AddTypesFromNamespace(includeShortNameNamespace);
+                AddType(type);
             }
         }
 
