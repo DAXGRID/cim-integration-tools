@@ -89,13 +89,15 @@ internal static class Program
                 {
                     var transSpec = config.GetTransformationSpecification(transSpecName.Trim());
                     var transformer = config.InitializeDataTransformer(transSpecName);
-                    transformer.TransferData();
+                    var mappingGuide = transformer.TransferData();
                     await CheckForCIMProcessingAsync(
                         serializerName,
                         outputFilePath,
                         config,
                         transformer)
                         .ConfigureAwait(false);
+
+                    Console.Out.WriteLine(mappingGuide.TabbedTextReport());
                 }
             },
             transformationConfigurationFileOption,

@@ -120,7 +120,7 @@ namespace DAX.IO
 
             foreach (DataSetMappingGuide dsGuide in DataSetMappingGuides.Values)
             {
-                result += "Dataset: " + dsGuide.ClassName + ", count=" + dsGuide.Antal + "";
+                result += "Dataset: " + dsGuide.ClassName;
                 if (dsGuide.DataSetMapping != null)
                     result += " -> " + dsGuide.DataSetMapping.OutputDataSet;
                 else
@@ -128,7 +128,7 @@ namespace DAX.IO
 
                 result += " " + dsGuide.GetMessageString();
 
-                result += "\r\n";
+                result += " (count=" + dsGuide.Antal + ")\r\n";
 
 
                 foreach (AttributeMappingGuide attrGuide in dsGuide.AttributeMappingGuides.Values)
