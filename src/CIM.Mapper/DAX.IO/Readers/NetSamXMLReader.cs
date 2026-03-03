@@ -71,6 +71,7 @@ namespace DAX.IO.Readers
             ,"generatingunit"
             ,"generatingunitext"
             ,"usagepoint"
+            ,"usagepointext"
             ,"basevoltage"
             ,"bay"
             ,"connectivitynode"
@@ -252,10 +253,6 @@ namespace DAX.IO.Readers
                         AddPsrType(feature, mrid.Value);
                         AddGeometry(feature, mrid.Value);
                         AddTerminals(feature, mrid.Value);
-
-                        if (classNameLower == "usagepoint")
-                        {
-                        }
 
                         // Get related data...
                         if (classNameLower == "powertransformer")
