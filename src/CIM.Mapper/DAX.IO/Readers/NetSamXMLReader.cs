@@ -53,6 +53,7 @@ namespace DAX.IO.Readers
             "ratiotapchanger",
             "energyconsumer",
             "usagepoint",
+            "usagepointext",
             "petersencoil",
             "faultindicator",
             "asset",
