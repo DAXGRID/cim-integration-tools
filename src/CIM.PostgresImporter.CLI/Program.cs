@@ -28,7 +28,7 @@ internal static class Program
 
         var sridOption = new Option<int?>(
             name: "--srid",
-            description: "The SRID for the geometries. Default is 25812."
+            description: "The SRID for the geometries. Default is 25832."
         )
         { IsRequired = false };
 
@@ -96,7 +96,7 @@ internal static class Program
                 }
 
                 await ImportFileAsync(
-                    srid ?? 25812,
+                    srid ?? 25832,
                     inputFilePath,
                     postgresConnectionString,
                     schemaName ?? "public",
