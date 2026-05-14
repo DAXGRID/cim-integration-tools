@@ -1823,7 +1823,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     referenceType = null,
                     @ref = @ref
                 };
-            }).FirstOrDefault();
+            })?.FirstOrDefault();
 
             return null;
         }
@@ -2090,7 +2090,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                 }
             }
 
-            return [];
+            return null;
         }
 
         private Location CreateLocation(double[] coords, CIMIdentifiedObject cimObj)
