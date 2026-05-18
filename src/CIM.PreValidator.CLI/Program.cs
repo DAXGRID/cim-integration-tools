@@ -44,41 +44,53 @@ internal static class Program
         var mrids = new HashSet<Guid>();
         var duplicateIds = new HashSet<Guid>();
         var invalidMrIds = new List<(int lineNumber, string invalidMrid)>();
+        var referenceMrids = new HashSet<Guid>();
 
         using (var reader = XmlReader.Create(inputFilePath, new XmlReaderSettings { Async = true }))
         {
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
-                if (reader.NodeType == XmlNodeType.Element && reader.LocalName == "mRID")
+                if (reader.NodeType == XmlNodeType.Element)
                 {
-                    var mridXmlValue = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
-                    if (Guid.TryParse(mridXmlValue, out var mrid))
+                    if (reader.HasAttributes)
                     {
-                        if (mrids.Contains(mrid))
+                        var reference = reader.GetAttribute("ref");
+                        if (!string.IsNullOrWhiteSpace(reference) && Guid.TryParse(reference, out var mrid))
                         {
-                            duplicateIds.Add(mrid);
+                            referenceMrids.Add(mrid);
                         }
-
-                        mrids.Add(mrid);
                     }
-                    else
+                    else if (reader.LocalName == "mRID")
                     {
-                        var xmlInfo = (IXmlLineInfo)reader;
-                        invalidMrIds.Add((xmlInfo.LineNumber, mridXmlValue));
+                        var mridXmlValue = await reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
+                        if (Guid.TryParse(mridXmlValue, out var mrid))
+                        {
+                            if (mrids.Contains(mrid))
+                            {
+                                duplicateIds.Add(mrid);
+                            }
+
+                            mrids.Add(mrid);
+                        }
+                        else
+                        {
+                            var xmlInfo = (IXmlLineInfo)reader;
+                            invalidMrIds.Add((xmlInfo.LineNumber, mridXmlValue));
+                        }
                     }
                 }
             }
         }
 
         var validationErrorsInvalidMrids = invalidMrIds.Select(x =>
-            new ValidationError
-            {
-                IdentifiedObjectId = $"INVALID_MRID_{x.invalidMrid}_{x.lineNumber}",
-                Code = "INVALID_MRID",
-                Description = $"Invalid MRID: {x.invalidMrid} on line {x.lineNumber}.",
-                Severity = Severity.Error,
-                IdentifiedObjectClass = "IdentifiedObject",
-            });
+           new ValidationError
+           {
+               IdentifiedObjectId = $"INVALID_MRID_{x.invalidMrid}_{x.lineNumber}",
+               Code = "INVALID_MRID",
+               Description = $"Invalid MRID: {x.invalidMrid} on line {x.lineNumber}.",
+               Severity = Severity.Error,
+               IdentifiedObjectClass = "IdentifiedObject",
+           });
 
         var validationErrorDuplicateIds = duplicateIds.Select(x =>
             new ValidationError
@@ -90,6 +102,16 @@ internal static class Program
                 IdentifiedObjectClass = "IdentifiedObject",
             });
 
+        var referencesToObjectsThatDoNotExist = referenceMrids.Where(x => !mrids.Contains(x)).Select(x =>
+            new ValidationError
+            {
+                IdentifiedObjectId = x.ToString(),
+                Code = "REFERENCE_TO_OBJECT_THAT_DOES_NOT_EXIST",
+                Description = "Reference to object that do not exist.",
+                Severity = Severity.Error,
+                IdentifiedObjectClass = "IdentifiedObject"
+            });
+
         using (var sw = new StreamWriter(outputFilePath))
         {
             foreach (var validationError in validationErrorsInvalidMrids)
@@ -98,6 +120,11 @@ internal static class Program
             }
 
             foreach (var validationError in validationErrorDuplicateIds)
+            {
+                await sw.WriteLineAsync(JsonSerializer.Serialize(validationError)).ConfigureAwait(false);
+            }
+
+            foreach (var validationError in referencesToObjectsThatDoNotExist)
             {
                 await sw.WriteLineAsync(JsonSerializer.Serialize(validationError)).ConfigureAwait(false);
             }
