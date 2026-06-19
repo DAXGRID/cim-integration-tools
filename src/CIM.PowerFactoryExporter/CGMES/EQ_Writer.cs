@@ -283,7 +283,7 @@ namespace CIM.PowerFactoryExporter
         {
             string xml = "<cim:VoltageLevel rdf:ID = '_" + vl.mRID + "'>\r\n";
             xml += "  <cim:IdentifiedObject.name>" + FormatName(vl.name) + "</cim:IdentifiedObject.name>\r\n";
-            xml += "  <cim:VoltageLevel.Substation rdf:resource = '#_" + vl.EquipmentContainer1.@ref + "'/>\r\n";
+            xml += "  <cim:VoltageLevel.Substation rdf:resource = '#_" + vl.EquipmentContainer.@ref + "'/>\r\n";
             xml += "  <cim:VoltageLevel.BaseVoltage rdf:resource='#_" + GetBaseVoltageId(vl.BaseVoltage) + "'/>\r\n";
             xml += "</cim:VoltageLevel>\r\n\r\n";
 

@@ -43,7 +43,7 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
             {
                 var voltageLevel = (VoltageLevel)identifiedObject;
 
-                return voltageLevel.EquipmentContainer1.Get(context).GetSubstation(context, false) != null;
+                return voltageLevel.EquipmentContainer.Get(context).GetSubstation(context, false) != null;
             }
 
             if (identifiedObject is BayExt)
@@ -83,7 +83,7 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
             {
                 var voltageLevel = (VoltageLevel)equipmentContainer;
 
-                return voltageLevel.EquipmentContainer1.Get(context).GetSubstation(context, throwIfNotFound);
+                return voltageLevel.EquipmentContainer.Get(context).GetSubstation(context, throwIfNotFound);
             }
 
             if (equipmentContainer is BayExt)
@@ -140,7 +140,7 @@ namespace CIM.PhysicalNetworkModel.Traversal.Extensions
             else if (identifiedObject is ConnectivityNode)
                 return GetSubstation((ConnectivityNode)identifiedObject, context, throwIfNotFound);
             else if (identifiedObject is VoltageLevel)
-                return context.GetObject<Substation>(((VoltageLevel)identifiedObject).EquipmentContainer1.@ref);
+                return context.GetObject<Substation>(((VoltageLevel)identifiedObject).EquipmentContainer.@ref);
             else if (identifiedObject is Bay)
                 return GetSubstation(context.GetObject<VoltageLevel>(((Bay)identifiedObject).VoltageLevel.@ref), context, throwIfNotFound);
             else if (identifiedObject is TransformerEnd)

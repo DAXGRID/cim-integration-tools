@@ -14,7 +14,7 @@
 
         private double baseVoltageField;
 
-        private VoltageLevelEquipmentContainer equipmentContainer1Field;
+        private VoltageLevelEquipmentContainer equipmentContainerField;
 
         /// <remarks/>
         public Voltage highVoltageLimit
@@ -57,15 +57,15 @@
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("EquipmentContainer")]
-        public VoltageLevelEquipmentContainer EquipmentContainer1
+        public VoltageLevelEquipmentContainer EquipmentContainer
         {
             get
             {
-                return this.equipmentContainer1Field;
+                return this.equipmentContainerField;
             }
             set
             {
-                this.equipmentContainer1Field = value;
+                this.equipmentContainerField = value;
             }
         }
     }

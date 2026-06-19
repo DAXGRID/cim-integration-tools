@@ -114,11 +114,11 @@ namespace CIM.PhysicalNetworkModel.Traversal.Internals
                 {
                     VoltageLevel vl = obj as VoltageLevel;
 
-                    if (vl.EquipmentContainer1 != null &&
-                        vl.EquipmentContainer1.@ref != null &&
-                        _objects.ContainsKey(vl.EquipmentContainer1.@ref))
+                    if (vl.EquipmentContainer != null &&
+                        vl.EquipmentContainer.@ref != null &&
+                        _objects.ContainsKey(vl.EquipmentContainer.@ref))
                     {
-                        var st = GetObject<Substation>(vl.EquipmentContainer1.@ref);
+                        var st = GetObject<Substation>(vl.EquipmentContainer.@ref);
 
                         // Upsert voltage levels dictionary
                         if (!_substationVoltageLevels.ContainsKey(st))

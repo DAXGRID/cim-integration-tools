@@ -169,7 +169,7 @@ internal static class CimValidation
                 var voltageLevel = (VoltageLevel)equipmentContainer;
                 validations.Add(() => EquipmentContainerValidation.EquipmentContainerCorrectType(
                     voltageLevel,
-                    equipmentContainersByMrid.TryGetValue(voltageLevel.EquipmentContainer1?.@ref is not null ? Guid.Parse(voltageLevel.EquipmentContainer1.@ref) : Guid.Empty, out var parentEquipmentContainer)
+                    equipmentContainersByMrid.TryGetValue(voltageLevel.EquipmentContainer?.@ref is not null ? Guid.Parse(voltageLevel.EquipmentContainer.@ref) : Guid.Empty, out var parentEquipmentContainer)
                     ? parentEquipmentContainer : null));
             }
             else if (equipmentContainer is Substation)

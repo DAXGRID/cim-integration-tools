@@ -538,7 +538,7 @@ namespace CIM.PowerFactoryExporter.PreProcessors
                                         {
                                             mRID = Guid.NewGuid().ToString(),
                                             name = "0,4 kV",
-                                            EquipmentContainer1 = new VoltageLevelEquipmentContainer() { @ref = pt.Substation(context).mRID },
+                                            EquipmentContainer = new VoltageLevelEquipmentContainer() { @ref = pt.Substation(context).mRID },
                                             BaseVoltage = 400
                                         };
 

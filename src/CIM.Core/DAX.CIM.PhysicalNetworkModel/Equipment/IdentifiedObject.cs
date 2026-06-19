@@ -142,7 +142,7 @@ namespace CIM.PhysicalNetworkModel
             {
                 var voltageLevel = (VoltageLevel)this;
 
-                return voltageLevel.EquipmentContainer1.Get(context).GetSubstation(context, false);
+                return voltageLevel.EquipmentContainer.Get(context).GetSubstation(context, false);
             }
 
             if (this is BayExt)
@@ -176,7 +176,7 @@ namespace CIM.PhysicalNetworkModel
             {
                 var voltageLevel = (VoltageLevel)this;
 
-                return voltageLevel.EquipmentContainer1.Get(context);
+                return voltageLevel.EquipmentContainer.Get(context);
             }
 
             if (this is BayExt)

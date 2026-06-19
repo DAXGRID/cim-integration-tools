@@ -240,7 +240,7 @@ namespace CIM.PowerFactoryExporter
                                 vl.mRID = Guid.NewGuid().ToString();
                                 vl.BaseVoltage = acls1.BaseVoltage;
                                 vl.name = "VL";
-                                vl.EquipmentContainer1 = new VoltageLevelEquipmentContainer() { @ref = st.mRID };
+                                vl.EquipmentContainer = new VoltageLevelEquipmentContainer() { @ref = st.mRID };
                                 addList.Add(vl);
 
                                 // Relate cn to voltage level
@@ -266,7 +266,7 @@ namespace CIM.PowerFactoryExporter
                             vl.mRID = Guid.NewGuid().ToString();
                             vl.BaseVoltage = cnNeighborsx[0].BaseVoltage;
                             vl.name = "VL";
-                            vl.EquipmentContainer1 = new VoltageLevelEquipmentContainer() { @ref = st.mRID };
+                            vl.EquipmentContainer = new VoltageLevelEquipmentContainer() { @ref = st.mRID };
                             addList.Add(vl);
 
                             // Relate cn to voltage level

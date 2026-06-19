@@ -380,7 +380,7 @@ namespace DAX.IO.CIM.Serialization.CIM100
                     // Equipment container
                     if (cimObj.EquipmentContainerRef != null)
                     {
-                        xmlObj.EquipmentContainer1 = new VoltageLevelEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
+                        xmlObj.EquipmentContainer = new VoltageLevelEquipmentContainer() { @ref = cimObj.EquipmentContainerRef.mRID.ToString() };
                     }
 
                     if (_includeEquipment)
